@@ -28,11 +28,7 @@ class WorldView extends BaseGraphicView {
 
         this.$eventBus.on('highlightEntity', this._onHighlightEntity.bind(this));
 
-        // this.$domain.events.on('stepStart', this._onStepStart.bind(this));
-        // this.$domain.events.on('entityBorn', this._onEntityBorn.bind(this));
-        // this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
-        // this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
-        // this.$domain.events.on('stepPack', this._onStepPack.bind(this));
+        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     entityGotIntoView(entity) {
@@ -161,17 +157,6 @@ class WorldView extends BaseGraphicView {
         this._renderCurrentSeason();
     }
 
-    // _onEntityBorn(entity) {
-    //     this._buildEntityView(entity);
-    // }
-
-    // _buildEntityViews() {
-    //     let entities = this.$domain.getEntities();
-    //     entities.forEach(entity => {
-    //         this._buildEntityView(entity);
-    //     });
-    // }
-
     _buildEntityView(entity) {
         let view = null;
         switch (entity.type) {
@@ -236,28 +221,6 @@ class WorldView extends BaseGraphicView {
         }
     }
 
-    // async _onViewPointChanged(viewPoint, viewRect) {
-    //     if (VIEW_SETTINGS.showPlayerViewRect) {
-    //         this._renderViewPoint(viewPoint, viewRect);
-    //     }
-    //     let result = await this.$domain.changePlayerViewPoint(viewPoint, viewRect);
-    //     if (result.isSomeChunkVisibilityChanged) {
-    //         this._currentEntities = result.entities;
-    //         this._updateCurrentEntities();
-    //     }
-    // }
-
-    // _renderViewPoint(viewPoint, viewRect) {
-    //     if (this._viewRectGraphics) {
-    //         this._viewRectContainer.removeChild(this._viewRectGraphics);
-    //     }
-    //     this._viewRectGraphics = new PIXI.Graphics();
-    //     this._viewRectGraphics
-    //         .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
-    //         .stroke({width: 1, color: 0x0000FF});
-    //     this._viewRectContainer.addChild(this._viewRectGraphics);
-    // }
-
     _removeEntityView(entityId, removeDelay) {
         let view = this._currentEntityViews[entityId];
         delete this._currentEntityViews[entityId];
@@ -285,18 +248,6 @@ class WorldView extends BaseGraphicView {
             this._currentEntities.splice(index, 1);
         }
     }
-
-    // _onStepPack(stepPack) {
-    //     for (let viewRectMigration of stepPack.viewRectMigrations) {
-    //         if (viewRectMigration.isMigrationIntoViewRect) {
-    //             this._currentEntities.push(viewRectMigration.entity);
-    //             this._addEntityView(viewRectMigration.entity);
-    //         } else {
-    //             this._removeEntityView(viewRectMigration.entityId);
-    //             this._removeEntityFromArray(viewRectMigration.entityId);
-    //         }
-    //     }
-    // }
 
     _onHighlightEntity(params) {
         EntityHightlighterView.registerHighlightEntityRequest(params);

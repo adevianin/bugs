@@ -10,8 +10,8 @@ class TreeView extends EntityView {
 
         this._render();
 
-        // this.$eventBus.on('viewPointChanged', this._onViewPointChange.bind(this));
-        // this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
+        this.$eventBus.on('viewPointChanged', this._onViewPointChange.bind(this));
+        this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     get _entityWidth() {
@@ -86,9 +86,7 @@ class TreeView extends EntityView {
     }
 
     _onViewPointChange(viewPoint, viewRect) {
-        if (this._isCurrentChunkVisible) {
-            this._bodyContainer.alpha = this._treeRect.contains(viewPoint.x, viewPoint.y) ? 0.5 : 1;
-        }
+        this._bodyContainer.alpha = this._treeRect.contains(viewPoint.x, viewPoint.y) ? 0.5 : 1;
     }
 
 }

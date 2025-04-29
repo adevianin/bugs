@@ -2487,11 +2487,7 @@ class World {
     }
 
     set currentSeason(season) {
-        let oldSeasonValue = this._currentSeason;
         this._currentSeason = season;
-        if (oldSeasonValue != season) {
-            this._mainEventBus.emit('currentSeasonChanged', season);
-        }
     }
 
     get entities() {
