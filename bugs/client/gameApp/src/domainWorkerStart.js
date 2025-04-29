@@ -23,6 +23,7 @@ import { EntitySerializer } from "./domain/worker/serializers/entitySerializer";
 import { ColonySerializer } from "@domain/worker/serializers/colonySerializer";
 
 import { MyStateCollector } from "@domain/worker/myStateCollector";
+import { WorldStepEventsCollector } from "@domain/worker/worldStepEventsCollector";
 import { ViewPointManager } from "@domain/worker/viewPointManager";
 import { DomainWorker } from "./domain/worker/domainWorker";
 
@@ -52,7 +53,8 @@ let colonySerializer = new ColonySerializer();
 
 let viewPointManager = new ViewPointManager();
 let myStateCollector = new MyStateCollector(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer);
-new DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, {
+let worldStepEventsCollector = new WorldStepEventsCollector(eventBus);
+new DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, worldStepEventsCollector, {
     worldService,
     accountService,
     colonyService,

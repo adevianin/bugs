@@ -53,13 +53,13 @@ class RaidNestPickerView extends BasePickerView {
                 });
             pickerGraphic.eventMode = 'static';
             pickerGraphic.cursor = 'pointer';
-            pickerGraphic.on('pointertap', () => this._onNestPicked(nestPicker.nest));
+            pickerGraphic.on('pointertap', () => this._onNestPicked(nestPicker.nestId));
             this._nestPickersContainer.addChild(pickerGraphic);
         }
     }
 
-    _onNestPicked(nest) {
-        this._callback(nest);
+    _onNestPicked(nestId) {
+        this._callback(nestId);
     }
 
     _removeNestPickers() {

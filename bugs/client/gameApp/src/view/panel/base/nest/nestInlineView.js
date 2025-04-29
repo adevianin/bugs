@@ -5,28 +5,26 @@ import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NestInlineView extends BaseGameHTMLView {
 
-    constructor(el, nest) {
+    constructor(el) {
         super(el);
-        this._nest = nest;
+        this._nestData = null;
+        this._isNestDied = false;
 
         this._render();
 
-        this._stopListenNesDied = this.$domain.events.on('nestDied', this._onSomeNestDied.bind(this));
+        this._stopListenNestDied = this.$domain.events.on('worldStepEvent:nestDied', this._onSomeNestDied.bind(this));
         this._nestNameEl.addEventListener('click', this._onNameClick.bind(this));
     }
 
-    get value() {
-        return this._nest && !this._nest.isDied ? this._nest : null;
-    }
-
-    set value(nest) {
-        this._nest = nest;
+    setNestData(nestData) {
+        this._nestData = nestData;
+        this._isNestDied = nestData.isDied;
         this._renderNest();
     }
 
     remove() {
         super.remove();
-        this._stopListenNesDied();
+        this._stopListenNestDied();
     }
 
     _render() {
@@ -46,26 +44,28 @@ class NestInlineView extends BaseGameHTMLView {
     }
 
     _renderNoNestPlaceholderState() {
-        this._noNestPlaceholderEl.classList.toggle('g-hidden', !!this._nest);
+        this._noNestPlaceholderEl.classList.toggle('g-hidden', !!this._nestData);
     }
 
     _renderNestName() {
-        this._nestNameEl.classList.toggle('g-hidden', !this._nest);
-        this._nestNameEl.innerHTML = this._nest ? this._nest.name : '';
+        this._nestNameEl.classList.toggle('g-hidden', !this._nestData);
+        this._nestNameEl.innerHTML = this._nestData ? this._nestData.name : '';
     }
 
     _renderNestDiedState() {
-        this._nestDiedErrorEl.innerHTML = this._nest && this._nest.isDied ? `(${this.$mm.get(GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED)})` : '';
+        this._nestDiedErrorEl.innerHTML = this._isNestDied ? `(${this.$mm.get(GAME_MESSAGE_IDS.NEST_INLINE_DESTROYED)})` : '';
     }
 
-    _onSomeNestDied(nest) {
-        if (this._nest && nest.id == this._nest.id) {
+    _onSomeNestDied({nestId}) {
+        if (this._nestData && nestId == this._nestData.id) {
+            this._isNestDied = true;
             this._renderNestDiedState();
         }
     }
 
-    _onNameClick() {
-        this.$eventBus.emit('showPointRequest', this._nest.position);
+    _onNameClick(e) {
+        e.preventDefault();
+        this.$eventBus.emit('showPointRequest', this._nestData.position);
     }
 
 }

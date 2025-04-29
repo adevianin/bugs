@@ -17,11 +17,11 @@ class ColonyApi {
         });
     }
 
-    destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
+    destroyNestOperation(colonyId, warriorsCount, workersCount, nestId) {
         return this._requester.post(`/api/world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
             workers_count: workersCount,
-            nest_id: nest.id
+            nest_id: nestId
         });
     }
 

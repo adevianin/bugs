@@ -3061,9 +3061,17 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
         }
 }   
 
-    async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));
-        return result.operationId;
+    async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId) {
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_7__.ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_8__.GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -3155,7 +3163,7 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
             if (nest.fromColony == raidingColonyId) {
                 exclusions.push({ center: nest.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.NEST_BLOCKING_RADIUS });
             } else {
-                nestPickers.push({ center: nest.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.NEST_BLOCKING_RADIUS, nest: nest });
+                nestPickers.push({ center: nest.position, radius: _domain_consts__WEBPACK_IMPORTED_MODULE_6__.CONSTS.NEST_BLOCKING_RADIUS, nestId: nest.id });
             }
         }
 
@@ -3225,6 +3233,20 @@ class ColonyService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_1__.B
             return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN;
         }
 
+        return null;
+    }
+
+    validateNestToDestroy(nestId) {
+        let nest = this._world.findEntityById(nestId);
+
+        if (!nestId) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED;
+        }
+
+        if (!nest || nest.isDied) {
+            return _messages_messageIds__WEBPACK_IMPORTED_MODULE_5__.GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED;
+        }
+        
         return null;
     }
 
@@ -3754,7 +3776,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class DomainWorker {
 
-    constructor(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, services) {
+    constructor(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, worldStepEventsCollector, services) {
         this._eventBus = eventBus;
         this._entitySerializer = entitySerializer;
         this._viewPointManager = viewPointManager;
@@ -3770,6 +3792,7 @@ class DomainWorker {
         this._messageHandlerService = services.messageHandlerService;
 
         this._myStateCollector = myStateCollector;
+        this._worldStepEventsCollector = worldStepEventsCollector;
 
         this._listenIncomeMessages();
 
@@ -3810,7 +3833,8 @@ class DomainWorker {
             dailyTemperature: this._worldService.world.climate.dailyTemperature,
             entityAnimations,
             viewRectMigrations,
-            myStatePatch
+            myStatePatch,
+            worldEvents: this._worldStepEventsCollector.pullStepEvents()
         }
         
         this._sendMessage('stepPack', stepPack);
@@ -3833,8 +3857,8 @@ class DomainWorker {
             case 'getChunkShapesDebug':
                 this._handleGetChunkShapesDebugCommand(command)
                 break;
-            case 'findEntityById':
-                this._handleFindEntityByIdCommand(command)
+            case 'getEntityDataById':
+                this._handleGetEntityDataByIdCommand(command)
                 break;
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
@@ -3899,6 +3923,9 @@ class DomainWorker {
             case 'validateDestroyNestOperationConditions':
                 this._handleValidateDestroyNestOperationConditionsCommand(command)
                 break;
+            case 'validateNestToDestroy':
+                this._handleValidateNestToDestroyCommand(command)
+                break;
             case 'validateLayingEggInNest':
                 this._handleValidateLayingEggInNestCommand(command)
                 break;
@@ -3910,6 +3937,9 @@ class DomainWorker {
                 break;
             case 'buildNewSubNestOperation':
                 this._handleBuildNewSubNestOperationCommand(command)
+                break;
+            case 'destroyNestOperation':
+                this._handleDestroyNestOperationCommand(command)
                 break;
             case 'logout':
                 this._handleLogoutCommand(command)
@@ -4005,11 +4035,12 @@ class DomainWorker {
         this._sendCommandResult(command.id, chunkShapes);
     }
 
-    _handleFindEntityByIdCommand(command) {
+    _handleGetEntityDataByIdCommand(command) {
         let data = command.data;
         let entityId = data.id;
         let entity = this._worldService.world.findEntityById(entityId);
-        this._sendCommandResult(command.id, this._entitySerializer.serializeAnyEntity(entity));
+        let entityData = entity ? this._entitySerializer.serializeAnyEntity(entity) : null;
+        this._sendCommandResult(command.id, entityData);
     }
 
     _handleBuildMarkerCommand(command) {
@@ -4174,6 +4205,13 @@ class DomainWorker {
         this._sendCommandResult(command.id, err);
     }
 
+    _handleValidateNestToDestroyCommand(command) {
+        let data = command.data;
+        let nestId = data.nestId;
+        let err = this._colonyService.validateNestToDestroy(nestId);
+        this._sendCommandResult(command.id, err);
+    }
+
     _handleValidateLayingEggInNestCommand(command) {
         let data = command.data;
         let nestId = data.nestId;
@@ -4207,6 +4245,16 @@ class DomainWorker {
         let warriorsCount = data.warriorsCount;
         let nestName = data.nestName;
         let result = await this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleDestroyNestOperationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let workersCount = data.workersCount;
+        let warriorsCount = data.warriorsCount;
+        let result = await this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId);
         this._sendCommandResult(command.id, result);
     }
 
@@ -4450,10 +4498,10 @@ class MyStateCollector {
         colony.events.on('operationDeleted', (operation) => {
             this._pushOperationRemoveToColonyUpdatePatch(colony.id, operation.id);
         });
-        colony.events.on('enemiesChanged', (operation) => {
-            this._pushOperationPropsToOperationUpdatePatch(colony.id, operation.id, {
-                enemies: operation.enemies
-            });
+        colony.events.on('enemiesChanged', () => {
+            // this._pushOperationPropsToOperationUpdatePatch(colony.id, operation.id, {
+            //     enemies: operation.enemies
+            // });
         });
     }
 
@@ -5205,6 +5253,47 @@ class ViewPointManager {
 
 /***/ }),
 
+/***/ "./gameApp/src/domain/worker/worldStepEventsCollector.js":
+/*!***************************************************************!*\
+  !*** ./gameApp/src/domain/worker/worldStepEventsCollector.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   WorldStepEventsCollector: () => (/* binding */ WorldStepEventsCollector)
+/* harmony export */ });
+class WorldStepEventsCollector {
+
+    constructor(eventBus) {
+        this._eventBus = eventBus;
+        this._stepEvents = [];
+
+        this._eventBus.on('nestDied', this._onNestDied.bind(this));
+    }
+
+    pullStepEvents() {
+        let evetns = this._stepEvents;
+        this._stepEvents = [];
+        return evetns;
+    }
+
+    _onNestDied(nest) {
+        this._stepEvents.push(this._buildEventRecord('nestDied', {nestId: nest.id}));
+    }
+
+    _buildEventRecord(type, data) {
+        return {
+            type,
+            data
+        };
+    }
+}
+
+
+
+/***/ }),
+
 /***/ "./gameApp/src/domain/worldFactory.js":
 /*!********************************************!*\
   !*** ./gameApp/src/domain/worldFactory.js ***!
@@ -5564,11 +5653,11 @@ class ColonyApi {
         });
     }
 
-    destroyNestOperation(colonyId, warriorsCount, workersCount, nest) {
+    destroyNestOperation(colonyId, warriorsCount, workersCount, nestId) {
         return this._requester.post(`/api/world/colonies/${ colonyId }/operations/destroy_nest`, {
             warriors_count: warriorsCount,
             workers_count: workersCount,
-            nest_id: nest.id
+            nest_id: nestId
         });
     }
 
@@ -10589,8 +10678,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./domain/worker/serializers/entitySerializer */ "./gameApp/src/domain/worker/serializers/entitySerializer.js");
 /* harmony import */ var _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @domain/worker/serializers/colonySerializer */ "./gameApp/src/domain/worker/serializers/colonySerializer.js");
 /* harmony import */ var _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @domain/worker/myStateCollector */ "./gameApp/src/domain/worker/myStateCollector.js");
-/* harmony import */ var _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @domain/worker/viewPointManager */ "./gameApp/src/domain/worker/viewPointManager.js");
-/* harmony import */ var _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./domain/worker/domainWorker */ "./gameApp/src/domain/worker/domainWorker.js");
+/* harmony import */ var _domain_worker_worldStepEventsCollector__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @domain/worker/worldStepEventsCollector */ "./gameApp/src/domain/worker/worldStepEventsCollector.js");
+/* harmony import */ var _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @domain/worker/viewPointManager */ "./gameApp/src/domain/worker/viewPointManager.js");
+/* harmony import */ var _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./domain/worker/domainWorker */ "./gameApp/src/domain/worker/domainWorker.js");
+
 
 
 
@@ -10643,9 +10734,10 @@ let messageHandlerService = new _domain_service_messageHandlerService__WEBPACK_I
 let entitySerializer = new _domain_worker_serializers_entitySerializer__WEBPACK_IMPORTED_MODULE_18__.EntitySerializer();
 let colonySerializer = new _domain_worker_serializers_colonySerializer__WEBPACK_IMPORTED_MODULE_19__.ColonySerializer();
 
-let viewPointManager = new _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_21__.ViewPointManager();
+let viewPointManager = new _domain_worker_viewPointManager__WEBPACK_IMPORTED_MODULE_22__.ViewPointManager();
 let myStateCollector = new _domain_worker_myStateCollector__WEBPACK_IMPORTED_MODULE_20__.MyStateCollector(eventBus, world, nuptialEnv, userService, entitySerializer, colonySerializer);
-new _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_22__.DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, {
+let worldStepEventsCollector = new _domain_worker_worldStepEventsCollector__WEBPACK_IMPORTED_MODULE_21__.WorldStepEventsCollector(eventBus);
+new _domain_worker_domainWorker__WEBPACK_IMPORTED_MODULE_23__.DomainWorker(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, worldStepEventsCollector, {
     worldService,
     accountService,
     colonyService,

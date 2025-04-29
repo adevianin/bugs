@@ -56,9 +56,17 @@ class ColonyService extends BaseGameService {
         }
 }   
 
-    async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-        let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest));
-        return result.operationId;
+    async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId) {
+        try {
+            let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId));
+            return this._makeSuccessResult({ operationId: result.operationId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
@@ -150,7 +158,7 @@ class ColonyService extends BaseGameService {
             if (nest.fromColony == raidingColonyId) {
                 exclusions.push({ center: nest.position, radius: CONSTS.NEST_BLOCKING_RADIUS });
             } else {
-                nestPickers.push({ center: nest.position, radius: CONSTS.NEST_BLOCKING_RADIUS, nest: nest });
+                nestPickers.push({ center: nest.position, radius: CONSTS.NEST_BLOCKING_RADIUS, nestId: nest.id });
             }
         }
 
@@ -220,6 +228,20 @@ class ColonyService extends BaseGameService {
             return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN;
         }
 
+        return null;
+    }
+
+    validateNestToDestroy(nestId) {
+        let nest = this._world.findEntityById(nestId);
+
+        if (!nestId) {
+            return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED;
+        }
+
+        if (!nest || nest.isDied) {
+            return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED;
+        }
+        
         return null;
     }
 

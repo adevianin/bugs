@@ -73,7 +73,7 @@ class AntView extends LiveEntityView {
 
     async _renderPickedItemState() {
         if (this._entity.pickedItemId) {
-            let item = await this.$domain.findEntityById(this._entity.pickedItemId);
+            let item = await this.$domain.getEntityDataById(this._entity.pickedItemId);
             this._renderPickedItemView(item);
         }
     }
@@ -320,7 +320,7 @@ class AntView extends LiveEntityView {
 
     async _onAntPickedUpItemAnimationRequest(params) {
         this._addAnimation(AntView.ANIMATION_TYPES.PICKED_UP_ITEM, {
-            item: await this.$domain.findEntityById(params.itemId)
+            item: await this.$domain.getEntityDataById(params.itemId)
         });
     }
 

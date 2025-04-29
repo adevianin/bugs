@@ -9,13 +9,14 @@ import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { doubleClickProtection } from "@common/utils/doubleClickProtection";
 import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
+import { ErrorCodes } from "@domain/enum/errorCodes";
 
 class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
 
     constructor(performingColony, onDone) {
         super(performingColony, onDone);
         this._mainNest = this.$domain.getMainNestOfMyColony(this._performingColony.id);
-        this._nestToDestroy = null;
+        this._nestToDestroyData = null;
 
         this._render();
 
@@ -72,7 +73,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             isError = true;
         }
 
-        let choosedNestErr = this._validateChoosedNest();
+        let choosedNestErr = await this._validateChoosedNest();
         this._renderChoosedNestError(choosedNestErr);
         if (choosedNestErr) {
             isError = true;
@@ -93,16 +94,9 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         return !isError;
     }
 
-    _validateChoosedNest() {
-        if (!this._nestToDestroy) {
-            return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED;
-        }
-
-        if (this._nestToDestroy.isDied) {
-            return GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NOT_DESTROYED_NEST_NEEDED;
-        }
-        
-        return null;
+    async _validateChoosedNest() {
+        let nestId = this._nestToDestroyData ? this._nestToDestroyData.id : null;
+        return await this.$domain.validateNestToDestroy(nestId);
     }
 
     _renderChoosedNestError(errId) {
@@ -138,11 +132,12 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestBtnClick() {
-        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, (nest) => {
-            this._choosedNestView.value = nest;
-            this._nestToDestroy = nest;
+        this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, async (nestId) => {
+            let nestData = await this.$domain.getEntityDataById(nestId);
+            this._choosedNestView.setNestData(nestData);
+            this._nestToDestroyData = nestData;
             this._showMarkers();
-            let choosedNestErr = this._validateChoosedNest();
+            let choosedNestErr = await this._validateChoosedNest();
             this._renderChoosedNestError(choosedNestErr);
         });
     }
@@ -157,25 +152,28 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         if (!isValid) {
             return
         }
-        try {
-            this._loader.toggle(true);
-            let operationId = await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroy);
-            this._performingColony.waitCreatingOperation(operationId, () => {
-                this._onDone();
-                this._loader.toggle(false);
-            });
-        } catch (e) {
-            this._loader.toggle(false);
-            if (e instanceof ConflictRequestError) {
+
+        this._loader.toggle(true);
+
+        let result = await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroyData.id);
+        
+        if (result.success) {
+            this._onDone();
+        } else {
+            if (result.errCode == ErrorCodes.CONFLICT) {
+                console.log('revalidating');
                 await this._validate();
-            } else if (e instanceof GenericRequestError) {
+            } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
+            this._loader.toggle(false);
         }
+
     }
 
-    _showMarkers() {
-        let markers = [this.$domain.buildMarker(MarkerTypes.CROSS, this._nestToDestroy.position)];
+    async _showMarkers() {
+        let marker = await this.$domain.buildMarker(MarkerTypes.CROSS, this._nestToDestroyData.position);
+        let markers = [marker];
         this._demonstrateMarkersRequest(markers);
     }
 

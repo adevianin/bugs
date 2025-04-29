@@ -115,10 +115,10 @@ class MyStateCollector {
         colony.events.on('operationDeleted', (operation) => {
             this._pushOperationRemoveToColonyUpdatePatch(colony.id, operation.id);
         });
-        colony.events.on('enemiesChanged', (operation) => {
-            this._pushOperationPropsToOperationUpdatePatch(colony.id, operation.id, {
-                enemies: operation.enemies
-            });
+        colony.events.on('enemiesChanged', () => {
+            // this._pushOperationPropsToOperationUpdatePatch(colony.id, operation.id, {
+            //     enemies: operation.enemies
+            // });
         });
     }
 

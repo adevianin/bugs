@@ -2,7 +2,7 @@ import { CONSTS } from "@domain/consts";
 
 class DomainWorker {
 
-    constructor(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, services) {
+    constructor(eventBus, entitySerializer, viewPointManager, requester, myStateCollector, worldStepEventsCollector, services) {
         this._eventBus = eventBus;
         this._entitySerializer = entitySerializer;
         this._viewPointManager = viewPointManager;
@@ -18,6 +18,7 @@ class DomainWorker {
         this._messageHandlerService = services.messageHandlerService;
 
         this._myStateCollector = myStateCollector;
+        this._worldStepEventsCollector = worldStepEventsCollector;
 
         this._listenIncomeMessages();
 
@@ -58,7 +59,8 @@ class DomainWorker {
             dailyTemperature: this._worldService.world.climate.dailyTemperature,
             entityAnimations,
             viewRectMigrations,
-            myStatePatch
+            myStatePatch,
+            worldEvents: this._worldStepEventsCollector.pullStepEvents()
         }
         
         this._sendMessage('stepPack', stepPack);
@@ -81,8 +83,8 @@ class DomainWorker {
             case 'getChunkShapesDebug':
                 this._handleGetChunkShapesDebugCommand(command)
                 break;
-            case 'findEntityById':
-                this._handleFindEntityByIdCommand(command)
+            case 'getEntityDataById':
+                this._handleGetEntityDataByIdCommand(command)
                 break;
             case 'buildMarker':
                 this._handleBuildMarkerCommand(command)
@@ -147,6 +149,9 @@ class DomainWorker {
             case 'validateDestroyNestOperationConditions':
                 this._handleValidateDestroyNestOperationConditionsCommand(command)
                 break;
+            case 'validateNestToDestroy':
+                this._handleValidateNestToDestroyCommand(command)
+                break;
             case 'validateLayingEggInNest':
                 this._handleValidateLayingEggInNestCommand(command)
                 break;
@@ -158,6 +163,9 @@ class DomainWorker {
                 break;
             case 'buildNewSubNestOperation':
                 this._handleBuildNewSubNestOperationCommand(command)
+                break;
+            case 'destroyNestOperation':
+                this._handleDestroyNestOperationCommand(command)
                 break;
             case 'logout':
                 this._handleLogoutCommand(command)
@@ -253,11 +261,12 @@ class DomainWorker {
         this._sendCommandResult(command.id, chunkShapes);
     }
 
-    _handleFindEntityByIdCommand(command) {
+    _handleGetEntityDataByIdCommand(command) {
         let data = command.data;
         let entityId = data.id;
         let entity = this._worldService.world.findEntityById(entityId);
-        this._sendCommandResult(command.id, this._entitySerializer.serializeAnyEntity(entity));
+        let entityData = entity ? this._entitySerializer.serializeAnyEntity(entity) : null;
+        this._sendCommandResult(command.id, entityData);
     }
 
     _handleBuildMarkerCommand(command) {
@@ -422,6 +431,13 @@ class DomainWorker {
         this._sendCommandResult(command.id, err);
     }
 
+    _handleValidateNestToDestroyCommand(command) {
+        let data = command.data;
+        let nestId = data.nestId;
+        let err = this._colonyService.validateNestToDestroy(nestId);
+        this._sendCommandResult(command.id, err);
+    }
+
     _handleValidateLayingEggInNestCommand(command) {
         let data = command.data;
         let nestId = data.nestId;
@@ -455,6 +471,16 @@ class DomainWorker {
         let warriorsCount = data.warriorsCount;
         let nestName = data.nestName;
         let result = await this._colonyService.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName);
+        this._sendCommandResult(command.id, result);
+    }
+
+    async _handleDestroyNestOperationCommand(command) {
+        let data = command.data;
+        let performingColonyId = data.performingColonyId;
+        let nestId = data.nestId;
+        let workersCount = data.workersCount;
+        let warriorsCount = data.warriorsCount;
+        let result = await this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId);
         this._sendCommandResult(command.id, result);
     }
 

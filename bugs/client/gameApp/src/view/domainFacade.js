@@ -135,6 +135,9 @@ class DomainFacade {
         if (isSeasonChanged) {
             this._eventBus.emit('currentSeasonChanged', this._currentSeason);
         }
+        for (let worldEventRecord of stepPack.worldEvents) {
+            this._eventBus.emit(`worldStepEvent:${worldEventRecord.type}`, worldEventRecord.data);
+        }
     }
 
     _handleEventMessage({ type, data }) {
@@ -175,8 +178,8 @@ class DomainFacade {
         return [];
     }
 
-    async findEntityById(id) {
-        return await this._sendCommand('findEntityById', {
+    async getEntityDataById(id) {
+        return await this._sendCommand('getEntityDataById', {
             id
         }, true);
     }
@@ -266,9 +269,11 @@ class DomainFacade {
         }, true);
     }
 
-    // destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest) {
-    //     return this._colonyService.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nest);
-    // }
+    destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId) {
+        return this._sendCommand('destroyNestOperation', {
+            performingColonyId, warriorsCount, workersCount, nestId
+        }, true);
+    }
 
     // pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
     //     return this._colonyService.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount);
@@ -450,6 +455,10 @@ class DomainFacade {
 
     validateDestroyNestOperationConditions(colonyId) {
         return this._sendCommand('validateDestroyNestOperationConditions', {colonyId}, true);
+    }
+
+    validateNestToDestroy(nestId) {
+        return this._sendCommand('validateNestToDestroy', {nestId}, true);
     }
 
     // validatePillageNestOperationConditions(colonyId) {
