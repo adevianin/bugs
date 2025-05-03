@@ -48,7 +48,7 @@ class ColonyViewModel extends BaseViewModel {
         let index = this._operations.findIndex(o => o.id == operationId);
         if (index != -1) {
             let operations = this._operations.splice(index, 1);
-            this.emit('operationRemoved', operations[0]);
+            this.emit('operationRemoved', operations[0].id);
         }
     }
 

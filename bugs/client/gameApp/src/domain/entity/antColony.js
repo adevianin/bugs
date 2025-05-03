@@ -55,17 +55,6 @@ class AntColony {
         }
     }
 
-    // waitCreatingOperation(operationId, callback) {
-    //     for (let operation of this._operations) {
-    //         if (operation.id == operationId) {
-    //             callback();
-    //             return;
-    //         }
-    //     }
-
-    //     this.once(`addedOperation:${operationId}`, callback);
-    // }
-
     _playColonyOperationCreated(action) {
         this._operations.push(action.operation);
         this.events.emit('addedOperation', action.operation);
@@ -89,15 +78,9 @@ class AntColony {
         this.events.emit('enemiesChanged');
     }
 
-    // _playOperationsChangedAction(action) {
-    //     this._operations = action.actionData.operations;
-    //     this.events.emit('operationsChanged');
-    // }
-
     _playColonyDiedAction(action) {
         this._emitToEventBus('colonyDied'); //to delete colony from world
         this.events.removeAllListeners();
-        // this.events.emit('died');//to delete view
     }
 
     _findOperationById(id) {

@@ -1297,17 +1297,6 @@ class AntColony {
         }
     }
 
-    // waitCreatingOperation(operationId, callback) {
-    //     for (let operation of this._operations) {
-    //         if (operation.id == operationId) {
-    //             callback();
-    //             return;
-    //         }
-    //     }
-
-    //     this.once(`addedOperation:${operationId}`, callback);
-    // }
-
     _playColonyOperationCreated(action) {
         this._operations.push(action.operation);
         this.events.emit('addedOperation', action.operation);
@@ -1331,15 +1320,9 @@ class AntColony {
         this.events.emit('enemiesChanged');
     }
 
-    // _playOperationsChangedAction(action) {
-    //     this._operations = action.actionData.operations;
-    //     this.events.emit('operationsChanged');
-    // }
-
     _playColonyDiedAction(action) {
         this._emitToEventBus('colonyDied'); //to delete colony from world
         this.events.removeAllListeners();
-        // this.events.emit('died');//to delete view
     }
 
     _findOperationById(id) {
@@ -4652,8 +4635,8 @@ class MyStateCollector {
                 hiredWorkersCount: operation.hiredWorkersCount
             });
         });
-        colony.events.on('operationDeleted', (operation) => {
-            this._pushOperationRemoveToColonyUpdatePatch(colony.id, operation.id);
+        colony.events.on('operationDeleted', (operationId) => {
+            this._pushOperationRemoveToColonyUpdatePatch(colony.id, operationId);
         });
         colony.events.on('enemiesChanged', () => {
             this._pushEnemiesToColonyUpdatePatch(colony.id, colony.enemies);

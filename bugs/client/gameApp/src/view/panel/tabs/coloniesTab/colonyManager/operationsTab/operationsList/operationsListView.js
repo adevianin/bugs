@@ -47,7 +47,6 @@ class OperationsListView extends BaseGameHTMLView {
 
     _listenColony(colony) {
         this._stopListeningAddedOperation = colony.on('operationAdded', this._onOperationAdded.bind(this));
-        // this._stopListeningOperationChanged = colony.on('operationChanged', this._onOperationChanged.bind(this));
         this._stopListeningOperationDeleted = colony.on('operationRemoved', this._onOperationDeleted.bind(this));
     }
 
@@ -70,7 +69,6 @@ class OperationsListView extends BaseGameHTMLView {
     _stopListenColony() {
         if (this._colony) {
             this._stopListeningAddedOperation();
-            // this._stopListeningOperationChanged();
             this._stopListeningOperationDeleted();
         }
     }

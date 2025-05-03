@@ -112,8 +112,8 @@ class MyStateCollector {
                 hiredWorkersCount: operation.hiredWorkersCount
             });
         });
-        colony.events.on('operationDeleted', (operation) => {
-            this._pushOperationRemoveToColonyUpdatePatch(colony.id, operation.id);
+        colony.events.on('operationDeleted', (operationId) => {
+            this._pushOperationRemoveToColonyUpdatePatch(colony.id, operationId);
         });
         colony.events.on('enemiesChanged', () => {
             this._pushEnemiesToColonyUpdatePatch(colony.id, colony.enemies);
