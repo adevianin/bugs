@@ -123,8 +123,8 @@ class NestView extends EntityView {
         this._stopListenHpChange();
         // this._stopListenNameChange();
         this._nestHudLayer.detach(this._hudContainer);
-        // this._stopListenShowNestAreaRequest();
-        // this._stopListenHideNestAreaRequest();
+        this._stopListenShowNestAreaRequest();
+        this._stopListenHideNestAreaRequest();
     }
 
     _renderEntityState() {
