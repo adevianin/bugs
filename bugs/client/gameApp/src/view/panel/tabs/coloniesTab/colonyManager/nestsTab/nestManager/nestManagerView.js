@@ -51,12 +51,14 @@ class NestManagerView extends BaseGameHTMLView {
     _emitHideNestAreaRequest() {
         if (this._nest) {
             // this._nest.emit('hideNestAreaRequest');
+            this.$eventBus.emit(`hideNestAreaRequest:${this._nest.id}`);
         }
     }
 
     _emitShowNestAreaRequest() {
         if (this._nest) {
             // this._nest.emit('showNestAreaRequest');
+            this.$eventBus.emit(`showNestAreaRequest:${this._nest.id}`);
         }
     }
 

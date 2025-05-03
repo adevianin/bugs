@@ -32,8 +32,8 @@ class NestView extends EntityView {
         this._stopListenFortificationChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
         this._stopListenHpChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
         // this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
-        // this._stopListenShowNestAreaRequest = this._entity.on('showNestAreaRequest', this._onShowNestAreaRequest.bind(this));
-        // this._stopListenHideNestAreaRequest = this._entity.on('hideNestAreaRequest', this._onHideNestAreaRequest.bind(this));
+        this._stopListenShowNestAreaRequest = this.$eventBus.on(`showNestAreaRequest:${nestId}`, this._onShowNestAreaRequest.bind(this));
+        this._stopListenHideNestAreaRequest = this.$eventBus.on(`hideNestAreaRequest:${nestId}`, this._onHideNestAreaRequest.bind(this));
     }
 
     get _nestWidth() {
