@@ -1,5 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { NestOptionView } from './nestOptionView';
 
 class NestSelectorView extends BaseGameHTMLView {
 
@@ -9,6 +10,8 @@ class NestSelectorView extends BaseGameHTMLView {
         this._nests = this.$domain.getMyNestsFromMyColony(this._colonyId);
         this._isDisabled = false;
         this._canBeEmpty = canBeEmpty;
+
+        this._nestOptionViews = {};
 
         this._render();
 
@@ -37,6 +40,7 @@ class NestSelectorView extends BaseGameHTMLView {
     remove() {
         this._stopListenNestDied();
         this._stopListenNestBorn();
+        this._removeAllNestOptionViews();
         super.remove();
     }
 
@@ -68,12 +72,21 @@ class NestSelectorView extends BaseGameHTMLView {
     _renderNestOption(nest) {
         let optionEl = document.createElement('option');
         optionEl.setAttribute('value', nest.id);
-        optionEl.innerHTML = nest.name;
         this._el.append(optionEl);
+        let nestOptionView = new NestOptionView(optionEl, nest);
+        this._nestOptionViews[nest.id] = nestOptionView;
     }
 
-    _removeNestOption(nestId) {
-        this._el.querySelector(`[value="${nestId}"]`).remove();
+    _removeNestOptionView(nestId) {
+        this._nestOptionViews[nestId].remove();
+        delete this._nestOptionViews[nestId];
+    }
+
+    _removeAllNestOptionViews() {
+        for (let nestId in this._nestOptionViews) {
+            this._nestOptionViews[nestId].remove();
+        }
+        this._nestOptionViews = {};
     }
 
     _removeNestFromArray(nest) {
@@ -85,14 +98,13 @@ class NestSelectorView extends BaseGameHTMLView {
 
     _clearValue() {
         this._el.value = 'none';
-        // this.events.emit('changed');
     }
 
     _onNestDied(nest) {
         if (this.nestId == nest.id) {
             this._clearValue();
         }
-        this._removeNestOption(nest.id);
+        this._removeNestOptionView(nest.id);
         this._removeNestFromArray(nest);
         
     }
