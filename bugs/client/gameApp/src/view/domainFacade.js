@@ -162,18 +162,6 @@ class DomainFacade {
         this._ratingContainer.ratingPlaces = rating;
     }
 
-    // get notificationsContainer() {
-    //     return this._userService.notificationsContainer;
-    // }
-
-    // get ratingContainer() {
-    //     return this._worldService.ratingContainer;
-    // }
-
-    // get world() {
-    //     return this._worldService.world;
-    // }
-
     getEntities() {
         return [];
     }
@@ -192,10 +180,6 @@ class DomainFacade {
         return this._myState.getNestsFromColony(colonyId);
     }
 
-    // getQueenOfColony(colonyId) {
-    //     return this._worldService.world.getQueenOfColony(colonyId);
-    // }
-
     getMainNestOfMyColony(colonyId) {
         return this._myState.getMainNestOfColony(colonyId);
     }
@@ -203,38 +187,6 @@ class DomainFacade {
     getEnemyColonyData(colonyId) {
         return this._sendCommand('getEnemyColonyData', {colonyId}, true);
     }
-
-    // getColoniesByIds(ids) {
-    //     return this._worldService.getColoniesByIds(ids);
-    // }
-
-    // isEntityMy(entity) {
-    //     let userData = this.getUserData();
-    //     return entity.ownerId == userData.id;
-    // }
-
-    // isMyAnt(entity) {
-    //     return this.isEntityMy(entity) && entity.type == EntityTypes.ANT;
-    // }
-
-    // isColonyMy(colony) {
-    //     let userData = this.getUserData();
-    //     return colony.ownerId == userData.id;
-    // }
-
-    // isAnyMyAnt() {
-    //     let userData = this.getUserData();
-    //     return this._worldService.world.isAnyAntByOwnerId(userData.id);
-    // }
-
-    // getMyQueensInNuptialFlight() {
-    //     let userData = this.getUserData();
-    //     return this._nuptialEnvironmentService.getQueensInNuptialFlightFromUser(userData.id);
-    // }
-
-    // getClimate() {
-    //     return this._worldService.world.climate;
-    // }
 
     buildMarker(type, point, params) {
         return this._sendCommand('buildMarker', {
@@ -310,14 +262,6 @@ class DomainFacade {
             queenId, nuptialMaleId, nestBuildingSite, colonyName
         }, true);
     }
-
-    // findNearestNest(point, excludeColonyId) {
-    //     return this._nestService.findNearestNest(point, excludeColonyId);
-    // }
-
-    // getMySpecie() {
-    //     return this._nuptialEnvironmentService.specie;
-    // }
 
     saveSpecieSchema() {
         this._sendCommand('saveSpecieSchema', {
