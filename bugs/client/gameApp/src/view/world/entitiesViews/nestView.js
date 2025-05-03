@@ -20,6 +20,7 @@ class NestView extends EntityView {
         static BUILD_STATUS_CHANGE = 'build_status_change';
         static FORTIFICATION_CHANGE = 'fortification_change';
         static HP_CHANGE = 'hp_change';
+        static RENAMED = 'renamed';
     };
 
     constructor(entity, entityContainer, nestHudLayer) {
@@ -31,7 +32,7 @@ class NestView extends EntityView {
         this._stopListenBuildStatusChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_BUILD_STATUS_CHANGED}`, this._onBuildStatusChangeAnimationRequest.bind(this));
         this._stopListenFortificationChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_FORTIFICATION_CHANGED}`, this._onFortificationChangeAnimationRequest.bind(this));
         this._stopListenHpChange = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
-        // this._stopListenNameChange = this._entity.on('nameChanged', this._onNameChanged.bind(this));
+        this._stopListenNestRenamed = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_RENAMED}`, this._onNestRenamedAR.bind(this));
         this._stopListenShowNestAreaRequest = this.$eventBus.on(`showNestAreaRequest:${nestId}`, this._onShowNestAreaRequest.bind(this));
         this._stopListenHideNestAreaRequest = this.$eventBus.on(`hideNestAreaRequest:${nestId}`, this._onHideNestAreaRequest.bind(this));
     }
@@ -121,7 +122,7 @@ class NestView extends EntityView {
         this._stopListenBuildStatusChange();
         this._stopListenFortificationChange();
         this._stopListenHpChange();
-        // this._stopListenNameChange();
+        this._stopListenNestRenamed();
         this._nestHudLayer.detach(this._hudContainer);
         this._stopListenShowNestAreaRequest();
         this._stopListenHideNestAreaRequest();
@@ -162,10 +163,6 @@ class NestView extends EntityView {
             });
     }
 
-    _renderName(name) {
-        this._nameContainer.addChild
-    }
-
     _determineNestVisualState() {
         if (this._entity.isDied) {
             return NestView.VISUAL_STATES.DEAD;
@@ -174,6 +171,10 @@ class NestView extends EntityView {
         } else {
             return NestView.VISUAL_STATES.BUILDING;
         }
+    }
+
+    _renderName(name) {
+        this._nameText.text = name;
     }
 
     _playAnimation(animation) {
@@ -191,6 +192,9 @@ class NestView extends EntityView {
                 return this._makePlayAnimationResponse(true);
             case NestView.ANIMATION_TYPES.HP_CHANGE: 
                 this._playHpChange(animation.params);
+                return this._makePlayAnimationResponse(true);
+            case NestView.ANIMATION_TYPES.RENAMED: 
+                this._playRenamed(animation.params);
                 return this._makePlayAnimationResponse(true);
             default:
                 return this._makePlayAnimationResponse(false);
@@ -216,6 +220,10 @@ class NestView extends EntityView {
         this._hpLineView.showValue(hp);
     }
 
+    _playRenamed({ name }) {
+        this._renderName(name);
+    }
+
     _onClick() {
         this.$eventBus.emit('nestManageRequest', this._entity);
     }
@@ -232,8 +240,12 @@ class NestView extends EntityView {
         this._addAnimation(NestView.ANIMATION_TYPES.HP_CHANGE, params);
     }
 
+    _onNestRenamedAR(params) {
+        this._addAnimation(NestView.ANIMATION_TYPES.RENAMED, params);
+    }
+
     _onNameChanged() {
-        this._nameText.text = this._entity.name;
+        this._renderName(this._entity.name);
     }
 
     _onShowNestAreaRequest() {

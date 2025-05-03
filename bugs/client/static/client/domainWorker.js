@@ -692,6 +692,7 @@ const ACTION_TYPES = {
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
+    NEST_RENAMED: 'nest_renamed',
     NUPTIAL_ENVIRONMENT_MALES_CHANGED: 'nuptial_environment_males_changed',
     NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED: 'nuptial_environment_specie_genes_changed',
     COLONY_BORN: 'colony_born',
@@ -2216,11 +2217,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._isBuilt;
     }
 
-    rename(newName) {
-        this._name = newName;
-        this.events.emit('nameChanged');
-    }
-    
     eggDelete(eggId) {
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
@@ -2304,6 +2300,9 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
                 return true;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_RENAMED:
+                this._playRenamed(action);
+                return true;
             default:
                 throw 'unknown type of action';
         }
@@ -2356,6 +2355,14 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this._requestActionAnimation(_action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_FORTIFICATION_CHANGED, {
             fortification: this.fortification
         });
+    }
+
+    _playRenamed(action) {
+        this._name = action.name;
+        this._requestActionAnimation(_action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_RENAMED, {
+            name: action.name
+        });
+        this.events.emit('nameChanged');
     }
 
 }
@@ -3517,8 +3524,6 @@ class NestService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
 
     async renameNest(nestId, name) {
         await this._requestHandler(() => this._nestApi.renameNest(nestId, name));
-        let nest = this._world.findEntityById(nestId);
-        nest.rename(name);
     }
 
     validateLayingEggInNest(nestId) {
@@ -4806,6 +4811,9 @@ class MyStateCollector {
     _listenNest(nest) {
         nest.events.on('storedCaloriesChanged', () => {
             this._pushNestPropsToNestUpdatePatch(nest.id, { storedCalories: nest.storedCalories });
+        });
+        nest.events.on('nameChanged', () => {
+            this._pushNestPropsToNestUpdatePatch(nest.id, { name: nest.name });
         });
         nest.events.on('eggAdded', (egg) => {
             this._pushEggAddToNestUpdatePatch(nest.id, egg);

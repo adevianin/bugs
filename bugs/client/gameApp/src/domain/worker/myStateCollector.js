@@ -270,6 +270,9 @@ class MyStateCollector {
         nest.events.on('storedCaloriesChanged', () => {
             this._pushNestPropsToNestUpdatePatch(nest.id, { storedCalories: nest.storedCalories });
         });
+        nest.events.on('nameChanged', () => {
+            this._pushNestPropsToNestUpdatePatch(nest.id, { name: nest.name });
+        });
         nest.events.on('eggAdded', (egg) => {
             this._pushEggAddToNestUpdatePatch(nest.id, egg);
         });

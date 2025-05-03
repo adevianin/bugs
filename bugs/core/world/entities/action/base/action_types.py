@@ -24,6 +24,7 @@ class ActionTypes(StrEnum):
     NEST_EGG_DEVELOP = 'nest_egg_develop'
     NEST_BUILD_STATUS_CHANGED = 'nest_build_status_changed'
     NEST_FORTIFICATION_CHANGED = 'nest_fortification_changed'
+    NEST_RENAMED = 'nest_renamed'
     ITEM_WAS_PICKED_UP = 'item_was_picked_up'
     ITEM_WAS_DROPPED = 'item_was_dropped'
     ITEM_BEING_BRINGED = 'item_being_bringed'

@@ -28,6 +28,7 @@ const ACTION_TYPES = {
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
+    NEST_RENAMED: 'nest_renamed',
     NUPTIAL_ENVIRONMENT_MALES_CHANGED: 'nuptial_environment_males_changed',
     NUPTIAL_ENVIRONMENT_SPECIE_GENES_CHANGED: 'nuptial_environment_specie_genes_changed',
     COLONY_BORN: 'colony_born',

@@ -59,11 +59,6 @@ class Nest extends Entity {
         return this._isBuilt;
     }
 
-    rename(newName) {
-        this._name = newName;
-        this.events.emit('nameChanged');
-    }
-    
     eggDelete(eggId) {
         let egg = this._findEggById(eggId);
         this._removeEggFromArray(egg);
@@ -147,6 +142,9 @@ class Nest extends Entity {
             case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
                 return true;
+            case ACTION_TYPES.NEST_RENAMED:
+                this._playRenamed(action);
+                return true;
             default:
                 throw 'unknown type of action';
         }
@@ -199,6 +197,14 @@ class Nest extends Entity {
         this._requestActionAnimation(ACTION_TYPES.NEST_FORTIFICATION_CHANGED, {
             fortification: this.fortification
         });
+    }
+
+    _playRenamed(action) {
+        this._name = action.name;
+        this._requestActionAnimation(ACTION_TYPES.NEST_RENAMED, {
+            name: action.name
+        });
+        this.events.emit('nameChanged');
     }
 
 }

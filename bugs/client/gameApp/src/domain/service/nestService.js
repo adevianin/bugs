@@ -63,8 +63,6 @@ class NestService extends BaseGameService {
 
     async renameNest(nestId, name) {
         await this._requestHandler(() => this._nestApi.renameNest(nestId, name));
-        let nest = this._world.findEntityById(nestId);
-        nest.rename(name);
     }
 
     validateLayingEggInNest(nestId) {

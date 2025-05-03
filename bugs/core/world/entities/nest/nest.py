@@ -24,6 +24,7 @@ from core.world.entities.world.notification.notifications.nest_alarm_canceled_no
 from .food_sources_data_manager import FoodSourcesDataManager
 from core.world.utils.point import Point
 from core.world.entities.world.season_types import SeasonTypes
+from core.world.entities.action.nest_renamed_action import NestRenamedAction
 
 from typing import List
 
@@ -97,6 +98,7 @@ class Nest(Entity):
     @name.setter
     def name(self, value: str):
         self._name = value
+        self._emit_action(NestRenamedAction(self.id, self.name))
     
     @property
     def is_main(self) -> bool:

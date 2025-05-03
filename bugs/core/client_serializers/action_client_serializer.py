@@ -46,6 +46,7 @@ from .genome_client_serializer import GenomeClientSerializer
 from core.world.entities.action.item_source_is_damaged_changed_action import ItemSourceIsDamagedChangedAction
 from core.world.entities.action.item_source_accumulated_changed_action import ItemSourceAccumulatedChangedAction
 from core.world.entities.action.ant_hungry_state_changed_action import AntHungryStateChangedAction
+from core.world.entities.action.nest_renamed_action import NestRenamedAction
 
 class ActionClientSerializer():
 
@@ -110,6 +111,8 @@ class ActionClientSerializer():
                 return self._serialize_fortification_changed(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
                 return self._serialize_nest_build_status_changed(action)
+            case ActionTypes.NEST_RENAMED:
+                return self._serialize_nest_renamed(action)
             case ActionTypes.ITEM_WAS_PICKED_UP:
                 return self._default_action_serialize(action)
             case ActionTypes.ITEM_WAS_DROPPED:
@@ -338,6 +341,15 @@ class ActionClientSerializer():
 
         json.update({
             'isBuilt': action.is_built
+        })
+
+        return json
+    
+    def _serialize_nest_renamed(self, action: NestRenamedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'name': action.name
         })
 
         return json
