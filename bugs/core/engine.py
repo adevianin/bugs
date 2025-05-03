@@ -462,8 +462,7 @@ class Engine():
     def _handle_move_egg_to_larva_chamber_command(self, command: Dict):
         data = command['data']
         larva = self._colony_service.move_egg_to_larva_chamber(data['user_id'], data['nest_id'], data['egg_id'])
-        serialized_larva = self._larva_client_serializer.serialize(larva)
-        self._send_command_result(command['id'], serialized_larva)
+        self._send_command_result(command['id'], larva.id)
 
     def _handle_change_egg_name_command(self, command: Dict):
         data = command['data']
@@ -501,8 +500,7 @@ class Engine():
     def _handle_add_egg_command(self, command: Dict):
         data = command['data']
         egg = self._colony_service.add_egg(data['user_id'], data['nest_id'], clean_name(data['name']), data['is_fertilized'])
-        serialized_egg = self._egg_client_serializer.serialize_egg(egg)
-        self._send_command_result(command['id'], serialized_egg)
+        self._send_command_result(command['id'], egg.id)
 
     def _handle_rename_nest_command(self, command: Dict):
         data = command['data']

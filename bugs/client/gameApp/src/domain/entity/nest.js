@@ -59,12 +59,6 @@ class Nest extends Entity {
         return this._isBuilt;
     }
 
-    eggDelete(eggId) {
-        let egg = this._findEggById(eggId);
-        this._removeEggFromArray(egg);
-        this.events.emit('eggRemoved', egg.id);
-    }
-
     changeCasteForEgg(eggId, antType) {
         let egg = this._findEggById(eggId);
         egg.antType = antType;
@@ -87,22 +81,11 @@ class Nest extends Entity {
         this.events.emit('larvaRemoved', larva.id);
     }
 
-    addNewEgg(egg) {
-        this._eggs.push(egg);
-        this.events.emit('eggAdded', egg);
-    }
-
-    moveEggToLarvaChamber(eggId, larva) {
-        let egg = this._findEggById(eggId);
-        this._removeEggFromArray(egg);
-        this.events.emit('eggRemoved', egg.id);
-        this._larvae.push(larva);
-        this.events.emit('larvaAdded', larva);
-    }
-
-    _removeEggFromArray(egg) {
-        let index = this._eggs.indexOf(egg);
-        this._eggs.splice(index, 1);
+    _removeEggFromArray(eggId) {
+        let index = this._eggs.findIndex(e => e.id == eggId);
+        if (index != -1) {
+            this._eggs.splice(index, 1);
+        }
     }
 
     _removeLarvaFromArray(larva) {
@@ -136,8 +119,14 @@ class Nest extends Entity {
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 this._playBuildStatusChanged(action);
                 return true;
+            case ACTION_TYPES.NEST_EGG_ADDED:
+                this._playEggAdded(action);
+                return true;
             case ACTION_TYPES.NEST_EGG_DEVELOP:
                 this._playEggDevelop(action);
+                return true;
+            case ACTION_TYPES.NEST_EGG_REMOVED:
+                this._playEggRemoved(action);
                 return true;
             case ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
@@ -176,13 +165,22 @@ class Nest extends Entity {
     
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
-        if (egg) { // for case when egg is not yet created after http request
-            egg.updateProgress(action.progress, action.state);
-            this.events.emit('eggUpdated', egg.id, {
-                state: egg.state,
-                progress: egg.progress
-            });
-        }
+        egg.updateProgress(action.progress, action.state);
+        this.events.emit('eggUpdated', egg.id, {
+            state: egg.state,
+            progress: egg.progress
+        });
+    }
+
+    _playEggAdded(action) {
+        let egg = Egg.buildFromJson(action.egg); 
+        this._eggs.push(egg);
+        this.events.emit('eggAdded', egg);
+    }
+
+    _playEggRemoved(action) {
+        this._removeEggFromArray(action.eggId);
+        this.events.emit('eggRemoved', action.eggId);
     }
 
     _playBuildStatusChanged(action) {

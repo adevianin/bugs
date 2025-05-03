@@ -2,6 +2,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
+import { ErrorCodes } from '@domain/enum/errorCodes';
 
 class EggTabView extends BaseGameHTMLView {
 
@@ -44,6 +45,7 @@ class EggTabView extends BaseGameHTMLView {
 
         this._stopListenEggDeleted();
         this._stopListenEggAdded();
+        this._stopWaitingEggAdding();
     }
 
     _renderEggsList() {
@@ -108,16 +110,40 @@ class EggTabView extends BaseGameHTMLView {
         let isFertilized = this._isFertilizeCheckbox.checked;
 
         let result = await this.$domain.layEggInNest(this._nest.id, name, isFertilized);
-        if (!result.success) {
+
+        if (result.success) {
+            this._waitEggAdding(result.eggId, () => {
+                this._toggleAddEggBtn(true);
+                this._addEggLoader.toggle(false);
+            });
+        } else {
+            this._toggleAddEggBtn(true);
+            this._addEggLoader.toggle(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
                 this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
             }
         }
+    }
+
+    _waitEggAdding(eggId, callback) {
+        this._stopWaitingEggAdding();
         
-        this._toggleAddEggBtn(true);
-        this._addEggLoader.toggle(false);
+        if (this._nest.hasEgg(eggId)) {
+            callback();
+        } else {
+            this._stopListeningEggAdding = this._nest.on(`eggAdded:${eggId}`, () => {
+                callback();
+            });
+        }
+    }
+
+    _stopWaitingEggAdding() {
+        if (this._stopListeningEggAdding) {
+            this._stopListeningEggAdding();
+            this._stopListeningEggAdding = null;
+        }
     }
 
     _generateAntName() {

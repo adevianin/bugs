@@ -25,6 +25,8 @@ from .food_sources_data_manager import FoodSourcesDataManager
 from core.world.utils.point import Point
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.action.nest_renamed_action import NestRenamedAction
+from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
+from core.world.entities.action.nest_egg_removed_action import NestEggRemovedAction
 
 from typing import List
 
@@ -46,7 +48,9 @@ class Nest(Entity):
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
         self._body.events.add_listener('larva_fed', self._on_larva_fed)
+        self._body.events.add_listener('egg_added', self._on_egg_added)
         self._body.events.add_listener('egg_develop', self._on_egg_develop)
+        self._body.events.add_listener('egg_removed', self._on_egg_removed)
         self._body.events.add_listener('fortification_changed', self._on_fortification_changed)
 
         self._not_building_steps_counter = 0
@@ -136,7 +140,7 @@ class Nest(Entity):
         return self._body.move_egg_to_larva_chamber(egg_id)
 
     def delete_egg(self, egg_id: str):
-        self._body.delete_egg(egg_id)
+        self._body.remove_egg(egg_id)
 
     def delete_larva(self, larva_id: str):
         self._body.delete_larva(larva_id)
@@ -182,8 +186,14 @@ class Nest(Entity):
     def _on_larva_fed(self, larva: Larva):
         self._emit_action(NestLarvaFedAction.build(self.id, larva, self._owner_id))
 
+    def _on_egg_added(self, egg: Egg):
+        self._emit_action(NestEggAddedAction(self.id, egg, self._owner_id))
+
     def _on_egg_develop(self, egg: Egg):
         self._emit_action(NestEggDevelopAction.build(self.id, egg, self._owner_id))
+
+    def _on_egg_removed(self, egg_id: int):
+        self._emit_action(NestEggRemovedAction(self.id, egg_id, self._owner_id))
 
     def _on_fortification_changed(self):
         self._emit_action(NestFortificationChangedAction.build(self.id, self._body.fortification))

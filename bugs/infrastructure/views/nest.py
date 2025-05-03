@@ -32,10 +32,10 @@ def lay_egg(request: HttpRequest, nest_id: int):
         return HttpResponse(status=400)
 
     ef = EngineFacade.get_instance()
-    egg = ef.add_egg_command(request.user.id, nest_id, name, is_fertilized)
+    eggId = ef.add_egg_command(request.user.id, nest_id, name, is_fertilized)
     
     return JsonResponse({
-        'egg': egg
+        'eggId': eggId
     }, status=201)
 
 @require_POST
@@ -70,13 +70,10 @@ def change_egg_name(request: HttpRequest, nest_id: int, egg_id: int):
 @login_required     
 def move_egg_to_larva_chamber(request: HttpRequest, nest_id: int, egg_id: int):
     ef = EngineFacade.get_instance()
-    larva = ef.move_egg_to_larva_chamber_command(request.user.id, nest_id, egg_id)
+    larva_id = ef.move_egg_to_larva_chamber_command(request.user.id, nest_id, egg_id)
 
-    if not larva:
-        return HttpResponse(status=400)
-    
     return JsonResponse({
-        'larva': larva
+        'larvaId': larva_id
     }, status=201)
 
 @require_POST

@@ -75,6 +75,7 @@ class NestBody(Body):
 
     def add_egg(self, egg: Egg):
         self.eggs.append(egg)
+        self.events.emit('egg_added', egg)
 
     def change_egg_caste(self, egg_id: str, ant_type: AntTypes):
         egg = self._get_egg_by_id(egg_id)
@@ -95,16 +96,18 @@ class NestBody(Body):
         if not egg.is_ready:
             return None
         
-        self._eggs.remove(egg)
+        self.remove_egg(egg.id)
+        
         larva = Larva.build_new(egg.name, egg.ant_type, egg.genome)
         self._add_larva(larva)
         
         return larva
 
-    def delete_egg(self, egg_id: str):
+    def remove_egg(self, egg_id: str):
         egg = self._get_egg_by_id(egg_id)
         if egg:
             self._eggs.remove(egg)
+            self.events.emit('egg_removed', egg_id)
 
     def develop_eggs(self):
         for egg in self._eggs:

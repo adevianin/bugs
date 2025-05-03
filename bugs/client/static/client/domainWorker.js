@@ -689,7 +689,9 @@ const ACTION_TYPES = {
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVA_FED: 'nest_larva_fed',
     NEST_LARVA_IS_READY: 'nest_larva_is_ready',
+    NEST_EGG_ADDED: 'nest_egg_added',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
+    NEST_EGG_REMOVED: 'nest_egg_removed',
     NEST_BUILD_STATUS_CHANGED: 'nest_build_status_changed',
     NEST_FORTIFICATION_CHANGED: 'nest_fortification_changed',
     NEST_RENAMED: 'nest_renamed',
@@ -2217,12 +2219,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         return this._isBuilt;
     }
 
-    eggDelete(eggId) {
-        let egg = this._findEggById(eggId);
-        this._removeEggFromArray(egg);
-        this.events.emit('eggRemoved', egg.id);
-    }
-
     changeCasteForEgg(eggId, antType) {
         let egg = this._findEggById(eggId);
         egg.antType = antType;
@@ -2245,22 +2241,19 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         this.events.emit('larvaRemoved', larva.id);
     }
 
-    addNewEgg(egg) {
-        this._eggs.push(egg);
-        this.events.emit('eggAdded', egg);
-    }
-
     moveEggToLarvaChamber(eggId, larva) {
-        let egg = this._findEggById(eggId);
-        this._removeEggFromArray(egg);
-        this.events.emit('eggRemoved', egg.id);
+        // let egg = this._findEggById(eggId);
+        // this._removeEggFromArray(egg);
+        // this.events.emit('eggRemoved', egg.id);
         this._larvae.push(larva);
         this.events.emit('larvaAdded', larva);
     }
 
-    _removeEggFromArray(egg) {
-        let index = this._eggs.indexOf(egg);
-        this._eggs.splice(index, 1);
+    _removeEggFromArray(eggId) {
+        let index = this._eggs.findIndex(e => e.id == eggId);
+        if (index != -1) {
+            this._eggs.splice(index, 1);
+        }
     }
 
     _removeLarvaFromArray(larva) {
@@ -2294,8 +2287,14 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 this._playBuildStatusChanged(action);
                 return true;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_ADDED:
+                this._playEggAdded(action);
+                return true;
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_DEVELOP:
                 this._playEggDevelop(action);
+                return true;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_EGG_REMOVED:
+                this._playEggRemoved(action);
                 return true;
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_FORTIFICATION_CHANGED:
                 this._playFortificationChanged(action);
@@ -2334,13 +2333,22 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
     
     _playEggDevelop(action) {
         let egg = this._findEggById(action.eggId);
-        if (egg) { // for case when egg is not yet created after http request
-            egg.updateProgress(action.progress, action.state);
-            this.events.emit('eggUpdated', egg.id, {
-                state: egg.state,
-                progress: egg.progress
-            });
-        }
+        egg.updateProgress(action.progress, action.state);
+        this.events.emit('eggUpdated', egg.id, {
+            state: egg.state,
+            progress: egg.progress
+        });
+    }
+
+    _playEggAdded(action) {
+        let egg = _egg__WEBPACK_IMPORTED_MODULE_4__.Egg.buildFromJson(action.egg); 
+        this._eggs.push(egg);
+        this.events.emit('eggAdded', egg);
+    }
+
+    _playEggRemoved(action) {
+        this._removeEggFromArray(action.eggId);
+        this.events.emit('eggRemoved', action.eggId);
     }
 
     _playBuildStatusChanged(action) {
@@ -3477,11 +3485,7 @@ class NestService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
     async layEggInNest(nestId, name, isFertilized) {
         try {
             let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
-            let eggJson = result.egg;
-            let egg = _domain_entity_egg__WEBPACK_IMPORTED_MODULE_3__.Egg.buildFromJson(eggJson);
-            let nest = this._world.findEntityById(nestId);
-            nest.addNewEgg(egg);
-            return this._makeSuccessResult({ eggId: egg.id });
+            return this._makeSuccessResult({ eggId: result.eggId });
         } catch (e) {
             if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_5__.ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -3504,15 +3508,19 @@ class NestService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
     }
 
     async moveEggToLarvaInNest(nestId, eggId) {
-        let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
-        let larva = _domain_entity_larva__WEBPACK_IMPORTED_MODULE_4__.Larva.buildFromJson(result.larva);
-        let nest = this._world.findEntityById(nestId);
-        nest.moveEggToLarvaChamber(eggId, larva);
+        try {
+            let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
+            return this._makeSuccessResult({ larvaId: result.larvaId });
+        } catch (e) {
+            if (e instanceof _common_domain_errors_conflictRequestError__WEBPACK_IMPORTED_MODULE_5__.ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof _common_domain_errors_genericRequestError__WEBPACK_IMPORTED_MODULE_6__.GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async deleteEggInNest(nestId, eggId) {
-        let nest = this._world.findEntityById(nestId);
-        nest.eggDelete(eggId);
         await this._requestHandler(() => this._nestApi.eggDelete(nestId, eggId));
     }
 
@@ -4194,8 +4202,8 @@ class DomainWorker {
         let data = command.data;
         let nestId = data.nestId;
         let eggId = data.eggId;
-        await this._nestService.moveEggToLarvaInNest(nestId, eggId);
-        this._sendCommandResult(command.id, true);
+        let result = await this._nestService.moveEggToLarvaInNest(nestId, eggId);
+        this._sendCommandResult(command.id, result);
     }
 
     async _handleDeleteEggInNestCommand(command) {

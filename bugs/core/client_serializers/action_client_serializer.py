@@ -47,6 +47,8 @@ from core.world.entities.action.item_source_is_damaged_changed_action import Ite
 from core.world.entities.action.item_source_accumulated_changed_action import ItemSourceAccumulatedChangedAction
 from core.world.entities.action.ant_hungry_state_changed_action import AntHungryStateChangedAction
 from core.world.entities.action.nest_renamed_action import NestRenamedAction
+from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
+from core.world.entities.action.nest_egg_removed_action import NestEggRemovedAction
 
 class ActionClientSerializer():
 
@@ -105,8 +107,12 @@ class ActionClientSerializer():
                 return self._serialize_nest_larva_fed(action)
             case ActionTypes.NEST_LARVA_IS_READY:
                 return self._serialize_nest_larva_is_ready(action)
+            case ActionTypes.NEST_EGG_ADDED:
+                return self._serialize_nest_egg_added(action)
             case ActionTypes.NEST_EGG_DEVELOP:
                 return self._serialize_nest_egg_develop(action)
+            case ActionTypes.NEST_EGG_REMOVED:
+                return self._serialize_nest_egg_removed(action)
             case ActionTypes.NEST_FORTIFICATION_CHANGED:
                 return self._serialize_fortification_changed(action)
             case ActionTypes.NEST_BUILD_STATUS_CHANGED:
@@ -316,6 +322,15 @@ class ActionClientSerializer():
 
         return json
     
+    def _serialize_nest_egg_added(self, action: NestEggAddedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'egg': self._egg_serializer.serialize_egg(action.egg)
+        })
+
+        return json
+    
     def _serialize_nest_egg_develop(self, action: NestEggDevelopAction):
         json = self._serialize_common(action)
 
@@ -323,6 +338,15 @@ class ActionClientSerializer():
             'eggId': action.egg.id,
             'progress': action.egg.progress,
             'state': action.egg.state
+        })
+
+        return json
+    
+    def _serialize_nest_egg_removed(self, action: NestEggRemovedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'eggId': action.egg_id
         })
 
         return json

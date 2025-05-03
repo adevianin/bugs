@@ -353,8 +353,8 @@ class DomainWorker {
         let data = command.data;
         let nestId = data.nestId;
         let eggId = data.eggId;
-        await this._nestService.moveEggToLarvaInNest(nestId, eggId);
-        this._sendCommandResult(command.id, true);
+        let result = await this._nestService.moveEggToLarvaInNest(nestId, eggId);
+        this._sendCommandResult(command.id, result);
     }
 
     async _handleDeleteEggInNestCommand(command) {

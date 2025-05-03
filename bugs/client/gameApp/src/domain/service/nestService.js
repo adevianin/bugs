@@ -16,11 +16,7 @@ class NestService extends BaseGameService {
     async layEggInNest(nestId, name, isFertilized) {
         try {
             let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
-            let eggJson = result.egg;
-            let egg = Egg.buildFromJson(eggJson);
-            let nest = this._world.findEntityById(nestId);
-            nest.addNewEgg(egg);
-            return this._makeSuccessResult({ eggId: egg.id });
+            return this._makeSuccessResult({ eggId: result.eggId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -43,15 +39,19 @@ class NestService extends BaseGameService {
     }
 
     async moveEggToLarvaInNest(nestId, eggId) {
-        let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
-        let larva = Larva.buildFromJson(result.larva);
-        let nest = this._world.findEntityById(nestId);
-        nest.moveEggToLarvaChamber(eggId, larva);
+        try {
+            let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
+            return this._makeSuccessResult({ larvaId: result.larvaId });
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                return this._makeErrorResultConflict();
+            } else if (e instanceof GenericRequestError) {
+                return this._makeErrorResultUnknownErr();
+            }
+        }
     }
 
     async deleteEggInNest(nestId, eggId) {
-        let nest = this._world.findEntityById(nestId);
-        nest.eggDelete(eggId);
         await this._requestHandler(() => this._nestApi.eggDelete(nestId, eggId));
     }
 
