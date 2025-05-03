@@ -2,7 +2,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import queenSelectorTmpl from './queenSelectorTmpl.html';
 import { QueenProfileView } from "./queenProfileView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
-import { StepWaiterView } from '@view/panel/base/stepWaiter/stepWaiterView';
+import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 
 class QueenSelectorView extends BaseGameHTMLView {
 
@@ -47,7 +47,7 @@ class QueenSelectorView extends BaseGameHTMLView {
         this._bornAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
 
         this._queenProfileView = new QueenProfileView(this._el.querySelector('[data-queen-profile]'));
-        this._stepWaiterBornAntara = new StepWaiterView(this._el.querySelector('[data-step-waiter]'));
+        this._bornAntaraLoader = new DotsLoaderView(this._el.querySelector('[data-born-antara-loader]'));
 
         this._renderIsEmptyState();
         this._renderChoosingBtnsState();
@@ -151,6 +151,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onAntBorn() {
+        this._bornAntaraLoader.toggle(false);
         this._renderBornAntaraBtnState();
     }
     
@@ -159,7 +160,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onBornNewAntaraBtnClick() {
-        // this._stepWaiterBornAntara.waitNextStep();
+        this._bornAntaraLoader.toggle(true);
         this.$domain.bornNewAntara();
     }
 
