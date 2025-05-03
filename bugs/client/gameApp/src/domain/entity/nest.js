@@ -75,12 +75,6 @@ class Nest extends Entity {
         });
     }
 
-    larvaDelete(larvaId) {
-        let larva = this._findLarvaById(larvaId);
-        this._removeLarvaFromArray(larva);
-        this.events.emit('larvaRemoved', larva.id);
-    }
-
     _removeEggFromArray(eggId) {
         let index = this._eggs.findIndex(e => e.id == eggId);
         if (index != -1) {
@@ -88,9 +82,11 @@ class Nest extends Entity {
         }
     }
 
-    _removeLarvaFromArray(larva) {
-        let index = this._larvae.indexOf(larva);
-        this._larvae.splice(index, 1);
+    _removeLarvaFromArray(larvaId) {
+        let index = this._larvae.findIndex(l => l.id == larvaId);
+        if (index != -1) {
+            this._larvae.splice(index, 1);
+        }
     }
 
     _findEggById(id) {
@@ -113,8 +109,11 @@ class Nest extends Entity {
             case ACTION_TYPES.NEST_LARVA_FED:
                 this._playLarvaFed(action);
                 return true;
-            case ACTION_TYPES.NEST_LARVA_IS_READY:
-                this._playLarvaIsReady(action);
+            case ACTION_TYPES.NEST_LARVA_ADDED:
+                this._playLarvaAdded(action);
+                return true;
+            case ACTION_TYPES.NEST_LARVA_REMOVED:
+                this._playLarvaRemoved(action);
                 return true;
             case ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 this._playBuildStatusChanged(action);
@@ -146,21 +145,21 @@ class Nest extends Entity {
 
     _playLarvaFed(action) {
         let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        if (larva) { // for case when larva is not yet created after http request
-            larva.ateFood = action.ateFood;
-            this.events.emit('larvaUpdated', larva.id, {
-                ateFood: larva.ateFood
-            });
-        }
+        larva.ateFood = action.ateFood;
+        this.events.emit('larvaUpdated', larva.id, {
+            ateFood: larva.ateFood
+        });
     }
 
-    _playLarvaIsReady(action) {
-        let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        if (larva) {
-            let index = this._larvae.indexOf(larva);
-            this._larvae.splice(index, 1);
-            this.events.emit('larvaRemoved', larva.id);
-        }
+    _playLarvaAdded(action) {
+        let larva = Larva.buildFromJson(action.larva);
+        this._larvae.push(larva);
+        this.events.emit('larvaAdded', larva);
+    }
+
+    _playLarvaRemoved(action) {
+        this._removeLarvaFromArray(action.larvaId);
+        this.events.emit('larvaRemoved', action.larvaId);
     }
     
     _playEggDevelop(action) {

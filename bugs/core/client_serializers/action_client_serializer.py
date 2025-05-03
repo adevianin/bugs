@@ -24,7 +24,6 @@ from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
-from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
 from core.world.entities.action.user_notification_action import UserNotificationAction
@@ -49,6 +48,8 @@ from core.world.entities.action.ant_hungry_state_changed_action import AntHungry
 from core.world.entities.action.nest_renamed_action import NestRenamedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.nest_egg_removed_action import NestEggRemovedAction
+from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
+from core.world.entities.action.nest_larva_removed_action import NestLarvaRemovedAction
 
 class ActionClientSerializer():
 
@@ -105,8 +106,10 @@ class ActionClientSerializer():
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVA_FED:
                 return self._serialize_nest_larva_fed(action)
-            case ActionTypes.NEST_LARVA_IS_READY:
-                return self._serialize_nest_larva_is_ready(action)
+            case ActionTypes.NEST_LARVA_ADDED:
+                return self._serialize_nest_larva_added(action)
+            case ActionTypes.NEST_LARVA_REMOVED:
+                return self._serialize_nest_larva_removed(action)
             case ActionTypes.NEST_EGG_ADDED:
                 return self._serialize_nest_egg_added(action)
             case ActionTypes.NEST_EGG_DEVELOP:
@@ -313,11 +316,20 @@ class ActionClientSerializer():
 
         return json
     
-    def _serialize_nest_larva_is_ready(self, action: NestLarvaIsReadyAction):
+    def _serialize_nest_larva_added(self, action: NestLarvaAddedAction):
         json = self._serialize_common(action)
 
         json.update({
-            'larvaId': action.larva.id
+            'larva':  self._larva_serializer.serialize(action.larva)
+        })
+
+        return json
+    
+    def _serialize_nest_larva_removed(self, action: NestLarvaRemovedAction):
+        json = self._serialize_common(action)
+
+        json.update({
+            'larvaId':  action.larva_id
         })
 
         return json

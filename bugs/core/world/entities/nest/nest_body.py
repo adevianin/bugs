@@ -171,11 +171,13 @@ class NestBody(Body):
 
     def _add_larva(self, larva: Larva):
         self._larvae.append(larva)
+        self.events.emit('larva_added', larva)
 
     def delete_larva(self, larva_id: str):
         larva = self._get_larva_by_id(larva_id)
         if larva:
             self._larvae.remove(larva)
+            self.events.emit('larva_removed', larva.id)
         
     def receive_damage(self, damage: int, damage_type: DamageTypes):
         if self.fortification > 0:

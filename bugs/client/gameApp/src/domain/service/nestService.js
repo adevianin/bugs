@@ -56,8 +56,6 @@ class NestService extends BaseGameService {
     }
 
     async deleteLarvaInNest(nestId, larvaId) {
-        let nest = this._world.findEntityById(nestId);
-        nest.larvaDelete(larvaId);
         await this._requestHandler(() => this._nestApi.larvaDelete(nestId, larvaId));
     }
 

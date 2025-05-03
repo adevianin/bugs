@@ -48,6 +48,7 @@ class LarvaView extends BaseGameHTMLView {
     }
 
     async _onDeleteBtnClick() {
+        this.toggle(false);
         await this.$domain.deleteLarvaInNest(this._nest.id, this._larva.id);
     }
 }

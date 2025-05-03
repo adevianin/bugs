@@ -13,7 +13,6 @@ from .nest_body import NestBody
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.nest_larva_fed_action import NestLarvaFedAction
-from core.world.entities.action.nest_larva_is_ready_action import NestLarvaIsReadyAction
 from core.world.entities.ant.base.ant_types import AntTypes
 from .nest_stats import NestStats
 from core.world.entities.action.nest_fortification_changed_action import NestFortificationChangedAction
@@ -27,6 +26,8 @@ from core.world.entities.world.season_types import SeasonTypes
 from core.world.entities.action.nest_renamed_action import NestRenamedAction
 from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.nest_egg_removed_action import NestEggRemovedAction
+from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
+from core.world.entities.action.nest_larva_removed_action import NestLarvaRemovedAction
 
 from typing import List
 
@@ -46,6 +47,8 @@ class Nest(Entity):
 
         self._body.events.add_listener('stored_calories_changed', self._on_stored_calories_changed)
         self._body.events.add_listener('build_status_changed', self._on_build_status_changed)
+        self._body.events.add_listener('larva_added', self._on_larva_added)
+        self._body.events.add_listener('larva_removed', self._on_larva_removed)
         self._body.events.add_listener('larva_is_ready', self._on_larva_is_ready)
         self._body.events.add_listener('larva_fed', self._on_larva_fed)
         self._body.events.add_listener('egg_added', self._on_egg_added)
@@ -179,8 +182,14 @@ class Nest(Entity):
     def _on_build_status_changed(self):
         self._emit_action(NestBuildStatusChangedAction.build(self.id, self._body.is_built))
 
+    def _on_larva_added(self, larva: Larva):
+        self._emit_action(NestLarvaAddedAction(self.id, larva, self._owner_id))
+
+    def _on_larva_removed(self, larva_id: int):
+        self._emit_action(NestLarvaRemovedAction(self.id, larva_id, self._owner_id))
+
     def _on_larva_is_ready(self, larva: Larva):
-        self._emit_action(NestLarvaIsReadyAction.build(self.id, larva, self._owner_id))
+        self._emit_action(NestLarvaRemovedAction(self.id, larva.id, self._owner_id))
         self._event_bus.emit('ant_birth_request', AntBirthFromNestRequest(larva, self._id))
 
     def _on_larva_fed(self, larva: Larva):

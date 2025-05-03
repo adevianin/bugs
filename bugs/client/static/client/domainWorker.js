@@ -688,7 +688,8 @@ const ACTION_TYPES = {
     ITEM_SOURCE_ACCUMULATED_CHANGED: 'item_source_accumulated_changed',
     NEST_STORED_CALORIES_CHANGED: 'nest_stored_calories_changed',
     NEST_LARVA_FED: 'nest_larva_fed',
-    NEST_LARVA_IS_READY: 'nest_larva_is_ready',
+    NEST_LARVA_ADDED: 'nest_larva_added',
+    NEST_LARVA_REMOVED: 'nest_larva_removed',
     NEST_EGG_ADDED: 'nest_egg_added',
     NEST_EGG_DEVELOP: 'nest_egg_develop',
     NEST_EGG_REMOVED: 'nest_egg_removed',
@@ -2235,20 +2236,6 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         });
     }
 
-    larvaDelete(larvaId) {
-        let larva = this._findLarvaById(larvaId);
-        this._removeLarvaFromArray(larva);
-        this.events.emit('larvaRemoved', larva.id);
-    }
-
-    moveEggToLarvaChamber(eggId, larva) {
-        // let egg = this._findEggById(eggId);
-        // this._removeEggFromArray(egg);
-        // this.events.emit('eggRemoved', egg.id);
-        this._larvae.push(larva);
-        this.events.emit('larvaAdded', larva);
-    }
-
     _removeEggFromArray(eggId) {
         let index = this._eggs.findIndex(e => e.id == eggId);
         if (index != -1) {
@@ -2256,9 +2243,11 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
         }
     }
 
-    _removeLarvaFromArray(larva) {
-        let index = this._larvae.indexOf(larva);
-        this._larvae.splice(index, 1);
+    _removeLarvaFromArray(larvaId) {
+        let index = this._larvae.findIndex(l => l.id == larvaId);
+        if (index != -1) {
+            this._larvae.splice(index, 1);
+        }
     }
 
     _findEggById(id) {
@@ -2281,8 +2270,11 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_FED:
                 this._playLarvaFed(action);
                 return true;
-            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_IS_READY:
-                this._playLarvaIsReady(action);
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_ADDED:
+                this._playLarvaAdded(action);
+                return true;
+            case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_LARVA_REMOVED:
+                this._playLarvaRemoved(action);
                 return true;
             case _action_actionTypes__WEBPACK_IMPORTED_MODULE_2__.ACTION_TYPES.NEST_BUILD_STATUS_CHANGED:
                 this._playBuildStatusChanged(action);
@@ -2314,21 +2306,21 @@ class Nest extends _entity__WEBPACK_IMPORTED_MODULE_0__.Entity {
 
     _playLarvaFed(action) {
         let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        if (larva) { // for case when larva is not yet created after http request
-            larva.ateFood = action.ateFood;
-            this.events.emit('larvaUpdated', larva.id, {
-                ateFood: larva.ateFood
-            });
-        }
+        larva.ateFood = action.ateFood;
+        this.events.emit('larvaUpdated', larva.id, {
+            ateFood: larva.ateFood
+        });
     }
 
-    _playLarvaIsReady(action) {
-        let larva = this._larvae.find(larva => larva.id == action.larvaId);
-        if (larva) {
-            let index = this._larvae.indexOf(larva);
-            this._larvae.splice(index, 1);
-            this.events.emit('larvaRemoved', larva.id);
-        }
+    _playLarvaAdded(action) {
+        let larva = _larva__WEBPACK_IMPORTED_MODULE_3__.Larva.buildFromJson(action.larva);
+        this._larvae.push(larva);
+        this.events.emit('larvaAdded', larva);
+    }
+
+    _playLarvaRemoved(action) {
+        this._removeLarvaFromArray(action.larvaId);
+        this.events.emit('larvaRemoved', action.larvaId);
     }
     
     _playEggDevelop(action) {
@@ -3525,8 +3517,6 @@ class NestService extends _base_baseGameService__WEBPACK_IMPORTED_MODULE_0__.Bas
     }
 
     async deleteLarvaInNest(nestId, larvaId) {
-        let nest = this._world.findEntityById(nestId);
-        nest.larvaDelete(larvaId);
         await this._requestHandler(() => this._nestApi.larvaDelete(nestId, larvaId));
     }
 
