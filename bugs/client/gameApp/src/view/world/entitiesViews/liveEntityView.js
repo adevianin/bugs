@@ -2,8 +2,6 @@ import { EntityView } from "./entityView";
 import * as PIXI from 'pixi.js';
 import { HpLineView } from "./hpLine";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
-import { distance_point } from "@utils/distance";
-import { interpolatePoint } from "@utils/interpolatePoint";
 
 class LiveEntityView extends EntityView {
 
