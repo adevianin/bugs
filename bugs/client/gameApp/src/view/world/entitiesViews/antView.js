@@ -44,12 +44,6 @@ class AntView extends LiveEntityView {
         this._stopListenAntPickedUpItemAR();
         this._stopListenAntDroppedItemAR();
         this._stopListenFlewNuptialAR();
-        // this._stopListenFlewNuptialAnimationRequest();
-        // this._stopListenFlewNuptialBackAnimationRequest();
-        // this._stopListenAntGotInNestAnimationRequest();
-        // this._stopListenAntGotOutOfNestAnimationRequest();
-        // this._stopListenAntPickedUpItemAnimationRequest();
-        // this._stopListenAntDroppedItemAnimationRequest();
     }
 
     _render() {
