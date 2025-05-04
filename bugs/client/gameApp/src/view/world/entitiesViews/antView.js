@@ -290,9 +290,11 @@ class AntView extends LiveEntityView {
             x: this._entityContainer.x,
             y: this._entityContainer.y
         }
-        this.$eventBus.emit(`interEntityAnimationRequest:${droppingItemId}:itemWasDropped`, {
-            dropPosition
-        });
+        if (this.checkIsEntityVisible()) {
+            this.$eventBus.emit(`interEntityAnimationRequest:${droppingItemId}:itemWasDropped`, {
+                dropPosition
+            });
+        }
         this._removePickedItemView();
     }
 

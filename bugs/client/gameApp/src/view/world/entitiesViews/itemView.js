@@ -17,7 +17,7 @@ class ItemView extends EntityView {
         this._stopListenItemDroppedAR = this.$eventBus.on(`interEntityAnimationRequest:${entity.id}:itemWasDropped`, this._onDroppedAnimationRequest.bind(this));
 
         this._stopListenPickedAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${entity.id}:${ACTION_TYPES.ITEM_WAS_PICKED_UP}`, this._onPickedAnimationRequest.bind(this));
-        this._stopListenDroppedAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${entity.id}:${ACTION_TYPES.ITEM_WAS_DROPPED}`, this._onDroppedAnimationRequest.bind(this));
+        // this._stopListenDroppedAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${entity.id}:${ACTION_TYPES.ITEM_WAS_DROPPED}`, this._onDroppedAnimationRequest.bind(this));
         this._stopListenBeingBringedAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${entity.id}:${ACTION_TYPES.ITEM_BEING_BRINGED}`, this._onBeingBringedAnimationRequest.bind(this));
 
         this._render();
@@ -26,7 +26,7 @@ class ItemView extends EntityView {
     remove() {
         this._stopListenItemDroppedAR();
         this._stopListenPickedAnimationRequest();
-        this._stopListenDroppedAnimationRequest();
+        // this._stopListenDroppedAnimationRequest();
         this._stopListenBeingBringedAnimationRequest();
         super.remove();
     }

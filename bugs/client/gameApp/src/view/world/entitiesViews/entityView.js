@@ -123,6 +123,10 @@ class EntityView extends BaseGraphicView {
         this._isEntityVisible = isVisible;
     }
 
+    checkIsEntityVisible() {
+        return this._isEntityVisible;
+    }
+
     _renderViewVisibility() {
         this._entityContainer.renderable = this._isEntityVisible;
     }
