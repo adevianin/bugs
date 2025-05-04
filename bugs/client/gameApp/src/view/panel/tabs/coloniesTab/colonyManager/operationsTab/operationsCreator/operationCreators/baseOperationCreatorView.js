@@ -10,8 +10,31 @@ class BaseOperationCreatorView extends BaseGameHTMLView {
         this._onDone = onDone;
     }
 
+    remove() {
+        super.remove();
+        this._stopListenAnyOperationWaiting();
+    }
+
     _demonstrateMarkersRequest(markers) {
         this.$eventBus.emit('showMarkersRequest', markers);
+    }
+
+    _waitAddingOperation(operationId, callback) {
+        this._stopListenAnyOperationWaiting();
+        if (this._performingColony.hasOperation(operationId)) {
+            callback();
+        } else {
+            this._stopListenOperationAdding = this._performingColony.on(`operationAdded:${operationId}`, () => {
+                callback();
+            })
+        }
+    }
+
+    _stopListenAnyOperationWaiting() {
+        if (this._stopListenOperationAdding) {
+            this._stopListenOperationAdding();
+            this._stopListenOperationAdding = null;
+        }
     }
 
 }

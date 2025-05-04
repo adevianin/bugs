@@ -144,15 +144,17 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let result = await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
 
         if (result.success) {
-            this._onDone();
+            this._waitAddingOperation(result.operationId, () => {
+                this._onDone();
+            });
         } else {
+            this._loader.toggle(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
             } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
-        this._loader.toggle(false);
     }
 
     _onNestFromChanged() {

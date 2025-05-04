@@ -42,6 +42,7 @@ class ColonyViewModel extends BaseViewModel {
     addOperation(operation) {
         this._operations.push(operation);
         this.emit('operationAdded', operation);
+        this.emit(`operationAdded:${operation.id}`);
     }
 
     removeOperation(operationId) {
@@ -68,6 +69,10 @@ class ColonyViewModel extends BaseViewModel {
         }
     }
 
+    hasOperation(operationId) {
+        let operation = this._operations.find(o => o.id == operationId);
+        return !!operation;
+    }
 }
 
 export {

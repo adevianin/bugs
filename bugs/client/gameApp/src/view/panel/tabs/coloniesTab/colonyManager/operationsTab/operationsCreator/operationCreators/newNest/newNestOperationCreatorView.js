@@ -153,14 +153,16 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let result = await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
         
         if (result.success) {
-            this._onDone();
+            this._waitAddingOperation(result.operationId, () => {
+                this._onDone();
+            });
         } else {
+            this._loader.toggle(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
-            this._loader.toggle(false);
         }
     }
 

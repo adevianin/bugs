@@ -156,16 +156,17 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         let result = await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroyData.id);
         
         if (result.success) {
-            this._onDone();
+            this._waitAddingOperation(result.operationId, () => {
+                this._onDone();
+            });
         } else {
+            this._loader.toggle(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
                 this._renderMainError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
         }
-        this._loader.toggle(false);
-
     }
 
     async _showMarkers() {
