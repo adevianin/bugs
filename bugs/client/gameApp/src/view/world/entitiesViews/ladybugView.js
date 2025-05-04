@@ -3,8 +3,8 @@ import { LiveEntityView } from './liveEntityView';
 
 class LadybugView extends LiveEntityView {
 
-    constructor(entity, entityContainer, hudLayer) {
-        super(entity, entityContainer, hudLayer);
+    constructor(entity, entityContainer, entitiesLayer, hudLayer) {
+        super(entity, entityContainer, entitiesLayer, hudLayer);
 
         this._render();
     }

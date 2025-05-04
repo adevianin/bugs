@@ -86,31 +86,34 @@ class WorldView extends BaseGraphicView {
     }
 
     _render() {
-        this._antContainer = new PIXI.Container();
-        this._ladybugContainer = new PIXI.Container();
-        this._itemContainer = new PIXI.Container();
-        this._nestContainer = new PIXI.Container();
-        this._itemAreaContainer = new PIXI.Container();
-        this._itemSourceContainer = new PIXI.Container();
-        this._treesContainer = new PIXI.Container();
+        this._entitiesContainer = new PIXI.Container();
         this._markerDemonstratorContainer = new PIXI.Container();
         this._chunksGridContainer = new PIXI.Container();
+        this._entitiesLayer = new PIXI.RenderLayer({
+            sortableChildren: true,
+            sortFunction: (entityContainer1, entityContainer2) => {
+                if (entityContainer1.y !== entityContainer2.y) {
+                    return entityContainer1.y - entityContainer2.y;
+                }
 
+                if (entityContainer1.label == EntityTypes.ANT && entityContainer2.label == EntityTypes.NEST) {
+                    return 1;
+                }
+                if (entityContainer1.label == EntityTypes.NEST && entityContainer2.label == EntityTypes.ANT) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
         this._liveEntityHudLayer = new PIXI.RenderLayer();
         this._nestHudLayer = new PIXI.RenderLayer();
 
-        this._container.addChild(this._nestContainer);
-        this._container.addChild(this._ladybugContainer);
-        this._container.addChild(this._antContainer);
-        this._container.addChild(this._itemContainer);
-        this._container.addChild(this._itemSourceContainer);
-        this._container.addChild(this._treesContainer);
-        this._container.addChild(this._itemAreaContainer);
-        this._container.addChild(this._markerDemonstratorContainer);
-        this._container.addChild(this._chunksGridContainer);
-
+        this._container.addChild(this._entitiesContainer);
+        this._container.addChild(this._entitiesLayer);
         this._container.addChild(this._nestHudLayer);
         this._container.addChild(this._liveEntityHudLayer);
+        this._container.addChild(this._markerDemonstratorContainer);
+        this._container.addChild(this._chunksGridContainer);
 
         this._markerDemonstrator = new MarkersDemonstratorView(this._markerDemonstratorContainer);
 
@@ -126,29 +129,29 @@ class WorldView extends BaseGraphicView {
         let view = null;
         switch (entity.type) {
             case EntityTypes.ANT:
-                view = new AntView(entity, this._antContainer, this._liveEntityHudLayer);
+                view = new AntView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
                 break;
             case EntityTypes.LADYBUG:
-                view = new LadybugView(entity, this._ladybugContainer, this._liveEntityHudLayer);
+                view = new LadybugView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
                 break;
             case EntityTypes.NEST:
-                view = new NestView(entity, this._nestContainer, this._nestHudLayer);
+                view = new NestView(entity, this._entitiesContainer, this._entitiesLayer, this._nestHudLayer);
                 break;
             case EntityTypes.ITEM:
                 if (entity.itemType == ItemTypes.LEAF) {
-                    view = new LeafItemView(entity, this._itemContainer);
+                    view = new LeafItemView(entity, this._entitiesContainer, this._entitiesLayer);
                 } else {
-                    view = new ItemView(entity, this._itemContainer);
+                    view = new ItemView(entity, this._entitiesContainer, this._entitiesLayer);
                 }
                 break;
             case EntityTypes.ITEM_SOURCE:
-                view = new ItemSourceView(entity, this._itemSourceContainer);
+                view = new ItemSourceView(entity, this._entitiesContainer, this._entitiesLayer);
                 break;
             case EntityTypes.ITEM_AREA:
-                view = new ItemAreaView(entity, this._itemAreaContainer);
+                view = new ItemAreaView(entity, this._entitiesContainer, this._entitiesLayer);
                 break;
             case EntityTypes.TREE:
-                view = new TreeView(entity, this._treesContainer);
+                view = new TreeView(entity, this._entitiesContainer, this._entitiesLayer);
                 break;
             default:
                 throw 'unknown type of entity';

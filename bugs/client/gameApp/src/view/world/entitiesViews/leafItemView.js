@@ -4,8 +4,8 @@ import { SEASON_TYPES } from "@domain/enum/season_types";
 
 class LeafItemView extends ItemView {
 
-    constructor(entity, entitiesContainer) {
-        super(entity, entitiesContainer);
+    constructor(entity, entitiesContainer, entitiesLayer) {
+        super(entity, entitiesContainer, entitiesLayer);
 
         this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }

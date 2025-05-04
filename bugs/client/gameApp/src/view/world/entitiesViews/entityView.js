@@ -12,7 +12,7 @@ class EntityView extends BaseGraphicView {
         static DIED = 'died';
     };
 
-    constructor(entity, entitiesContainer) {
+    constructor(entity, entitiesContainer, entitiesLayer) {
         super();
         this._animQueue = [];
         this._isAnimPlaying = false;
@@ -20,8 +20,11 @@ class EntityView extends BaseGraphicView {
 
         this._entity = entity;
         this._parentContainer = entitiesContainer;
-        this._entityContainer = new PIXI.Container();
+        this._entityContainer = new PIXI.Container({label: entity.type});
         this._parentContainer.addChild(this._entityContainer);
+
+        this._entitiesLayer = entitiesLayer;
+        this._entitiesLayer.attach(this._entityContainer);
 
         this._timeoutIds = [];
 
@@ -31,7 +34,6 @@ class EntityView extends BaseGraphicView {
 
         let eId = this._entity.id;
         this._stopListenEntityDiedAR = this.$eventBus.on(`entityActionAnimationRequest:${eId}:${ACTION_TYPES.ENTITY_DIED}`, this._onDiedAnimationRequest.bind(this));
-        // this._stopListenStetStart = this.$eventBus.on('stepStart', this._onStepStart.bind(this));
     }
 
     get entity() {
@@ -48,8 +50,9 @@ class EntityView extends BaseGraphicView {
         this._stopAnyAnimations();
         this._entityContainer.removeFromParent();
         this._entityContainer.destroy({children: true});
-        this._removedDuringAnimation = this._currentAnimation
+        this._removedDuringAnimation = this._currentAnimation;
         this._stopListenEntityDiedAR();
+        this._entitiesLayer.detach(this._entityContainer);
     }
 
     checkIsRefreshAnimationsNeeded() {
@@ -186,22 +189,6 @@ class EntityView extends BaseGraphicView {
     _onDiedAnimationRequest(params) {
         this._addAnimation(EntityView.ANIMATION_TYPES.DIED, params, false);
     }
-
-    // _onStepStart() {
-    //     if (this._isCurrentChunkVisible && this._hasBlockingAnimationInQueue()) {
-    //         this._refreshAnimations();
-    //     }
-    // }
-
-    // _refreshAnimations() {
-    //     this._animQueue = [];
-    //     this._stopAllRunningAnimations();
-    //     this._renderEntityState();
-    //     if (this._entity.isDied) {
-    //         this._playDiedAnimation();
-    //     }
-    //     console.warn('refreshed animations')
-    // }
 
     _hasBlockingAnimationInQueue() {
         return this._animQueue.some(anim => anim.isBlocking);

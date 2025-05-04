@@ -23,8 +23,8 @@ class NestView extends EntityView {
         static RENAMED = 'renamed';
     };
 
-    constructor(entity, entityContainer, nestHudLayer) {
-        super(entity, entityContainer);
+    constructor(entity, entityContainer, entitiesLayer, nestHudLayer) {
+        super(entity, entityContainer, entitiesLayer);
         this._nestHudLayer = nestHudLayer;
 
         this._render();
@@ -77,7 +77,7 @@ class NestView extends EntityView {
         this._hudContainer.addChild(this._nestArea);
 
         let nestHalfWidth = this._nestWidth / 2;
-        let nestHalfHeight = this._nestHeight / 2;
+        let nestHalfHeight = this._nestHeight * 0.75;
 
         this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 

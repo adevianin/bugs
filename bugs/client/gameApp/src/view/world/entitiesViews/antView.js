@@ -17,8 +17,8 @@ class AntView extends LiveEntityView {
         static DROPPED_ITEM = 'dropped_item';
     }
 
-    constructor(entity, entityContainer, hudLayer) {
-        super(entity, entityContainer, hudLayer);
+    constructor(entity, entityContainer, entitiesLayer, hudLayer) {
+        super(entity, entityContainer, entitiesLayer, hudLayer);
 
         this._render();
 

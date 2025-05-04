@@ -4,8 +4,8 @@ import { SEASON_TYPES } from '@domain/enum/season_types';
 
 class TreeView extends EntityView {
 
-    constructor(entity, entityContainer) {
-        super(entity, entityContainer);
+    constructor(entity, entityContainer, entitiesLayer) {
+        super(entity, entityContainer, entitiesLayer);
         this._treeRect = null
 
         this._render();

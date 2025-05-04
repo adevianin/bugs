@@ -21,8 +21,8 @@ class ItemSourceView extends EntityView {
         static ACCUMULATED_CHANGE = 'accumulated_change';
     };
 
-    constructor(entity, entitiesContainer) {
-        super(entity, entitiesContainer);
+    constructor(entity, entitiesContainer, entitiesLayer) {
+        super(entity, entitiesContainer, entitiesLayer);
 
         let id = this._entity.id;
         this._stopListenHpChange = this.$eventBus.on(`entityActionAnimationRequest:${id}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));

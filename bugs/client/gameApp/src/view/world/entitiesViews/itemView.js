@@ -10,8 +10,8 @@ class ItemView extends EntityView {
         static BE_BRINGED = 'be_bringed';
     };
 
-    constructor(entity, entitiesContainer) {
-        super(entity, entitiesContainer);
+    constructor(entity, entitiesContainer, entitiesLayer) {
+        super(entity, entitiesContainer, entitiesLayer);
 
         
         this._stopListenItemDroppedAR = this.$eventBus.on(`interEntityAnimationRequest:${entity.id}:itemWasDropped`, this._onDroppedAnimationRequest.bind(this));

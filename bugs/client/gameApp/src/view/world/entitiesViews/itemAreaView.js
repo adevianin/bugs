@@ -4,8 +4,8 @@ import { VIEW_SETTINGS } from '@view/viewSettings';
 
 class ItemAreaView extends EntityView { 
 
-    constructor(entity, entitiesContainer) {
-        super(entity, entitiesContainer);
+    constructor(entity, entitiesContainer, entitiesLayer) {
+        super(entity, entitiesContainer, entitiesLayer);
 
         this._render();
     }

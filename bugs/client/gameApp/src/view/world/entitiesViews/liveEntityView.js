@@ -18,8 +18,8 @@ class LiveEntityView extends EntityView {
         static HP_CHANGED = 'hp_changed';
     };
 
-    constructor(entity, entitiesContainer, liveEntityHudLayer) {
-        super(entity, entitiesContainer);
+    constructor(entity, entitiesContainer, entitiesLayer, liveEntityHudLayer) {
+        super(entity, entitiesContainer, entitiesLayer);
         this._liveEntityHudLayer = liveEntityHudLayer;
 
         let eId = this._entity.id;
