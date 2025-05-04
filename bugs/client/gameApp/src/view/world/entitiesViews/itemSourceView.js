@@ -24,8 +24,9 @@ class ItemSourceView extends EntityView {
     constructor(entity, entitiesContainer) {
         super(entity, entitiesContainer);
 
-        // this._stopListenHpChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
-        // this._stopListenAccumulatedChange = this._entity.on(`actionAnimationReqest:${ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED}`, this._onAccumulatedChangeAnimationRequest.bind(this));
+        let id = this._entity.id;
+        this._stopListenHpChange = this.$eventBus.on(`entityActionAnimationRequest:${id}:${ACTION_TYPES.ENTITY_HP_CHANGE}`, this._onHpChangeAnimationRequest.bind(this));
+        this._stopListenAccumulatedChange = this.$eventBus.on(`entityActionAnimationRequest:${id}:${ACTION_TYPES.ITEM_SOURCE_ACCUMULATED_CHANGED}`, this._onAccumulatedChangeAnimationRequest.bind(this));
         this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
 
         this._render();
@@ -42,8 +43,8 @@ class ItemSourceView extends EntityView {
     remove() {
         super.remove();
         this._hpLineView.remove();
-        // this._stopListenHpChange();
-        // this._stopListenAccumulatedChange();
+        this._stopListenHpChange();
+        this._stopListenAccumulatedChange();
         this._stopListenSeasonChange();
     }
 
