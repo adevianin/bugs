@@ -10,6 +10,7 @@ import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
 import { HelpView } from './help/helpView'; 
 import { VIEW_SETTINGS } from '@view/viewSettings';
+import { WorldBackgroundView } from './world/worldBackgroundView';
 
 class AppView extends BaseGameHTMLView {
     constructor(el) {
@@ -31,23 +32,26 @@ class AppView extends BaseGameHTMLView {
         this.$pixiApp.resizeTo = canvasContainerEl;
         canvasContainerEl.appendChild(this.$pixiApp.canvas);
 
-        let globalContainer = new PIXI.Container();
-        this.$pixiApp.stage.addChild(globalContainer);
-        new MapController(globalContainer, this.$pixiApp);
-
         let worldContainer = new PIXI.Container();
-        globalContainer.addChild(worldContainer);
-        this._worldView = new WorldView(worldContainer);
+        let scrollingWorldContainer = new PIXI.Container();
+        let bgWorldContainer = new PIXI.Container();
+        worldContainer.addChild(bgWorldContainer);
+        worldContainer.addChild(scrollingWorldContainer);
+        this.$pixiApp.stage.addChild(worldContainer);
+
+        let worldBackgroundView = new WorldBackgroundView(bgWorldContainer);
+        this._worldView = new WorldView(scrollingWorldContainer);
+        new MapController(scrollingWorldContainer, worldBackgroundView, this.$pixiApp);
+
+        this._viewRectContainer = new PIXI.Container();
+        scrollingWorldContainer.addChild(this._viewRectContainer);
 
         let mapPickerContainer = new PIXI.Container();
-        worldContainer.addChild(mapPickerContainer);
+        scrollingWorldContainer.addChild(mapPickerContainer);
         new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
 
         new HelpView(this._el.querySelector('[data-help]'));
 
-        this._viewRectContainer = new PIXI.Container();
-        globalContainer.addChild(this._viewRectContainer);
-        
         this.$pixiApp.resize();
     }
 

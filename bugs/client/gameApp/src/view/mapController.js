@@ -8,9 +8,10 @@ class MapController extends BaseGraphicView {
     static MAP_MARGIN = 5;
     static SHOW_POSITION_DURATION = 500;
 
-    constructor(container, pixiApp) {
+    constructor(container, worldBackgroundView, pixiApp) {
         super();
         this._container = container;
+        this._worldBackgroundView = worldBackgroundView;
         this._isDragingMode = false;
         this._anchorPoint = {x: null, y: null};
         this._startPoint = {x: null, y: null};
@@ -132,6 +133,7 @@ class MapController extends BaseGraphicView {
 
         this._container.x = containerPosX;
         this._container.y = containerPosY;
+        this._worldBackgroundView.updateTilePosition(containerPosX, containerPosY);
 
         this._throttledOnViewPointChange();
     }
