@@ -194,8 +194,8 @@ class AntView extends LiveEntityView {
 
         switch (animation.type) {
             case AntView.ANIMATION_TYPES.FLEW_NUPTIAL: 
-                let animPromise = this._playFlewNuptialAnimation(animation.params);
-                return this._makePlayAnimationResponse(true, animPromise);
+                let flewAnimPromise = this._playFlewNuptialAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, flewAnimPromise);
             case AntView.ANIMATION_TYPES.FLEW_NUPTIAL_BACK: 
                 this._playFlewNuptialBackAnimation(animation.params);
                 return this._makePlayAnimationResponse(true);
@@ -206,8 +206,8 @@ class AntView extends LiveEntityView {
                 this._playGotOutOfNestAnimation(animation.params);
                 return this._makePlayAnimationResponse(true);
             case AntView.ANIMATION_TYPES.PICKED_UP_ITEM: 
-                this._playPickedUpItemAnimation(animation.params);
-                return this._makePlayAnimationResponse(true);
+                let pickUpAnimPromise = this._playPickedUpItemAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, pickUpAnimPromise);
             case AntView.ANIMATION_TYPES.DROPPED_ITEM: 
                 this._playDroppedItemAnimation(animation.params);
                 return this._makePlayAnimationResponse(true);
@@ -281,7 +281,8 @@ class AntView extends LiveEntityView {
         this._toggleEntityVisibility(isAntVisibleAfter);
     }
 
-    _playPickedUpItemAnimation({ item }) {
+    async _playPickedUpItemAnimation({ itemId }) {
+        let item = await this.$domain.getEntityDataById(itemId)
         this._renderPickedItemView(item);
     }
 
@@ -314,10 +315,8 @@ class AntView extends LiveEntityView {
         this._addAnimation(AntView.ANIMATION_TYPES.GOT_OUT_OF_NEST, params);
     }
 
-    async _onAntPickedUpItemAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.PICKED_UP_ITEM, {
-            item: await this.$domain.getEntityDataById(params.itemId)
-        });
+    _onAntPickedUpItemAnimationRequest(params) {
+        this._addAnimation(AntView.ANIMATION_TYPES.PICKED_UP_ITEM, params);
     }
 
     _onAntDroppedItemAnimationRequest(params) {
