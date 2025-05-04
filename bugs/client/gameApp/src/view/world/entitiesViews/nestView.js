@@ -225,7 +225,7 @@ class NestView extends EntityView {
     }
 
     _onClick() {
-        this.$eventBus.emit('nestManageRequest', this._entity);
+        this.$eventBus.emit('nestManageRequest', this._entity.id);
     }
 
     _onBuildStatusChangeAnimationRequest(params) {

@@ -66,7 +66,8 @@ class PanelView extends BaseGameHTMLView {
         ]);
     }
 
-    _onNestManageRequest(nest) {
+    _onNestManageRequest(nestId) {
+        let nest = this.$domain.myState.getNestById(nestId);
         this._tabSwitcher.activateTab('colonies');
         this._coloniesTab.showNestManagerFor(nest);
     }

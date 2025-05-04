@@ -60,7 +60,7 @@ class AppView extends BaseGameHTMLView {
     _showStartPosition() {
         let nest = this.$domain.findMyFirstNest();
         if (nest) {
-            this.$eventBus.emit('nestManageRequest', nest);
+            this.$eventBus.emit('nestManageRequest', nest.id);
             this.$eventBus.emit('showPointRequest', nest.position);
         } else {
             let worldSize = this.$domain.getWorldSize();
