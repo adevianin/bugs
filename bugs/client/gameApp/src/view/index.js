@@ -11,7 +11,6 @@ import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import { BaseView } from '@common/view/base/baseView';
 import { MessageMaster } from '@common/messages/messageMaster';
 import { gameMsgLibrariesPack } from '@messages/msgLibraries';
-// import { ChunksVisibilityManager } from './world/chunksVisibilityManager';
 import { StepProgressCheker } from './world/stepProgressChecker';
 
 
@@ -39,8 +38,6 @@ async function initViewLayer(domainFacade) {
     BaseGameHTMLView.usePixiApp(pixiApp);
     BaseGraphicView.useStepProgressChecker(stepProgressChecker);
     BaseGraphicView.useTextureManager(spritesheetManager);
-
-    // ChunksVisibilityManager.init(eventBus, domainFacade.world.chunks);
 
     let app = new AppView(document.querySelector('[data-app]'));
     app.events.on('ready', () => {
