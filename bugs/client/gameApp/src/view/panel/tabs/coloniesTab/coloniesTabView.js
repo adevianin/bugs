@@ -1,9 +1,9 @@
 import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import coloniesTabTmpl from "./coloniesTab.html";
-import { ColoniesListView } from './coloniesList';
 import { ColonyManager } from './colonyManager';
 import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
+import { ColoniesSelectView } from './coloniesSelect/coloniesSelectView';
 
 class ColoniesTabView extends BaseGameHTMLView {
 
@@ -27,7 +27,7 @@ class ColoniesTabView extends BaseGameHTMLView {
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
 
-        this._coloniesList = new ColoniesListView(this._el.querySelector('[data-colonies-list]'));
+        this._coloniesList = new ColoniesSelectView(this._el.querySelector('[data-colonies-select]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'colonies');
 

@@ -21,7 +21,6 @@ class ColonyManager extends BaseGameHTMLView {
         }
         
         this._colony = colony;
-        this._colonyNameEl.innerHTML = `colony: ${this._colony.id}`;
         this._operationsTab.manageColony(colony);
         this._antsTab.manageColony(colony);
         this._nestsTab.manageColony(colony, nestToSelect);
@@ -33,7 +32,6 @@ class ColonyManager extends BaseGameHTMLView {
 
     _render() {
         this._el.innerHTML = colonyManagerTmpl;
-        this._colonyNameEl = this._el.querySelector('[data-colony-name]');
         this._antsTab = new AntsTab(this._el.querySelector('[data-ants-tab]'));
         this._operationsTab = new OperationsTab(this._el.querySelector('[data-operations-tab]'));
         this._nestsTab = new NestsTabView(this._el.querySelector('[data-nests-tab]'));
