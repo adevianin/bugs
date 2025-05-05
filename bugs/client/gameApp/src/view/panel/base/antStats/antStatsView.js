@@ -1,6 +1,16 @@
+import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antStatsTmpl from './antStatsTmpl.html'
 import { convertStepsToYear } from "@utils/convertStepsToYear";
+import '@view/panel/icons/statsMaxHpIcon.png';
+import '@view/panel/icons/statsStrengthIcon.png';
+import '@view/panel/icons/statsDefenseIcon.png';
+import '@view/panel/icons/statsHpRegenRateIcon.png';
+import '@view/panel/icons/statsSpeedIcon.png';
+import '@view/panel/icons/statsSightDistanceIcon.png';
+import '@view/panel/icons/statsMinTempIcon.png';
+import '@view/panel/icons/statsLifeSpanIcon.png';
+import '@view/panel/icons/statsAppetiteIcon.png';
 
 class AntStatsView extends BaseGameHTMLView {
 

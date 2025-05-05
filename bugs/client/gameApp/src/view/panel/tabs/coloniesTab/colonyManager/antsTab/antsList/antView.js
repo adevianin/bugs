@@ -5,6 +5,7 @@ import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
+import { AntStatsView } from '@view/panel/base/antStats/antStatsView';
 
 class AntView extends BaseGameHTMLView {
 
@@ -37,6 +38,7 @@ class AntView extends BaseGameHTMLView {
         this._stopListenIsHungryChanged();
         this._nestSelector.remove();
         this._genomeView.remove();
+        this._antStatsView.remove();
         if (this._breedingMaleGenomeView) {
             this._breedingMaleGenomeView.remove();
         }
@@ -83,7 +85,8 @@ class AntView extends BaseGameHTMLView {
 
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
 
-        this._renderStats();
+        this._antStatsView = new AntStatsView(this._ant.stats);
+        this._el.querySelector('[data-ant-stats]').append(this._antStatsView.el);
 
         this._renderBreedingMaleGenome();
         
@@ -119,18 +122,18 @@ class AntView extends BaseGameHTMLView {
         this._currentActivityEl.innerHTML = this._ant.currentActivity ? this.$messages[messageId] : this.$messages.nothing_activity;
     }
 
-    _renderStats() {
-        let statsEl = this._el.querySelector('[data-stats]');
-        statsEl.querySelector('[data-max-hp]').innerHTML = this._ant.stats.maxHp;
-        statsEl.querySelector('[data-hp-regen-rate]').innerHTML = this._ant.stats.hpRegenRate;
-        statsEl.querySelector('[data-speed]').innerHTML = this._ant.stats.distancePerStep;
-        statsEl.querySelector('[data-sight-distance]').innerHTML = this._ant.stats.sightDistance;
-        statsEl.querySelector('[data-strength]').innerHTML = this._ant.stats.strength;
-        statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
-        statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
-        statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
-        statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan, true);
-    }
+    // _renderStats() {
+    //     let statsEl = this._el.querySelector('[data-stats]');
+    //     statsEl.querySelector('[data-max-hp]').innerHTML = this._ant.stats.maxHp;
+    //     statsEl.querySelector('[data-hp-regen-rate]').innerHTML = this._ant.stats.hpRegenRate;
+    //     statsEl.querySelector('[data-speed]').innerHTML = this._ant.stats.distancePerStep;
+    //     statsEl.querySelector('[data-sight-distance]').innerHTML = this._ant.stats.sightDistance;
+    //     statsEl.querySelector('[data-strength]').innerHTML = this._ant.stats.strength;
+    //     statsEl.querySelector('[data-defense]').innerHTML = this._ant.stats.defence;
+    //     statsEl.querySelector('[data-appetite]').innerHTML = this._ant.stats.appetite;
+    //     statsEl.querySelector('[data-min-temperature]').innerHTML = this._ant.stats.minTemperature;
+    //     statsEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._ant.stats.lifeSpan, true);
+    // }
 
     _renderBreedingMaleGenome() {
         if (this._ant.isQueenOfColony) {

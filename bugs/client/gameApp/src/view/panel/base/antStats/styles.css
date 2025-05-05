@@ -1,0 +1,45 @@
+.ant-stats__stat_title {
+    image-rendering: pixelated;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 1px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+}
+
+.ant-stats__stat_title--max-hp-icon {
+    background-image: url('@view/panel/icons/statsMaxHpIcon.png');
+}
+
+.ant-stats__stat_title--strength-icon {
+    background-image: url('@view/panel/icons/statsStrengthIcon.png');
+}
+
+.ant-stats__stat_title--defense-icon {
+    background-image: url('@view/panel/icons/statsDefenseIcon.png');
+}
+
+.ant-stats__stat_title--hp-regen-rate-icon {
+    background-image: url('@view/panel/icons/statsHpRegenRateIcon.png');
+}
+
+.ant-stats__stat_title--speed-icon {
+    background-image: url('@view/panel/icons/statsSpeedIcon.png');
+}
+
+.ant-stats__stat_title--sight-distance-icon {
+    background-image: url('@view/panel/icons/statsSightDistanceIcon.png');
+}
+
+.ant-stats__stat_title--min-temp-icon {
+    background-image: url('@view/panel/icons/statsMinTempIcon.png');
+}
+
+.ant-stats__stat_title--life-span-icon {
+    background-image: url('@view/panel/icons/statsLifeSpanIcon.png');
+}
+
+.ant-stats__stat_title--appetite-icon {
+    background-image: url('@view/panel/icons/statsAppetiteIcon.png');
+}
