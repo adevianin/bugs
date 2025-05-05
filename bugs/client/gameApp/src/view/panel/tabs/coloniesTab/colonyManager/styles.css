@@ -3,24 +3,9 @@
     width: 350px;
 }
 
-.colony-manager__nests-list {
-    list-style-type: none;
-    padding: 3px;
-    margin: 0;
-}
-
-.colony-manager__nest_item {
-    color: blue;
-    cursor: pointer;
-}
-
-.colony-manager__nest_item--selected {
-    color: red
-}
-
 .colony-manager__nest-tab {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .colony-manager__nest-manager {
