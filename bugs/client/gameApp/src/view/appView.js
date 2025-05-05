@@ -8,7 +8,6 @@ import { MapController } from './mapController';
 import { WorldView } from './world';
 import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
-import { HelpView } from './help/helpView'; 
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { WorldBackgroundView } from './world/worldBackgroundView';
 
@@ -49,8 +48,6 @@ class AppView extends BaseGameHTMLView {
         let mapPickerContainer = new PIXI.Container();
         scrollingWorldContainer.addChild(mapPickerContainer);
         new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
-
-        new HelpView(this._el.querySelector('[data-help]'));
 
         this.$pixiApp.resize();
     }

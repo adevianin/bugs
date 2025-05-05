@@ -26,7 +26,7 @@
     flex-direction: row;
     justify-content: space-around;
     position: absolute;
-    width: 320px;
+    width: 360px;
     left: 50%;
     transform: translateY(-100%) translateX(-50%);
 }

@@ -10,6 +10,7 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Сповіщення',
     [GAME_MESSAGE_IDS.TAB_RATING]: 'Рейтинг',
     [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Акаунт',
+    [GAME_MESSAGE_IDS.TAB_HELP]: '?',
 
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED]: 'Самкі треба вказати місце де поселитись.',
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED]: 'Місце для поселення вже заняте.',

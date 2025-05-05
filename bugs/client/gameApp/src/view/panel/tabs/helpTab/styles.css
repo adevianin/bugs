@@ -1,0 +1,8 @@
+.help__section {
+    padding: 20px;
+    transition: background-color 1s ease;
+}
+
+.help__section--highlighted {
+    background-color: yellow;
+}

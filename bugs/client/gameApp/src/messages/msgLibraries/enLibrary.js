@@ -10,6 +10,7 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
     [GAME_MESSAGE_IDS.TAB_RATING]: 'Rating',
     [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
+    [GAME_MESSAGE_IDS.TAB_HELP]: '?',
 
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED]: 'The female needs a location to settle down.',
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED]: 'The location for settling down is already occupied.',
