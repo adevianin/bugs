@@ -79,6 +79,7 @@ class NestViewModel extends EntityViewModel {
     addLarva(larva) {
         this._larvae.push(larva);
         this.emit('larvaAdded', larva);
+        this.emit(`larvaAdded:${larva.id}`);
     }
 
     removeLarva(larvaId) {
@@ -87,6 +88,11 @@ class NestViewModel extends EntityViewModel {
             let larvae = this._larvae.splice(index, 1);
             this.emit('larvaRemoved', larvae[0]);
         }
+    }
+
+    hasLarva(larvaId) {
+        let index = this._larvae.findIndex(l => l.id == larvaId);
+        return index !== -1;
     }
 
     applyPatch(patch) {

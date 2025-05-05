@@ -8,6 +8,8 @@ class MainTabView extends BaseGameHTMLView {
         super(el);
 
         this._render();
+
+        this._showNestBtn.addEventListener('click', this._onShowNestBtnClick.bind(this));
     }
 
     manageNest(nest) {
@@ -17,6 +19,7 @@ class MainTabView extends BaseGameHTMLView {
 
         this._renderStoredClalories();
         this._nameEditor.name = nest.name;
+        this._renderIsMainNest();
     }
 
     _listenNest() {
@@ -36,10 +39,16 @@ class MainTabView extends BaseGameHTMLView {
 
         this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyNestName.bind(this));
+        this._isMainNestEl = this._el.querySelector('[data-is-main-nest]');
+        this._showNestBtn = this._el.querySelector('[data-show-nest]');
     }
 
     _renderStoredClalories() {
         this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
+    }
+
+    _renderIsMainNest() {
+        this._isMainNestEl.innerHTML = this._nest.isMain ? '+' : '-';
     }
 
     _onStoredCaloriesChanged() {
@@ -49,6 +58,10 @@ class MainTabView extends BaseGameHTMLView {
     async _applyNestName(newName) {
         await this.$domain.renameNest(this._nest.id, newName);
         return true;
+    }
+
+    _onShowNestBtnClick() {
+        this.$eventBus.emit('showPointRequest', this._nest.position);
     }
 
 }

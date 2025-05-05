@@ -1,0 +1,12 @@
+.nest-manager__tab {
+    border-bottom: 1px solid black;
+}
+
+.nest-manager__tab:first-child {
+    border-top: 1px solid black;
+}
+
+.nest-manager__tab-title {
+    font-weight: 700;
+    text-align: center;
+}

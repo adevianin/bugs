@@ -29,6 +29,7 @@ class EggView extends BaseGameHTMLView {
         this._nameEditor.remove();
         this._toLarvaLoaderView.remove();
         this._stopListenProgressChange();
+        this._stopWaitAnyLarva();
     }
 
     _render() {
@@ -99,15 +100,38 @@ class EggView extends BaseGameHTMLView {
         this._toggleToLarvaChamberBtnBlock(true);
         let result = await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         if (result.success) {
-            this.toggle(false);
+            this._waitLarva(result.larvaId, () => {
+                this._toLarvaLoaderView.toggle(false);
+                this._toggleToLarvaChamberBtnBlock(false);
+                this.toggle(false);
+            });
+        } else {
+            this._toLarvaLoaderView.toggle(false);
+            this._toggleToLarvaChamberBtnBlock(false);
         }
-        this._toLarvaLoaderView.toggle(false);
-        this._toggleToLarvaChamberBtnBlock(false);
     }
 
     async _onEggDeleteClick() {
         this.toggle(false);
         await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
+    }
+
+    _waitLarva(larvaId, callback) {
+        this._stopWaitAnyLarva();
+        if (this._nest.hasLarva(larvaId)) {
+            callback();
+        } else {
+            this._stopListenLarvaAdding = this._nest.on(`larvaAdded:${larvaId}`, () => {
+                callback();
+            });
+        }
+    }
+
+    _stopWaitAnyLarva() {
+        if (this._stopListenLarvaAdding) {
+            this._stopListenLarvaAdding();
+            this._stopListenLarvaAdding = null;
+        }
     }
 
 }
