@@ -4,16 +4,6 @@
     <td>
         <select data-nest></select>
     </td>
-    <td>
-        <select data-guardian-type>
-            <option value="none">не захищає</option>
-            <option value="nest">тільки гніздо</option>
-            <option value="colony">вся колонія</option>
-        </select>
-    </td>
-    <td>
-        <input data-is-cooperactive type="checkbox">
-    </td>
     <td data-actions>
         <button data-profile-btn>+</button>
     </td>
@@ -48,6 +38,18 @@
                 </tr>
             </tbody>
         </table>
+        <div>
+            <span>поведінка захисту:</span>
+            <select data-guardian-type>
+                <option value="none">не захищає</option>
+                <option value="nest">тільки гніздо</option>
+                <option value="colony">вся колонія</option>
+            </select>
+        </div>
+        <div>
+            <span>чи бере участь в спільних справах:</span>
+            <input data-is-cooperactive type="checkbox">
+        </div>
         <div>
             геном: <div data-genome></div>
         </div>
