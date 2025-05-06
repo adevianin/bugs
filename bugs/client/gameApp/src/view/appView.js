@@ -10,6 +10,7 @@ import { MapPickerMasterView } from './mapPickers/mapPickerMasterView';
 import { randomInt } from '@utils/randomInt';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { WorldBackgroundView } from './world/worldBackgroundView';
+import { GenomeAnalizerView } from './panel/base/genomeAnalizer/genomeAnalizerView';
 
 class AppView extends BaseGameHTMLView {
     constructor(el) {
@@ -48,6 +49,8 @@ class AppView extends BaseGameHTMLView {
         let mapPickerContainer = new PIXI.Container();
         scrollingWorldContainer.addChild(mapPickerContainer);
         new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
+
+        new GenomeAnalizerView(this._el.querySelector('[data-genome-analizer]'));
 
         this.$pixiApp.resize();
     }
