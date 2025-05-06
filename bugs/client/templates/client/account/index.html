@@ -2,7 +2,9 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}Акаунт{% endblock %}
+{% block title %}
+    {% trans "Enter the Game: Sign In / Sign Up" %}
+{% endblock %}
 
 {% block meta %}
     <meta name="referrer" content="origin" />
@@ -40,7 +42,7 @@
         </div>
         <div class="account-tab" data-login-tab>
             <span class="account--title">
-                {% trans "Sign in" context "title" %}
+                {% trans "Sign in" context "form title" %}
             </span>
             <ul class="account--fields-list">
                 <li>
@@ -56,17 +58,17 @@
             <div class="account--buttons-container">
                 <button data-login-btn>{% trans "sign in" context "button" %}</button>
                 <div class="g-hidden" data-login-request-loader></div>
-                <a href="{% url 'reset_password' %}">Забули пароль?</a>
+                <a href="{% url 'reset_password' %}">{% trans "Forgot password?" %}</a>
                 <a href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
             </div>
         </div>
         <div class="account-tab g-hidden" data-registration-tab>
             <span class="account--title">
-                {% trans "Sign up" context "title" %}
+                {% trans "Sign up" context "form title" %}
             </span>
             <ul class="account--fields-list">
                 <li>
-                    <input type="text" placeholder="{% trans "login" %}" data-username />
+                    <input type="text" placeholder="{% trans "username" %}" data-username />
                     <div class="g-hidden" data-username-loader></div>
                     <div class="g-error-container" data-username-err ></div>
                 </li>

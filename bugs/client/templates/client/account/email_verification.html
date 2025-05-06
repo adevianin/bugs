@@ -2,7 +2,9 @@
 {% load i18n %}
 {% load static %}
 
-{% block title %}Підтвердження email{% endblock %}
+{% block title %}
+    {% trans "Email Verification" %}
+{% endblock %}
 
 {% block meta %}
     <meta name="referrer" content="no-referrer">    
@@ -17,15 +19,15 @@
         {% if is_success %}
             <div class="verification-success">
                 <div class="icon success-icon">✔</div>
-                <h1>Email успішно підтверджено!</h1>
-                <p>Нові горизонти еволюції відкриті для вас.</p>
-                <a href="/" class="action-link">До мурашника</a>
+                <h2>{% trans "Email successfully verified!" %}</h2>
+                <p>{% trans "New horizons of evolution are open to you." %}</p>
+                <a href="/" class="action-link">{% trans "To the nest" %}</a>
             </div>
         {% else %}
             <div class="verification-failure">
                 <div class="icon failure-icon">✖</div>
-                <h1>Щось пішло не так...</h1>
-                <p>На жаль, нам не вдалося підтвердити ваш email. Можливо, токен недійсний або вже використаний.</p>
+                <h2>{% trans "Something went wrong..." %}</h2>
+                <p>{% trans "Unfortunately, we were unable to verify your email. The token may be invalid or has already been used." %}</p>
             </div>
         {% endif %}
     </div>

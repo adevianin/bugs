@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-    Game Under Maintenance
+    {% trans "Game Under Maintenance" %}
 {% endblock %}
 
 {% block styles %}
@@ -34,7 +34,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Game Under Maintenance</h1>
-        <p>The game is temporarily unavailable due to maintenance or updates.</p>
+        <h1>{% trans "Game Under Maintenance" %}</h1>
+        <p>{% trans "The game is temporarily unavailable due to maintenance or updates." %}</p>
     </div>
 {% endblock %}

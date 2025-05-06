@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-08 01:42+0200\n"
+"POT-Creation-Date: 2025-05-06 09:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,62 +17,199 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: .\client\templates\client\account.html:30
-msgctxt "title"
+#: bugs/settings.py:120
+msgid "English"
+msgstr "English"
+
+#: bugs/settings.py:121
+msgid "Українська"
+msgstr "Ukrainian"
+
+#: client/templates/client/account/email_verification.html:6
+msgid "Email Verification"
+msgstr "Email Verification"
+
+#: client/templates/client/account/email_verification.html:22
+msgid "Email successfully verified!"
+msgstr "Email successfully verified!"
+
+#: client/templates/client/account/email_verification.html:23
+msgid "New horizons of evolution are open to you."
+msgstr "New horizons of evolution are open to you."
+
+#: client/templates/client/account/email_verification.html:24
+msgid "To the nest"
+msgstr "To the nest"
+
+#: client/templates/client/account/email_verification.html:29
+msgid "Something went wrong..."
+msgstr "Something went wrong..."
+
+#: client/templates/client/account/email_verification.html:30
+msgid "Unfortunately, we were unable to verify your email. The token may be invalid or has already been used."
+msgstr "Unfortunately, we were unable to verify your email. The token may be invalid or has already been used."
+
+#: client/templates/client/account/index.html:6
+msgid "Enter the Game: Sign In / Sign Up"
+msgstr "Enter the Game: Sign In / Sign Up"
+
+#: client/templates/client/account/index.html:45
+msgctxt "form title"
 msgid "Sign in"
 msgstr "Sign in"
 
-#: .\client\templates\client\account.html:34
-#: .\client\templates\client\account.html:52
-msgid "login"
-msgstr "login"
+#: client/templates/client/account/index.html:49
+#: client/templates/client/account/index.html:76
+#: client/templates/client/account/reset_password.html:32
+msgid "email"
+msgstr "email"
 
-#: .\client\templates\client\account.html:37
-#: .\client\templates\client\account.html:55
+#: client/templates/client/account/index.html:53
+#: client/templates/client/account/index.html:81
 msgid "password"
 msgstr "password"
 
-#: .\client\templates\client\account.html:40
-msgid "Login or password is not correct."
-msgstr "The login or password is incorrect."
-
-#: .\client\templates\client\account.html:42
+#: client/templates/client/account/index.html:59
 msgctxt "button"
 msgid "sign in"
 msgstr "sign in"
 
-#: .\client\templates\client\account.html:43
+#: client/templates/client/account/index.html:61
+msgid "Forgot password?"
+msgstr "Forgot password?"
+
+#: client/templates/client/account/index.html:62
 msgctxt "link"
 msgid "sign up"
 msgstr "sign up"
 
-#: .\client\templates\client\account.html:48
-msgctxt "title"
+#: client/templates/client/account/index.html:67
+msgctxt "form title"
 msgid "Sign up"
 msgstr "Sign up"
 
-#: .\client\templates\client\account.html:58
+#: client/templates/client/account/index.html:71
+msgid "username"
+msgstr "username"
+
+#: client/templates/client/account/index.html:85
 msgid "password confirmation"
 msgstr "password confirmation"
 
-#: .\client\templates\client\account.html:61
-msgid "Passwords is not equal."
-msgstr "Passwords do not match"
-
-#: .\client\templates\client\account.html:62
-msgid "Login is taken."
-msgstr "The login is already taken."
-
-#: .\client\templates\client\account.html:63
-msgid "Something went wrong."
-msgstr "Something went wrong."
-
-#: .\client\templates\client\account.html:65
+#: client/templates/client/account/index.html:91
 msgctxt "button"
 msgid "sign up"
 msgstr "sign up"
 
-#: .\client\templates\client\account.html:66
+#: client/templates/client/account/index.html:93
 msgctxt "link"
 msgid "sign in"
 msgstr "sign in"
+
+#: client/templates/client/account/reset_password.html:10
+msgid "Password Recovery"
+msgstr "Password Recovery"
+
+#: client/templates/client/account/reset_password.html:26
+msgid "Password recovery request"
+msgstr "Password recovery request"
+
+#: client/templates/client/account/reset_password.html:29
+msgid "Enter your email to receive instructions for password recovery."
+msgstr "Enter your email to receive instructions for password recovery."
+
+#: client/templates/client/account/reset_password.html:37
+msgctxt "pass recovery send btn"
+msgid "send"
+msgstr "send"
+
+#: client/templates/client/account/reset_password.html:39
+#: client/templates/client/account/reset_password.html:74
+msgid "back to sign in"
+msgstr "back to sign in"
+
+#: client/templates/client/account/reset_password.html:43
+msgid "Check your email."
+msgstr "Check your email."
+
+#: client/templates/client/account/reset_password.html:44
+msgid "If specified email address is registered with the system, we have sent instructions to reset your password. If your account was created through Google, use the Google sign-in feature."
+msgstr "If specified email address is registered with the system, we have sent instructions to reset your password. If your account was created through Google, use the Google sign-in feature."
+
+#: client/templates/client/account/reset_password.html:51
+msgid "Setting password"
+msgstr "Setting password"
+
+#: client/templates/client/account/reset_password.html:54
+msgid "Set a new password and never forget it again."
+msgstr "Set a new password and never forget it again."
+
+#: client/templates/client/account/reset_password.html:57
+msgid "New password:"
+msgstr "New password:"
+
+#: client/templates/client/account/reset_password.html:62
+msgid "Password confirmation:"
+msgstr "Password confirmation:"
+
+#: client/templates/client/account/reset_password.html:68
+msgid "set password"
+msgstr "set password"
+
+#: client/templates/client/account/reset_password.html:73
+msgid "New password successfully set."
+msgstr "New password successfully set."
+
+#: client/templates/client/game.html:6
+msgid "Evolution Of Ants"
+msgstr "Evolution Of Ants"
+
+#: client/templates/client/game.html:22
+msgid "Loading..."
+msgstr "Loading..."
+
+#: client/templates/client/maintenance.html:6
+#: client/templates/client/maintenance.html:37
+msgid "Game Under Maintenance"
+msgstr "Game Under Maintenance"
+
+#: client/templates/client/maintenance.html:38
+msgid "The game is temporarily unavailable due to maintenance or updates."
+msgstr "The game is temporarily unavailable due to maintenance or updates."
+
+#: infrastructure/email/email_service.py:43
+msgid "Verifying your account"
+msgstr "Verifying your account"
+
+#: infrastructure/email/email_service.py:70
+msgid "Password recovery"
+msgstr "Password recovery"
+
+#: infrastructure/templates/infrastructure/emails/password_reset.html:5
+#: infrastructure/templates/infrastructure/emails/verify_email.html:5
+msgid "Hello"
+msgstr "Hello"
+
+#: infrastructure/templates/infrastructure/emails/password_reset.html:6
+msgid "You received this email because a password change request has been received for your account."
+msgstr "You received this email because a password change request has been received for your account."
+
+#: infrastructure/templates/infrastructure/emails/password_reset.html:8
+msgid "To reset your password, click the link below:"
+msgstr "To reset your password, click the link below:"
+
+#: infrastructure/templates/infrastructure/emails/password_reset.html:9
+msgid "Reset password"
+msgstr "Reset password"
+
+#: infrastructure/templates/infrastructure/emails/password_reset.html:11
+msgid "If you did not send this request, simply ignore this email."
+msgstr "If you did not send this request, simply ignore this email."
+
+#: infrastructure/templates/infrastructure/emails/verify_email.html:6
+msgid "Thank you for registering. Please verify your email address by following the link below:"
+msgstr "Thank you for registering. Please verify your email address by following the link below:"
+
+#: infrastructure/templates/infrastructure/emails/verify_email.html:7
+msgid "Verify email"
+msgstr "Verify email"

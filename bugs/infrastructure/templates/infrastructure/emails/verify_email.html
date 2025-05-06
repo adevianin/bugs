@@ -1,5 +1,10 @@
+{% load i18n %}
+{% load static %}
+
 {% autoescape off %}
-<p>Привіт, {{ user.username }}!</p>
-<p>Дякуємо за реєстрацію. Підтвердьте вашу електронну адресу, перейшовши за посиланням нижче:</p>
-<a href="{{ verification_link }}">Підтвердити email</a>
+<p>{% trans "Hello" %}, {{ user.username }}!</p>
+<p>{% trans "Thank you for registering. Please verify your email address by following the link below:" %}</p>
+<p>
+    <a href="{{ verification_link }}">{% trans "Verify email" %}</a>
+</p>
 {% endautoescape %}

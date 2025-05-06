@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}Evolution Of Ants{% endblock %}
+{% block title %}
+    {% trans "Evolution Of Ants" %}
+{% endblock %}
 
 {% block styles %}
     <link rel="stylesheet" href="{% static 'client/initialStylesGameApp.css' %}">
@@ -15,5 +18,7 @@
 {% block content %}
     <div data-app></div>
     <div data-popup-container></div>
-    <div class="game-loader" data-game-loader>loading</div>
+    <div class="game-loader" data-game-loader>
+        {% trans "Loading..." %}
+    </div>
 {% endblock %}

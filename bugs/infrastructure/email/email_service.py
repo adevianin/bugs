@@ -11,6 +11,7 @@ from urllib.parse import urlencode
 from collections import defaultdict
 from infrastructure.exceptions import DailyEmailLimitExceededException
 from bugs.settings import USER_MAILS_DAY_LIMIT
+from django.utils.translation import gettext_lazy as _
 import time
 
 class EmailService():
@@ -39,7 +40,7 @@ class EmailService():
         if not EmailService.can_send_email(user):
             raise DailyEmailLimitExceededException(f'user id = {user.id}')
         
-        subject = 'Підтвердження вашого облікового запису'
+        subject = _('Verifying your account')
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = EmailVerificationTokenGenerator.generate(user)
         relative_link = reverse('verify_email', kwargs={'uidb64': uid, 'token': token})
@@ -66,7 +67,7 @@ class EmailService():
         if not EmailService.can_send_email(user):
             raise DailyEmailLimitExceededException(f'user id = {user.id}')
         
-        subject = 'Відновлення пароля'
+        subject = _('Password recovery')
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = ResetPasswordTokenGenerator.generate(user)
         relative_link = reverse('reset_password')

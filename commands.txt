@@ -1,0 +1,5 @@
+#creating message files
+python manage.py makemessages -l uk --no-wrap
+python manage.py makemessages -l en --no-wrap
+#compliling messages
+python manage.py compilemessages
