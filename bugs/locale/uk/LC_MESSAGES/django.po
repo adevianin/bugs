@@ -165,7 +165,7 @@ msgstr "Новий пароль успішно встановлено."
 
 #: client/templates/client/game.html:6
 msgid "Evolution Of Ants"
-msgstr "Уволюція мурах"
+msgstr "Еволюція мурах"
 
 #: client/templates/client/game.html:22
 msgid "Loading..."
