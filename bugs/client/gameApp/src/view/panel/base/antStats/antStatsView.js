@@ -2,6 +2,7 @@ import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antStatsTmpl from './antStatsTmpl.html'
 import { convertStepsToYear } from "@utils/convertStepsToYear";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import '@view/panel/icons/statsMaxHpIcon.png';
 import '@view/panel/icons/statsStrengthIcon.png';
 import '@view/panel/icons/statsDefenseIcon.png';
@@ -33,6 +34,16 @@ class AntStatsView extends BaseGameHTMLView {
         if (this._stats) {
             this._renderStats();
         }
+
+        this._el.querySelector('[data-max-hp-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_MAX_HP));
+        this._el.querySelector('[data-hp-regen-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_HP_REGEN_RATE));
+        this._el.querySelector('[data-speed-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_SPEED));
+        this._el.querySelector('[data-sight-distance-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_SIGHT_DISTANCE));
+        this._el.querySelector('[data-strength-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_STRENGTH));
+        this._el.querySelector('[data-defense-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_DEFENSE));
+        this._el.querySelector('[data-appetite-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_APPETITE));
+        this._el.querySelector('[data-min-temp-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_MIN_TEMP));
+        this._el.querySelector('[data-life-span-stat-title]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.STATS_LABEL_LIFE_SPAN));
     }
 
     _renderStats() {
