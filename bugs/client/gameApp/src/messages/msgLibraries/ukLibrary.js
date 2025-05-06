@@ -30,11 +30,9 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Народити первинну самку',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NEXT_QUEEN]: 'наступна',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_PREV_QUEEN]: 'попередня',
-    [GAME_MESSAGE_IDS.QUEEN_PROFILE_LABEL_GENOME]: 'геном:',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'Немає самців із віддалених країв в шлюбному льоті.',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NEXT_MALE]: 'наступний',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_PREV_MALE]: 'попередній',
-    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_GENOME]: 'геном:',
 
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.!!',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.!!',

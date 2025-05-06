@@ -30,11 +30,9 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Birth the primal female',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NEXT_QUEEN]: 'next',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_PREV_QUEEN]: 'previous',
-    [GAME_MESSAGE_IDS.QUEEN_PROFILE_LABEL_GENOME]: 'genome:',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'There are no males from distant lands in the nuptial flight.',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NEXT_MALE]: 'next',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_PREV_MALE]: 'previous',
-    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_GENOME]: 'genome:',
 
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'You can\'t build a satellite nest in a colony without a queen.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Ants need a location chosen for building a nest.',

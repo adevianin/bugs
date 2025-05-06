@@ -26,8 +26,6 @@ class QueenProfileView extends BaseGameHTMLView {
         this._queenGenomeEl = this._el.querySelector('[data-queen-genome]');
         this._nameEl = this._el.querySelector('[data-name]');
 
-        this._el.querySelector('[data-queen-profile-label-genome]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_PROFILE_LABEL_GENOME);
-
         this._queenStatsView = new AntStatsView();
         this._queenStatsEl.appendChild(this._queenStatsView.el);
         this._queenGenomeView = new GenomeInlineView(this._queenGenomeEl);
