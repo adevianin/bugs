@@ -5,8 +5,6 @@ import { MaleSelectorView } from "./maleSelector/maleSelectorView";
 import { PositionView } from "@view/panel/base/position/positionView";
 import { MarkerTypes } from '@domain/enum/markerTypes';
 import { TextInputView } from "@view/panel/base/textInput/textInputView";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { CONSTS } from '@domain/consts';
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
@@ -28,14 +26,21 @@ class BreedingManagerView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = breedingManagerTmpl;
 
+        this._el.querySelector('[data-breeding-label-female]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_FEMALE);
+        this._el.querySelector('[data-breeding-label-male]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_MALE);
+        this._el.querySelector('[data-breeding-label-new-colony-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_NEW_COLONY_NAME);
+        this._el.querySelector('[data-breeding-label-nest-position]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_NEST_POSITION);
+
         this._queenSelectorView = new QueenSelectorView(this._el.querySelector('[data-queen-selector]'));
         this._malesSelectorView = new MaleSelectorView(this._el.querySelector('[data-males-search]'));
         this._nestPositionView = new PositionView(this._el.querySelector('[data-building-site]'));
         this._colonyNameView = new TextInputView(this._el.querySelector('[data-colony-name]'), this._el.querySelector('[data-colony-name-error-container]'));
         this._buildingSiteEl = this._el.querySelector('[data-building-site]');
         this._startBtn = this._el.querySelector('[data-start]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_START);
         this._requestErrorContainerEl = this._el.querySelector('[data-request-error-container]');
         this._chooseNestPositionBtn = this._el.querySelector('[data-choose-nest-position]');
+        this._chooseNestPositionBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BREEDING_LABEL_CHOOSE_NEST_POSITION);
         this._queenErrorContainerEl = this._el.querySelector('[data-queen-error-container]');
         this._maleErrorContainerEl = this._el.querySelector('[data-male-error-container]');
         this._nestPositionErrorContainerEl = this._el.querySelector('[data-nest-position-error-container]');

@@ -4,6 +4,7 @@ import { COMMON_EN_LIBRARY } from "@common/messages/msgLibraries/enLibrary";
 const EN_LIBRARY = {
     ...COMMON_EN_LIBRARY,
     [GAME_MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
+
     [GAME_MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
     [GAME_MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
     [GAME_MESSAGE_IDS.TAB_SPECIE]: 'Specie',
@@ -17,6 +18,23 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED]: 'A female is required for breeding.',
     [GAME_MESSAGE_IDS.BREEDING_LIVE_QUEEN_NEEDED]: 'A living female is required for breeding.',
     [GAME_MESSAGE_IDS.BREEDING_MALE_NEEDED]: 'A male from distant regions is required for breeding.',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_FEMALE]: 'Female:',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_MALE]: 'Male:',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_NEW_COLONY_NAME]: 'Name of the new colony:',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_NEST_POSITION]: 'Nest placement:',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_CHOOSE_NEST_POSITION]: 'Choose',
+    [GAME_MESSAGE_IDS.BREEDING_LABEL_START]: 'Breed',
+    [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME]: 'Breeding',
+    [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NUPT_SEASON_START_AFTER]: 'The breeding season will begin in ',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NO_QUEENS]: 'There are no females in the nuptial flight.',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Birth the primal female',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NEXT_QUEEN]: 'next',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_PREV_QUEEN]: 'previous',
+    [GAME_MESSAGE_IDS.QUEEN_PROFILE_LABEL_GENOME]: 'genome:',
+    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'There are no males from distant lands in the nuptial flight.',
+    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NEXT_MALE]: 'next',
+    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_PREV_MALE]: 'previous',
+    [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_GENOME]: 'genome:',
 
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'You can\'t build a satellite nest in a colony without a queen.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Ants need a location chosen for building a nest.',
@@ -61,24 +79,14 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE]: 'Place of Destruction.',
 
     [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_FULL]: '{0} hr. {1} min. {2} sec.',
-    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT]: '{1} min. {2} sec.',
+    [GAME_MESSAGE_IDS.NUPTIAL_TAB_TIME_SHORT]: '{0} min. {1} sec.',
 
-    // [GAME_MESSAGE_IDS.CANT_BUILD_MORE_SUB_NEST]: 'The maximum number of satellite nests has been reached.',
-    // [GAME_MESSAGE_IDS.CANT_BUILD_SUB_NEST_FAR_AWAY]: 'A satellite nest cannot be built so far from the central nest.',
-    // [GAME_MESSAGE_IDS.CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST]: 'The queen is not in the nest to lay eggs.',
-    // [GAME_MESSAGE_IDS.NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG]: 'Not enough food to lay eggs.',
-    // [GAME_MESSAGE_IDS.NOT_SUITABLE_SEASON_TO_LAY_EGG]: 'It is not the right season for laying eggs.',
-    // [GAME_MESSAGE_IDS.NO_BUG_CORPSE_IN_NEST_AREA]: 'No beetle corpses are visible within the nest\'s territory.',
-    // [GAME_MESSAGE_IDS.CANT_DESTROY_NEST_WITHOUT_LIVING_QUEEN]: 'Ants cannot attack a nest on their own without the queen.',
-    // [GAME_MESSAGE_IDS.NEST_TO_DESTROY_IS_FAR_AWAY]: 'The target nest is too far from the main nest to attack.',
-    // [GAME_MESSAGE_IDS.NO_NEST_TO_DESTROY]: 'There is no nest available to attack.',
-    // [GAME_MESSAGE_IDS.CANT_PILLAGE_NEST_WITHOUT_LIVING_QUEEN]: 'Ants cannot raid a nest on their own without the queen.',
-    // [GAME_MESSAGE_IDS.NO_NEST_TO_PILLAGE]: 'There is no nest available to raid.',
-    // [GAME_MESSAGE_IDS.CANT_PILLAGE_WITHOUT_NEST_FOR_LOOT]: 'A nest cannot be raided without having a nest prepared for loot.',
-    // [GAME_MESSAGE_IDS.NEST_TO_PILLAGE_IS_FAR_AWAY]: 'The nest to raid is too far away.',
-    // [GAME_MESSAGE_IDS.QUEEN_IS_NECESSARY_FOR_BREEDING]: 'A female is required for reproduction.',
-    // [GAME_MESSAGE_IDS.LIVE_QUEEN_IS_NECESSARY_FOR_BREEDING]: 'A living female is required for reproduction.',
-    // [GAME_MESSAGE_IDS.MALE_IS_NECESSARY_FOR_BREEDING]: 'A male is required for reproduction.',
+
+    [GAME_MESSAGE_IDS.CLIMATE_LABEL_YEAR]: 'year',
+    [GAME_MESSAGE_IDS.SEASON_LABEL_SPRING]: 'spring',
+    [GAME_MESSAGE_IDS.SEASON_LABEL_SUMMER]: 'summer',
+    [GAME_MESSAGE_IDS.SEASON_LABEL_AUTUMN]: 'autumn',
+    [GAME_MESSAGE_IDS.SEASON_LABEL_WINTER]: 'winter',
 
 }
 

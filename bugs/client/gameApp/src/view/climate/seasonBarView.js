@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import seasonBarTmpl from './seasonBarTmpl.html';
 import { CONSTS } from "@domain/consts";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class SeasonBarView extends BaseGameHTMLView {
 
@@ -26,14 +27,10 @@ class SeasonBarView extends BaseGameHTMLView {
         this._winterEl = this._el.querySelector('[data-winter]');
         this._markerEl = this._el.querySelector('[data-marker]');
 
-        this._springEl.setAttribute('title', this.$messages.spring);
-        this._springEl.innerHTML = this.$messages.spring;
-        this._summerEl.setAttribute('title', this.$messages.summer);
-        this._summerEl.innerHTML = this.$messages.summer;
-        this._autumnEl.setAttribute('title', this.$messages.autumn);
-        this._autumnEl.innerHTML = this.$messages.autumn;
-        this._winterEl.setAttribute('title', this.$messages.winter);
-        this._winterEl.innerHTML = this.$messages.winter;
+        this._springEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_SPRING);
+        this._summerEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_SUMMER);
+        this._autumnEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_AUTUMN);
+        this._winterEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_WINTER);
 
         this._springEl.style.width = this._springStepsLength * this._percentsPerStep + '%';
         this._summerEl.style.width = this._summerStepsLength * this._percentsPerStep + '%';

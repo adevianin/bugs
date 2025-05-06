@@ -3,6 +3,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import climateTmpl from './climateTmpl.html';
 import { SeasonBarView } from "./seasonBarView";
 import { convertStepsToYear } from '@utils/convertStepsToYear';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class ClimateView extends BaseGameHTMLView {
 
@@ -23,6 +24,8 @@ class ClimateView extends BaseGameHTMLView {
         this._seasonBarView = new SeasonBarView(this._el.querySelector('[data-season-bar]'));
 
         this._yearEl = this._el.querySelector('[data-year]');
+
+        this._el.querySelector('[data-climate-label-year]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CLIMATE_LABEL_YEAR);
 
         this._renderTemperature();
         this._renderYear();

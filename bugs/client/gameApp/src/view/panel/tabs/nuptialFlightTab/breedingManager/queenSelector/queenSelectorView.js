@@ -3,6 +3,7 @@ import queenSelectorTmpl from './queenSelectorTmpl.html';
 import { QueenProfileView } from "./queenProfileView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class QueenSelectorView extends BaseGameHTMLView {
 
@@ -45,6 +46,11 @@ class QueenSelectorView extends BaseGameHTMLView {
         this._prevBtn = this._el.querySelector('[data-previous-btn]');
         this._nextBtn = this._el.querySelector('[data-next-btn]');
         this._bornAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
+
+        this._nextBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NEXT_QUEEN);
+        this._prevBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_PREV_QUEEN);
+        this._bornAntaraBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA);
+        this._el.querySelector('[data-queen-selector-label-no-queens]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NO_QUEENS);
 
         this._queenProfileView = new QueenProfileView(this._el.querySelector('[data-queen-profile]'));
         this._bornAntaraLoader = new DotsLoaderView(this._el.querySelector('[data-born-antara-loader]'));

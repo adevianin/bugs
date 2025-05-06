@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import maleSelectorTmpl from './maleSelectorTmpl.html';
 import { MaleProfileView } from "./maleProfileView";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class MaleSelectorView extends BaseGameHTMLView {
 
@@ -31,6 +32,10 @@ class MaleSelectorView extends BaseGameHTMLView {
         this._nextMaleBtn = this._el.querySelector('[data-next-btn]');
         this._prevMaleBtn = this._el.querySelector('[data-previous-btn]');
         this._maleProfile = new MaleProfileView(this._el.querySelector('[data-male-profile]'));
+
+        this._malesPlaceholder.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES);
+        this._nextMaleBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NEXT_MALE);
+        this._prevMaleBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_PREV_MALE);
 
         this._renderMales();
     }
