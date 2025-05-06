@@ -5,6 +5,7 @@ import { GeneView } from './genes/geneView';
 import { ChromosomesTypes } from '@domain/enum/chromosomeTypes';
 import genomeTmpl from './genomeTmpl.html';
 import chromosomesSetTmpl from './chromosomesSetTmpl.html';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class GenomeView extends BaseGameHTMLView {
 
@@ -37,9 +38,11 @@ class GenomeView extends BaseGameHTMLView {
 
     _renderGenome() {
         this._removeGeneViews();
-        this._renderChromosomeSet(this._el.querySelector('[data-maternal-chromosomes-set]'), this._genome.maternal, 'материнський набір хромосом');
+        let maternalChrSetTitle = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOMESET_LABEL_MATERNAL);
+        this._renderChromosomeSet(this._el.querySelector('[data-maternal-chromosomes-set]'), this._genome.maternal, maternalChrSetTitle);
         if (this._genome.paternal) {
-            this._renderChromosomeSet(this._el.querySelector('[data-paternal-chromosomes-set]'), this._genome.paternal, 'батьківський набір хромосом');
+            let paternalChrSetTitle = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOMESET_LABEL_PATERNAL);
+            this._renderChromosomeSet(this._el.querySelector('[data-paternal-chromosomes-set]'), this._genome.paternal, paternalChrSetTitle);
         }
     }
 
@@ -47,6 +50,11 @@ class GenomeView extends BaseGameHTMLView {
         el.innerHTML = chromosomesSetTmpl;
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
+
+        el.querySelector('[data-body-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_BODY);
+        el.querySelector('[data-development-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_DEVELOPMENT);
+        el.querySelector('[data-adaptation-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_ADAPTATION);
+        el.querySelector('[data-specialization-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION);
 
         this._renderChromosome(el.querySelector('[data-body-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.BODY));
         this._renderChromosome(el.querySelector('[data-development-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.DEVELOPMENT));
