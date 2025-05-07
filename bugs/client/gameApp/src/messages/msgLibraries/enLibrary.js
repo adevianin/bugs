@@ -324,6 +324,8 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.ENEMIES_TAB_NO_ENEMY_LABEL]: 'the colony has no enemies',
     [GAME_MESSAGE_IDS.ENEMIES_TAB_SHOW_ENEMY_BTN_LABEL]: 'show',
 
+    [GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE]: 'Specie builder',
+
 }
 
 export {

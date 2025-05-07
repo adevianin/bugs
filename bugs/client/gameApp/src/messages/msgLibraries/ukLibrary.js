@@ -324,6 +324,8 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.ENEMIES_TAB_NO_ENEMY_LABEL]: 'колонія не має ворогів',
     [GAME_MESSAGE_IDS.ENEMIES_TAB_SHOW_ENEMY_BTN_LABEL]: 'показать',
 
+    [GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE]: 'Конструктор виду',
+
 }
 
 export {

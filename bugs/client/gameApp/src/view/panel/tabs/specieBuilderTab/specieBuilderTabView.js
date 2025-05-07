@@ -33,6 +33,7 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
             { name: 'specialization_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION), tab: this._specializationChromosomeEditorTab }
         ]);
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'specie');
+        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE);
     }
 
     _onSpecieSchemaChanged() {
