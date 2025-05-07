@@ -5,6 +5,7 @@ import { ChromosomeEditorTab } from "./chromosomeEditorTabView";
 import { TabSwitcher } from '../../base/tabSwitcher';
 import { ChromosomesTypes } from "@domain/enum/chromosomeTypes";
 import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class SpecieBuilderTabView extends BaseGameHTMLView {
 
@@ -26,10 +27,10 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
         this._specializationChromosomeEditorTab = new ChromosomeEditorTab(this._el.querySelector('[data-specialization-chromosome-editor-tab]'), this._specie.getChromosomeByType(ChromosomesTypes.SPECIALIZATION));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'specie', [
-            { name: 'body_editor', label: 'Тіло', tab: this._bodyChromosomeEditorTab },
-            { name: 'development_editor', label: 'Розвиток', tab: this._developmentChromosomeEditorTab },
-            { name: 'adaptation_editor', label: 'Адаптація', tab: this._adaptationChromosomeEditorTab },
-            { name: 'specialization_editor', label: 'Спеціалізація', tab: this._specializationChromosomeEditorTab }
+            { name: 'body_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_BODY), tab: this._bodyChromosomeEditorTab },
+            { name: 'development_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_DEVELOPMENT), tab: this._developmentChromosomeEditorTab },
+            { name: 'adaptation_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_ADAPTATION), tab: this._adaptationChromosomeEditorTab },
+            { name: 'specialization_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION), tab: this._specializationChromosomeEditorTab }
         ]);
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'specie');
     }
