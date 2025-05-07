@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { OperationView } from "./operationView";
 import operationsListTmpl from "./operationsListTmpl.html";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class OperationsListView extends BaseGameHTMLView {
     
@@ -28,6 +29,11 @@ class OperationsListView extends BaseGameHTMLView {
         this._el.innerHTML = operationsListTmpl;
 
         this._operationsContainerEl = this._el.querySelector('[data-operations-container]');
+
+        this._el.querySelector('[data-col-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_NAME);
+        this._el.querySelector('[data-col-name-status]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_STATUS);
+        this._el.querySelector('[data-col-name-hiring]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_HIRING);
+        this._el.querySelector('[data-col-name-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_ACTIONS);
     }
 
     manageColony(colony) {
@@ -84,7 +90,7 @@ class OperationsListView extends BaseGameHTMLView {
         let el = document.createElement('tr');
         el.classList.add('colony-manager__operation');
         let view = new OperationView(el, operation, this._colony.id);
-        view.events.on('click', () => this._onOperationViewClick(operation));
+        view.events.on('activate', () => this._onOperationViewActivateClick(operation));
         this._operationViews[operation.id] = view;
         this._operationsContainerEl.append(el);
     }
@@ -118,7 +124,7 @@ class OperationsListView extends BaseGameHTMLView {
         }
     }
 
-    _onOperationViewClick(operation) {
+    _onOperationViewActivateClick(operation) {
         if (this._selectedOperationId == operation.id) {
             this._clearOperationSelect();
         } else {

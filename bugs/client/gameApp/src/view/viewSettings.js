@@ -6,7 +6,8 @@ const VIEW_SETTINGS = {
     showPlayerViewRect: false,
     showItemAreaDot: false,
     isFastAnimations: false,
-    renderNestId: true
+    renderNestId: false,
+    renderAntId: true
 }
 
 export {

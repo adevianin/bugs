@@ -2,6 +2,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestsTabTmpl from './nestsTabTmpl.html';
 import { NestsSelectView } from './nestsSelect/nestsSelectView';
 import { NestManagerView } from "./nestManager";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NestsTabView extends BaseGameHTMLView {
 
@@ -22,6 +23,8 @@ class NestsTabView extends BaseGameHTMLView {
 
         this._nestsList = new NestsSelectView(this._el.querySelector('[data-nests-select]'));
         this._nestManager = new NestManagerView(this._el.querySelector('[data-nest-manager]'));
+
+        this._el.querySelector('[data-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NESTS_TAB_NEST_LABEL);
     }
 
     _manageSelectedNest() {

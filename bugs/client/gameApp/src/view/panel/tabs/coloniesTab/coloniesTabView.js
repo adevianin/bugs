@@ -4,6 +4,7 @@ import coloniesTabTmpl from "./coloniesTab.html";
 import { ColonyManager } from './colonyManager';
 import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 import { ColoniesSelectView } from './coloniesSelect/coloniesSelectView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class ColoniesTabView extends BaseGameHTMLView {
 
@@ -26,10 +27,16 @@ class ColoniesTabView extends BaseGameHTMLView {
         this._el.innerHTML = coloniesTabTmpl;
 
         this._noColoniesPlaceholderEl = this._el.querySelector('[data-no-colonies-space-holder]');
+        this._noColoniesPlaceholderEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_LABEL_NO_COLONIES);
 
         this._coloniesList = new ColoniesSelectView(this._el.querySelector('[data-colonies-select]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'colonies');
+
+        this._colonySelectorEl = this._el.querySelector('[data-colony-selector]');
+
+        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_TITLE);
+        this._el.querySelector('[data-colony-selector-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_LABEL_COLONY_SELECTOR);
 
         this._renderMode();
     }
@@ -44,10 +51,12 @@ class ColoniesTabView extends BaseGameHTMLView {
             this._coloniesList.toggle(false);
             this._colonyManager.toggle(false);
             this._noColoniesPlaceholderEl.classList.remove('g-hidden');
+            this._colonySelectorEl.classList.add('g-hidden');
         } else {
             this._coloniesList.toggle(true);
             this._colonyManager.toggle(true);
             this._noColoniesPlaceholderEl.classList.add('g-hidden');
+            this._colonySelectorEl.classList.remove('g-hidden');
         }
     }
 

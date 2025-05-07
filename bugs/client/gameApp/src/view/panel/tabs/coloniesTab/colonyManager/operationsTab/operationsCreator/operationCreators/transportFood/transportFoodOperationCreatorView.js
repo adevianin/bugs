@@ -54,10 +54,17 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCountView = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrContainer);
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
+
+        this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.TRANSPORT_FOOD_OP_CR_TITLE);
+        this._el.querySelector('[data-from-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.TRANSPORT_FOOD_OP_CR_FROM_NEST_LABEL);
+        this._el.querySelector('[data-to-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.TRANSPORT_FOOD_OP_CR_TO_NEST_LABEL);
+        this._el.querySelector('[data-workers-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WORKERS_COUNT);
+        this._el.querySelector('[data-warriors-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WARRIORS_COUNT);
     }
 
     _validate() {

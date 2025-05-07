@@ -2,6 +2,7 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antsListTmpl from './antsListTmpl.html';
 import { AntView } from "./antView";
 import { EntityTypes } from "@domain/enum/entityTypes";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class AntsListView extends BaseGameHTMLView {
 
@@ -28,6 +29,12 @@ class AntsListView extends BaseGameHTMLView {
         this._el.innerHTML = antsListTmpl;
         this._antsContainerEl = this._el.querySelector('[data-ants-container]');
         this._noAntsPlaceholderEl = this._el.querySelector('[data-no-ants-placeholder]');
+
+        this._el.querySelector('[data-name-col-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANTS_LIST_COL_NAME_NAME);
+        this._el.querySelector('[data-type-col-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANTS_LIST_COL_NAME_TYPE);
+        this._el.querySelector('[data-nest-col-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANTS_LIST_COL_NAME_NEST);
+        this._el.querySelector('[data-more-col-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANTS_LIST_COL_NAME_MORE);
+        this._el.querySelector('[data-no-ants-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANTS_LIST_LABEL_NO_ANTS);
     }
 
     _renderNoAntsMode() {

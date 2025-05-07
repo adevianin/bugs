@@ -1,21 +1,21 @@
 <div>
-    <div class="nest-manager__tab-title">яйця</div>
+    <div class="nest-manager__tab-title" data-title></div>
     <div>
-        запліднить: <input type="checkbox" data-is-fertilized checked>
-        <button data-add-egg>відкласти яйце</button>
+        <span data-fertilize-label></span><input type="checkbox" data-is-fertilized checked>
+        <button data-add-egg></button>
         <div data-lay-egg-loader></div>
         <div class="g-error-container" data-error-container></div>
     </div>
     <div>
         <table>
             <tr>
-                <td>імя</td>
-                <td>геном</td>
-                <td>заплідн</td>
-                <td>прогрес</td>
-                <td>стан</td>
-                <td>каста</td>
-                <td>дії</td>
+                <td data-col-title-name></td>
+                <td data-col-title-genome></td>
+                <td data-col-title-is-fertilized></td>
+                <td data-col-title-progress></td>
+                <td data-col-title-state></td>
+                <td data-col-title-caste></td>
+                <td data-col-title-actions></td>
             </tr>
             <tbody data-eggs-list>
                 

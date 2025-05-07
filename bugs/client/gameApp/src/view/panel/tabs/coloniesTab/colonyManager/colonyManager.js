@@ -6,6 +6,7 @@ import { AntsTab } from './antsTab';
 import { OperationsTab } from './operationsTab';
 import { EnemiesTab } from './enemiesTab';
 import { TabSwitcher } from '@view/panel/base/tabSwitcher';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class ColonyManager extends BaseGameHTMLView {
 
@@ -37,11 +38,16 @@ class ColonyManager extends BaseGameHTMLView {
         this._nestsTab = new NestsTabView(this._el.querySelector('[data-nests-tab]'));
         this._enemiesTab = new EnemiesTab(this._el.querySelector('[data-enemies-tab]'));
 
+        let antsTabName = this.$mm.get(GAME_MESSAGE_IDS.COLONY_MANAGER_TAB_NAME_ANTS);
+        let operationsTabName = this.$mm.get(GAME_MESSAGE_IDS.COLONY_MANAGER_TAB_NAME_OPERATIONS);
+        let nestsTabName = this.$mm.get(GAME_MESSAGE_IDS.COLONY_MANAGER_TAB_NAME_NESTS);
+        let enemiesTabName = this.$mm.get(GAME_MESSAGE_IDS.COLONY_MANAGER_TAB_NAME_ENEMIES);
+
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'colony', [
-            { name: 'ants', label: 'мурахи', tab: this._antsTab },
-            { name: 'operations', label: 'операції', tab: this._operationsTab },
-            { name: 'nests', label: 'гнізда', tab: this._nestsTab },
-            { name: 'enemies', label: 'вороги', tab: this._enemiesTab }
+            { name: 'ants', label: antsTabName, tab: this._antsTab },
+            { name: 'operations', label: operationsTabName, tab: this._operationsTab },
+            { name: 'nests', label: nestsTabName, tab: this._nestsTab },
+            { name: 'enemies', label: enemiesTabName, tab: this._enemiesTab }
         ]);
     }
 }

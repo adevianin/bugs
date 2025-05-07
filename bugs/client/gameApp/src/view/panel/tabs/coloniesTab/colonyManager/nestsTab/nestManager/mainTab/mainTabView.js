@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import mainTabTmpl from './mainTabTmpl.html';
 import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class MainTabView extends BaseGameHTMLView {
 
@@ -41,6 +42,11 @@ class MainTabView extends BaseGameHTMLView {
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyNestName.bind(this));
         this._isMainNestEl = this._el.querySelector('[data-is-main-nest]');
         this._showNestBtn = this._el.querySelector('[data-show-nest]');
+        this._showNestBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_SHOW_NEST_BTN_LABEL);
+
+        this._el.querySelector('[data-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_NAME_LABEL);
+        this._el.querySelector('[data-food-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_FOOD_COUNT_LABEL);
+        this._el.querySelector('[data-is-main-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_IS_NEST_MAIN_LABEL);
     }
 
     _renderStoredClalories() {

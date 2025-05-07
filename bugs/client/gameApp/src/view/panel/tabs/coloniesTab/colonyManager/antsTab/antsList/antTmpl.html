@@ -5,64 +5,34 @@
         <select data-nest></select>
     </td>
     <td data-actions>
-        <button data-profile-btn>+</button>
+        <button data-profile-btn></button>
     </td>
 </tr>
 <tr data-ant-profile>
     <td colspan="5">
-        <!-- <table class="g-table">
-            <thead>
-                <tr>
-                    <td>max_hp</td>
-                    <td>hp_regen_rate</td>
-                    <td>speed</td>
-                    <td>sight_distance</td>
-                    <td>strength</td>
-                    <td>defense</td>
-                    <td>appetite</td>
-                    <td>min_temperature</td>
-                    <td>life_span</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-stats>
-                    <td data-max-hp></td>
-                    <td data-hp-regen-rate></td>
-                    <td data-speed></td>
-                    <td data-sight-distance></td>
-                    <td data-strength></td>
-                    <td data-defense></td>
-                    <td data-appetite></td>
-                    <td data-min-temperature></td>
-                    <td data-life-span></td>
-                </tr>
-            </tbody>
-        </table> -->
         <div data-ant-stats></div>
         <div>
-            <span>поведінка захисту:</span>
+            <span data-guardian-behavior-label></span>:
             <select data-guardian-type>
-                <option value="none">не захищає</option>
-                <option value="nest">тільки гніздо</option>
-                <option value="colony">вся колонія</option>
+                <option value="none" data-guardian-behavior-option-none></option>
+                <option value="nest" data-guardian-behavior-option-nest></option>
+                <option value="colony" data-guardian-behavior-option-colony></option>
             </select>
         </div>
         <div>
-            <span>чи бере участь в спільних справах:</span>
+            <span data-cooperative-behavior-label></span>:
             <input data-is-cooperactive type="checkbox">
         </div>
-        <div>
-            геном: <div data-genome></div>
-        </div>
+        <div data-genome></div>
         <div data-breeding-male-genome-container>
-            геном від шлюбного самця: <div data-breeding-male-genome></div>
+            <span data-breeding-male-genome-label></span>:
+            <div data-breeding-male-genome></div>
         </div>
         <div data-id></div>
-        <div>age: <span data-age></span></div>
-        <div>занятість: <span data-current-activity></span></div>
-        <div>чи голодний: <span data-is-hungry></span></div>
-        <button data-nuptial-flight>шлюбний політ</button>
-        <button data-show-ant>показать</button>
-        <!-- <button data-genome-debug>геном</button> -->
+        <div><span data-age-label></span>: <span data-age></span></div>
+        <div><span data-current-activity-label></span>: <span data-current-activity></span></div>
+        <div><span data-is-hungry-label></span>: <span data-is-hungry></span></div>
+        <button data-nuptial-flight></button>
+        <button data-show-ant></button>
     </td>
 </tr>

@@ -12,8 +12,6 @@ import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
 import adaptationColdTmpl from './adaptationColdTmpl.html';
 import adaptationAppetiteTmpl from './adaptationAppetiteTmpl.html';
 import adaptationDevelopmentAppetiteTmpl from './adaptationDevelopmentAppetiteTmpl.html';
-import { AntTypes } from "@domain/enum/antTypes";
-import { antTypesLabels } from "@view/labels/antTypesLabels";
 import { convertStepsToYear } from '@utils/convertStepsToYear';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 

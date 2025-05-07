@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import larvaTabTmpl from './larvaTabTmpl.html';
 import { LarvaView } from "./larvaView";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class LarvaTabView extends BaseGameHTMLView {
 
@@ -37,6 +38,13 @@ class LarvaTabView extends BaseGameHTMLView {
         this._el.innerHTML = larvaTabTmpl;
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_TITLE);
+        this._el.querySelector('[data-col-title-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_NAME);
+        this._el.querySelector('[data-col-title-genome]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_GENOME);
+        this._el.querySelector('[data-col-title-progress]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_PROGRESS);
+        this._el.querySelector('[data-col-title-caste]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_CASTE);
+        this._el.querySelector('[data-col-title-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_ACTIONS);
     }
 
     _renderLarvaeList() {

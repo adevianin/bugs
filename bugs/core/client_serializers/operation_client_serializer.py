@@ -9,7 +9,8 @@ class OperationClientSerializer():
     def serialize(self, operation: Operation):
         return {
             'id': operation.id,
-            'name': operation.name,
+            'type': operation.type,
+            # 'name': operation.name,
             'status': operation.status,
             'markers': [self._serialize_marker(marker) for marker in operation.markers],
             'workerVacanciesCount': operation.worker_vacancies_count,

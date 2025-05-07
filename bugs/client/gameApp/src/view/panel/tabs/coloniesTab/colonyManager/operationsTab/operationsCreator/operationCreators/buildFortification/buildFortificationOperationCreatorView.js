@@ -41,10 +41,15 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
+
+        this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BUILD_FORTIFICATION_OP_CR_TITLE);
+        this._el.querySelector('[data-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BUILD_FORTIFICATION_OP_CR_NEST_LABEL);
+        this._el.querySelector('[data-workers-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WORKERS_COUNT);
     }
 
     _validate() {

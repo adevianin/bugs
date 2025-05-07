@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import enemiesListTmpl from './enemiesListTmpl.html';
 import { EnemyView } from './enemyView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class EnemiesListView extends BaseGameHTMLView {
 
@@ -39,6 +40,7 @@ class EnemiesListView extends BaseGameHTMLView {
 
         this._enemiesListEl = this._el.querySelector('[data-enemies-list]');
         this._enemiesPlaceholderEl = this._el.querySelector('[data-no-enemies-placeholder]');
+        this._enemiesPlaceholderEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_NO_ENEMY_LABEL);
     }
 
     _renderEnemiesEmptyState() {

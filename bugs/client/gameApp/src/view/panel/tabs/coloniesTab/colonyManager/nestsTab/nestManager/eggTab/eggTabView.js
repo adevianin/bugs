@@ -3,6 +3,7 @@ import eggTabTmpl from './eggTabTmpl.html';
 import { EggView } from "./eggView";
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { ErrorCodes } from '@domain/enum/errorCodes';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class EggTabView extends BaseGameHTMLView {
 
@@ -19,9 +20,20 @@ class EggTabView extends BaseGameHTMLView {
         this._el.innerHTML = eggTabTmpl;
         this._eggsListEl = this._el.querySelector('[data-eggs-list]');
         this._addEggBtn = this._el.querySelector('[data-add-egg]');
+        this._addEggBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_LAY_EGG_BTN_LABEL);
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._addEggLoader = new DotsLoaderView(this._el.querySelector('[data-lay-egg-loader]'));
+
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_TITLE);
+        this._el.querySelector('[data-fertilize-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_FERTILIZE_LABEL);
+        this._el.querySelector('[data-col-title-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_NAME);
+        this._el.querySelector('[data-col-title-genome]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_GENOME);
+        this._el.querySelector('[data-col-title-is-fertilized]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_FERTILIZED);
+        this._el.querySelector('[data-col-title-progress]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_PROGRESS);
+        this._el.querySelector('[data-col-title-state]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_STATE);
+        this._el.querySelector('[data-col-title-caste]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_CASTE);
+        this._el.querySelector('[data-col-title-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_ACTIONS);
     }
 
     manageNest(nest) {
@@ -147,8 +159,8 @@ class EggTabView extends BaseGameHTMLView {
     }
 
     _generateAntName() {
-        let adjectives = ["Веселий", "Швидкий", "Сміливий", "Маленький", "Розумний", "Спритний"];
-        let nouns = ['Трудяга', "Борець", "Мандрівник", "Дослідник", "Боб", "Захисник", 'Мурашко'];
+        let adjectives = this.$mm.get(GAME_MESSAGE_IDS.ANT_NAME_ADJECTIVES);
+        let nouns = this.$mm.get(GAME_MESSAGE_IDS.ANT_NAME_NOUNS);
 
         let randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
         let randomNoun = nouns[Math.floor(Math.random() * nouns.length)];

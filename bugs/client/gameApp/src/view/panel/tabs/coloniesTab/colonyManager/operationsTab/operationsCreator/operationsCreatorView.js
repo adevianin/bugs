@@ -3,6 +3,7 @@ import operationsCreatorTmpl from './operationsCreatorTmpl.html';
 import { NewNestOperationCreatorView, DestroyNestOperationCreatorView, PillageNestOperationCreatorView, 
     TransportFoodOperationCreatorView, BuildFortificationOperationCreatorView, BringBugOperationCreatorView } from "./operationCreators";
 import { OperationTypes } from "@domain/enum/operationTypes";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class OperationsCreatorView extends BaseGameHTMLView {
 
@@ -33,13 +34,20 @@ class OperationsCreatorView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = operationsCreatorTmpl;
         this._newNestOperationBtn = this._el.querySelector('[data-add-new-nest]');
+        this._newNestOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_NEW_SUB_NEST_BTN_LABEL);
         this._destroyNestOperationBtn = this._el.querySelector('[data-destroy-nest]');
+        this._destroyNestOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_DESTROY_NEST_BTN_LABEL);
         this._pillageNestOperationBtn = this._el.querySelector('[data-pillage-nest]');
+        this._pillageNestOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_PILLAGE_NEST_BTN_LABEL);
         this._transportFoodOperationBtn = this._el.querySelector('[data-transport-food]');
+        this._transportFoodOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_TRANSPORT_FOOD_BTN_LABEL);
         this._buildFortificationOperationBtn = this._el.querySelector('[data-build-fortification]');
+        this._buildFortificationOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_BUILD_FORTIFICATIONS_BTN_LABEL);
         this._bringBugOperationBtn = this._el.querySelector('[data-bring-bug]');
+        this._bringBugOperationBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_BRING_BUG_CORPSE_BTN_LABEL);
         this._newOperationsBtnsListEl = this._el.querySelector('[data-new-operation-list]');
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
+        this._cancelOperationCreatingBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_CANCEL_OPERATION_CREATING_BTN_LABEL);
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
         this._toggleCreatorMode(false);
     }

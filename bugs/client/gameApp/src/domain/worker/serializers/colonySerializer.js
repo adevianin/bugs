@@ -45,14 +45,13 @@ class ColonySerializer {
         }
         return {
             'id': operation.id,
-            'name': operation.name,
+            'type': operation.type,
             'status': operation.status,
             'markers': serializedMarkers,
             'workerVacanciesCount': operation.workerVacanciesCount,
             'warriorVacanciesCount': operation.warriorVacanciesCount,
             'hiredWorkersCount': operation.hiredWorkersCount,
-            'hiredWarriorsCount': operation.hiredWarriorsCount,
-            'test': 123
+            'hiredWarriorsCount': operation.hiredWarriorsCount
         }
     }
 }

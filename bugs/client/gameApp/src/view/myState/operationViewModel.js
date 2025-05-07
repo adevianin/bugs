@@ -10,6 +10,10 @@ class OperationViewModel extends BaseViewModel {
         return this._props.name;
     }
 
+    get type() {
+        return this._props.type;
+    }
+
     get status() {
         return this._props.status;
     }

@@ -1,5 +1,6 @@
 import { BaseGameHTMLView } from "@view/base/baseGameHTMLView";
 import enemyTmpl from './enemyTmpl.html';
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class EnemyView extends BaseGameHTMLView {
 
@@ -17,6 +18,7 @@ class EnemyView extends BaseGameHTMLView {
 
         this._renderName();
         this._showBtn = this._el.querySelector('[data-show-btn]');
+        this._showBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_SHOW_ENEMY_BTN_LABEL);
     }
 
     async _renderName() {

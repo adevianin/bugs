@@ -42,6 +42,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._minAntsCountErrorContainerEl = this._el.querySelector('[data-min-ants-count-error-container]');
 
         this._chooseNestBtn = this._el.querySelector('[data-choose-nest-btn]');
+        this._chooseNestBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.DESTROY_NEST_OP_CR_CHOOSE_NEST_BTN_LABEL);
         this._choosedNestErr = this._el.querySelector('[data-choosed-nest-err]');
         this._choosedNestView = new NestInlineView(this._el.querySelector('[data-choosed-nest]'));
 
@@ -58,6 +59,11 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._warriorsCount = new IntInputView(warriorsCountInput, minWarriorsCount, maxWarriorsCount, warriorsCountErrEl);
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
+
+        this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.DESTROY_NEST_OP_CR_TITLE);
+        this._el.querySelector('[data-nest-to-destroy-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.DESTROY_NEST_OP_CR_NEST_TO_DESTROY_LABEL);
+        this._el.querySelector('[data-workers-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WORKERS_COUNT);
+        this._el.querySelector('[data-warriors-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WARRIORS_COUNT);
     }
 
     async _validate() {

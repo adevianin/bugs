@@ -36,6 +36,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._el.innerHTML = newNestOperationCreatorTmpl;
 
         this._startBtn = this._el.querySelector('[data-start]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
 
         let workersCountInput = this._el.querySelector('[data-workers-count-input]');
         let workersCountErrEl = this._el.querySelector('[data-workers-count-err]');
@@ -53,11 +54,19 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
 
         this._buildingPosition = new PositionView(this._el.querySelector('[data-building-position]'));
         this._chooseBuildingSiteBtn = this._el.querySelector('[data-choose-building-position]');
+        this._chooseBuildingSiteBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_CHOOSE_NEST_POSITION_BTN_LABEL);
         this._buildingPositionErrEl = this._el.querySelector('[data-building-position-err]');
 
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
+
+        this._el.querySelector('[data-nest-position-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_POSITION_LABEL);
+        this._el.querySelector('[data-workers-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WORKERS_COUNT);
+        this._el.querySelector('[data-warriors-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WARRIORS_COUNT);
+        this._el.querySelector('[data-worker-requirements-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_WORKER_REQUIREMENTS_LABEL);
+        this._el.querySelector('[data-nest-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_NAME_LABEL);
+        this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_TITLE);
     }
 
     async _validate() {

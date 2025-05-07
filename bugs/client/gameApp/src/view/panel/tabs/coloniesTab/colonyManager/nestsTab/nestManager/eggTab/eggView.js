@@ -1,11 +1,12 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import eggTmpl from './eggTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
-import { antTypesLabels } from "@view/labels/antTypesLabels";
-import { eggStatesLabels } from "@view/labels/eggStatesLabels";
 import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
+import { EggStates } from "@domain/enum/eggStates";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { antTypesLabelIds } from '@view/labels/antTypesLabelIds';
 
 class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
@@ -40,6 +41,7 @@ class EggView extends BaseGameHTMLView {
         this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
 
         this._toLarvaChamberBtn = this._el.querySelector('[data-to-larva-chamber]');
+        this._toLarvaChamberBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_EGG_TO_LARVA_BTN_LABEL);
         this._deleteBtn = this._el.querySelector('[data-delete]');
 
         this._progressEl = this._el.querySelector('[data-progress]');
@@ -63,8 +65,19 @@ class EggView extends BaseGameHTMLView {
     _renderProgress() {
         let progressValue = this._egg.isDevelopment ? this._egg.progress : 100;
         this._progressEl.innerHTML = progressValue;
-        this._stateEl.innerHTML = eggStatesLabels[this._egg.state];
+        this._stateEl.innerHTML = this._getEggStateText(this._egg.state);
         this._renderToLarvaChamberBtnState();
+    }
+
+    _getEggStateText(state) {
+        switch (state) {
+            case EggStates.DEVELOPMENT:
+                return this.$mm.get(GAME_MESSAGE_IDS.EGG_STATE_DEVELOPMENT);
+            case EggStates.READY:
+                return this.$mm.get(GAME_MESSAGE_IDS.EGG_STATE_READY);
+            case EggStates.SPOILED:
+                return this.$mm.get(GAME_MESSAGE_IDS.EGG_STATE_SPOILED);
+        }
     }
 
     _renderToLarvaChamberBtnState() {
@@ -82,7 +95,7 @@ class EggView extends BaseGameHTMLView {
             let option = document.createElement('option');
             this._antTypeSelector.append(option);
             option.value = antType;
-            option.innerHTML = antTypesLabels[antType];
+            option.innerHTML = this.$mm.get(antTypesLabelIds[antType]);
         }
     }
 

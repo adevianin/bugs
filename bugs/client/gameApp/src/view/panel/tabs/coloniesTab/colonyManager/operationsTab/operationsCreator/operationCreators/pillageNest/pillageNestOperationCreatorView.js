@@ -39,6 +39,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._el.innerHTML = pillageNestOperationCreatorTmpl;
 
         this._chooseNestToPillageBtn = this._el.querySelector('[data-choose-nest-to-pillage]');
+        this._chooseNestToPillageBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PILLAGE_NEST_OP_CR_CHOOSE_NEST_TO_PILLAGE_BTN_LABEL);
         this._nestToPillageView = new NestInlineView(this._el.querySelector('[data-nest-to-pillage]'));
         this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
@@ -58,11 +59,18 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._workersCountView = new IntInputView(workersCountInput, minWorkersCount, maxWorkersCount, workersCountErrContainer);
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._showMarkers();
+
+        this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PILLAGE_NEST_OP_CR_TITLE);
+        this._el.querySelector('[data-nest-to-pillage-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PILLAGE_NEST_OP_CR_NEST_TO_PILLAGE_LABEL);
+        this._el.querySelector('[data-nest-for-loot-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PILLAGE_NEST_OP_CR_NEST_FOR_LOOT_LABEL);
+        this._el.querySelector('[data-warriors-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WARRIORS_COUNT);
+        this._el.querySelector('[data-workers-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_WORKERS_COUNT);
     }
 
     _validateOperationConditions() {
