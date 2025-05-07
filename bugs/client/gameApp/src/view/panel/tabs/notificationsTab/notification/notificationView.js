@@ -52,15 +52,21 @@ class NotificationView extends BaseGameHTMLView {
 
     _renderDiedAntNotification() {
         this._el.innerHTML = diedAntNotificationTmpl;
+        this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_ANT);
         this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
-        let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE);
-        this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
+        if (this._notification.deathRecord.type == DeathTypes.NUPTIAL_FLY) {
+            this._el.querySelector('[data-death-position]').remove();
+        } else {
+            let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE);
+            this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
+        }
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderDiedNestNotification() {
         this._el.innerHTML = diedNestNotificationTmpl;
+        this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_NEST);
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateNestDeathDescribeText();
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE);
@@ -70,20 +76,26 @@ class NotificationView extends BaseGameHTMLView {
 
     _renderNestAlarmRaisedNotification() {
         this._el.innerHTML = nestAlarmRaisedNotificationTmpl;
+        this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_NEST);
+        this._el.querySelector('[data-raised-alarm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_RAISED_ALARM);
         this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
         this._el.innerHTML = nestAlarmCanceledNotificationTmpl;
+        this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_NEST);
+        this._el.querySelector('[data-canceled-alarm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_CANCELED_ALARM);
         this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
         this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
     }
 
     _renderDiedColonyNotification() {
         this._el.innerHTML = diedColonyNotificationTmpl;
+        this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_COLONY);
+        this._el.querySelector('[data-destroyed-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_COLONY_DEATH_DESTROYED);
         this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
+        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
     }
 
     _generateAntDeathDescribeText() {
@@ -91,24 +103,22 @@ class NotificationView extends BaseGameHTMLView {
             case DeathTypes.DAMAGE:
                 switch(this._notification.deathRecord.damageType) {
                     case DamageTypes.COMBAT:
-                        return 'загинув в бою';
+                        return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_COMBAT);
                     case DamageTypes.COLD:
-                        return 'замерз';
+                        return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_FREEZED);
                 }
             case DeathTypes.AGED:
-                return 'помер від старості';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_AGED);
             case DeathTypes.HUNGER:
-                return 'помер з голоду';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_HUNGER);
             case DeathTypes.NO_HOME:
-                return 'помер без дому';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_WITHOUT_HOME);
             case DeathTypes.NUPTIAL_FLY:
-                return 'помер в шлюбному льоті';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_NUPTIAL_FLIGHT);
             case DeathTypes.SIMPLE:
-                return 'помер з невідомих причин';
-            case DeathTypes.SIMPLE:
-                return 'помер з невідомих причин';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_UNKNOWN);
             case DeathTypes.BURIED_IN_DESTRUCTED_NEST:
-                return 'загинув в зруйнованому гнізді';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_BURIED_IN_NEST);
         }
     }
 
@@ -117,12 +127,12 @@ class NotificationView extends BaseGameHTMLView {
             case DeathTypes.DAMAGE:
                 switch(this._notification.deathRecord.damageType) {
                     case DamageTypes.COMBAT:
-                        return 'розбито';
+                        return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_COMBAT);
                     case DamageTypes.DECAY:
-                        return 'завалилось';
+                        return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_DECAY);
                 }
             case DeathTypes.SIMPLE:
-                return 'завалилось з невідомих причин';
+                return this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_UNKNOWN);
         }
     }
 

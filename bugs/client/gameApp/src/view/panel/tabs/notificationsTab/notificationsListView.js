@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import notificationsListTmpl from './notificationsListTmpl.html';
 import { NotificationView } from "./notification/notificationView";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class NotificationsListView extends BaseGameHTMLView {
 
@@ -26,12 +27,17 @@ class NotificationsListView extends BaseGameHTMLView {
 
         this._listEl = this._el.querySelector('[data-notifications-list]');
         this._showMoreBtn = this._el.querySelector('[data-show-more]');
+        this._showMoreBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATIONS_TAB_SHOW_MORE_BTN_LABEL);
 
         this._notificationsContainerEl = this._el.querySelector('[data-notifications-container]');
         this._notificationPlaceholderEl = this._el.querySelector('[data-notifications-placeholder]');
+        this._notificationPlaceholderEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATIONS_TAB_NO_NOTIFICATIONS_LABEL);
 
         this._renderCurrentPortion();
         this._renderEmptyState();
+
+        this._el.querySelector('[data-col-label-event]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATIONS_TAB_COL_TITLE_EVENT);
+        this._el.querySelector('[data-col-label-year]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATIONS_TAB_COL_TITLE_YEAR);
     }
 
     _renderEmptyState() {
