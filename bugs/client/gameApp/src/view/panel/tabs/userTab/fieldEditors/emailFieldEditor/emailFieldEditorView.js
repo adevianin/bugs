@@ -1,6 +1,7 @@
 import emailFieldEditorTmpl from './emailFieldEditorTmpl.html';
 import { BaseFieldEditor } from '../baseFieldEditor';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class EmailFieldEditorView extends BaseFieldEditor {
 
@@ -25,12 +26,16 @@ class EmailFieldEditorView extends BaseFieldEditor {
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._okBtn = this._el.querySelector('[data-ok]');
+        this._okBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.EMAIL_EDITOR_OK_BTN_LABEL);
         this._cancelBtn = this._el.querySelector('[data-cancel]');
+        this._cancelBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.EMAIL_EDITOR_CANCEL_BTN_LABEL);
         
         this._passwordEl = this._el.querySelector('[data-password]');
         this._emailEl = this._el.querySelector('[data-email]');
         let user = this.$domain.getUserData();
         this._emailEl.value = user.email;
+
+        this._el.querySelector('[data-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.EMAIL_EDITOR_PASSWORD_LABEL);
     }
 
     _renderErr(errId) {

@@ -4,6 +4,7 @@ import { EmailFieldEditorView } from './fieldEditors/emailFieldEditor/emailField
 import { UsernameFieldEditorView } from './fieldEditors/usernameFieldEditor/usernameFieldEditorView';
 import { PasswordFieldEditorView } from './fieldEditors/passwordFieldEditor/passwordFieldEditorView';
 import { DoneButtonView } from '@common/view/doneButton/doneButtonView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -38,7 +39,8 @@ class UserTab extends BaseGameHTMLView {
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
         this._notVerifiedEmailStateEl = this._el.querySelector('[data-not-verified-email-state]');
         this._verifiedEmailStateEl = this._el.querySelector('[data-verified-email-state]');
-        this._verifyEmailRequestBtnView = new DoneButtonView(this._el.querySelector('[data-verify-email-request-btn]'), 'send again');
+        this._verifiedEmailStateEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_VERIFIED_LABEL);
+        this._verifyEmailRequestBtnView = new DoneButtonView(this._el.querySelector('[data-verify-email-request-btn]'), this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_VERIFICATION_REQUEST_BTN_LABEL));
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
@@ -47,10 +49,17 @@ class UserTab extends BaseGameHTMLView {
         this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
+        this._userLogoutBtnEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_LOGOUT_BTN_LABEL);
 
         this._renderEmail();
         this._renderUsername();
         this._renderPasswordField();
+
+        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_TITLE);
+        this._el.querySelector('[data-username-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_USERNAME_LABEL);
+        this._el.querySelector('[data-email-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_LABEL);
+        this._el.querySelector('[data-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_PASSWORD_LABEL);
+        this._el.querySelector('[data-not-verified-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_NOT_VERIFIED_LABEL);
     }
 
     _changeMode(modeName) {

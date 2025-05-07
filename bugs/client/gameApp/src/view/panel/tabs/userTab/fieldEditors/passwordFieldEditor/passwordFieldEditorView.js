@@ -32,7 +32,9 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
         this._okBtn = this._el.querySelector('[data-ok]');
+        this._okBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_OK_BTN_LABEL);
         this._cancelBtn = this._el.querySelector('[data-cancel]');
+        this._cancelBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_CANCEL_BTN_LABEL);
         
         this._newPasswordEl = this._el.querySelector('[data-new-password]');
         this._newPasswordConfirmEl = this._el.querySelector('[data-new-password-confirmation]');
@@ -42,6 +44,10 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._newPasswordConfirmErrContainer = this._el.querySelector('[data-new-password-confirm-err-container]');
         this._oldPasswordErrContainer = this._el.querySelector('[data-old-password-err-container]');
         this._requestErrContainer = this._el.querySelector('[data-request-err-container]');
+
+        this._el.querySelector('[data-new-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_NEW_PASSWORD_LABEL);
+        this._el.querySelector('[data-new-password-confirm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_NEW_PASSWORD_CONFIRM_LABEL);
+        this._el.querySelector('[data-old-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_OLD_PASSWORD_LABEL);
     }
 
     _renderErr(errId) {

@@ -1,28 +1,27 @@
+<h2 data-tab-title></h2>
 <div data-main-contentainer>
     <div>
-        username:
+        <span data-username-label></span>
         <span data-username></span>
         <button data-edit-username-btn>(>)</button>
     </div>
     <div style="display: flex; flex-direction: row;">
-        <div>email:</div>
+        <div data-email-label></div>
         <div>
             <span data-email></span>
             <button data-edit-email-btn>(>)</button>
             <div data-not-verified-email-state>
-                <span class="g-error-container">not verified</span>
+                <span class="g-error-container" data-not-verified-label></span>
                 <button data-verify-email-request-btn></button>
             </div>
-            <div style="color: green;" data-verified-email-state>
-                verified
-            </div>
+            <div style="color: green;" data-verified-email-state></div>
         </div>
     </div>
     <div data-password-field>
-        password:
+        <span data-password-label></span>
         <span>***</span>
         <button data-edit-password-btn>(>)</button>
     </div>
-    <button data-logout-btn>вийти</button>
+    <button data-logout-btn></button>
 </div>
 <div data-field-editor-container></div>
