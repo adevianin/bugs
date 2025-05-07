@@ -2,6 +2,7 @@ import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import ratingTabTmpl from './ratingTabTmpl.html';
 import ratingPlaceTmpl from './ratingPlaceTmpl.html';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class RatingTabView extends BaseGameHTMLView {
 
@@ -28,6 +29,12 @@ class RatingTabView extends BaseGameHTMLView {
 
         this._renderCurrentPortion();
         this._renderBtnsState();
+
+        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_TITLE);
+        this._el.querySelector('[data-col-title-place]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_PLACE);
+        this._el.querySelector('[data-col-title-username]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_USERNAME);
+        this._el.querySelector('[data-col-title-ants-count]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_ANTS_COUNT);
+        this._el.querySelector('[data-col-title-colonies-count]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_COLONIES_COUNT);
     }
 
     _renderCurrentPortion() {
