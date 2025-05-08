@@ -1,7 +1,6 @@
 from channels.generic.websocket import WebsocketConsumer
-from infrastructure.engine.engine_facade import EngineFacade
 from infrastructure.event_bus import event_bus
-from infrastructure.models import User
+# from infrastructure.models import User
 import json
 from typing import Dict
 
@@ -9,11 +8,12 @@ class MainSocketConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        from infrastructure.engine.engine_facade import EngineFacade
         self._engine_facade = EngineFacade.get_instance()
         self._init_pack_sent = False
 
     def connect(self):
-        self._user: User = self.scope["user"]
+        self._user = self.scope["user"]
 
         event_bus.add_listener('email_verified', self._on_email_verified)
         event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
@@ -61,7 +61,7 @@ class MainSocketConsumer(WebsocketConsumer):
             }
             self.send(json.dumps(msg))
 
-    def _on_email_verified(self, user: User):
+    def _on_email_verified(self, user):
         if self._user.id == user.id:
             self.send(json.dumps({
                 'type': 'email_verified'
