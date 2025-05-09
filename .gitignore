@@ -6,3 +6,4 @@ bugs/db.sqlite3
 .env
 game_errors.log
 request_errors.log
+backups

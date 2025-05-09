@@ -11,7 +11,6 @@ from .season_types import SeasonTypes
 from core.world.entities.ant.base.ant import Ant
 from core.world.entities.world.id_generator import IdGenerator
 from core.world.entities.colony.base.colony_relations_table import ColonyRelationsTable
-from bugs.settings import DEBUG
 from core.world.entities.colony.colonies.ant_colony.ant_colony import AntColony
 
 from logging import Logger
@@ -132,8 +131,7 @@ class World():
                     entity.do_step(self._current_step, self._current_season)
             except Exception as e:
                 self._logger.exception(f'entity(id={ entity.id }) step({self._current_step}) error', exc_info=e)
-                if DEBUG:
-                    raise e
+                raise e
 
         self._event_bus.emit('step_done', self._current_step, self._current_season)
 

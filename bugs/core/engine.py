@@ -30,18 +30,19 @@ from core.client_serializers.larva_client_serializer import LarvaClientSerialize
 
 from logging import Logger
 from core.world.entities.world.id_generator import IdGenerator
-from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL
+from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL, BACKUP_EVERY_STEP
 import time, threading, redis, json
 from multiprocessing import SimpleQueue
 from core.world.exceptions import GameError, StateConflictError
 from core.world.entities.action.base.action import Action
 from typing import Dict, List
-from bugs.settings import DEBUG
 from core.world.utils.clean_name import clean_name
 from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeTypes
 from core.world.utils.point import Point
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.ant.base.ant_types import AntTypes
+from datetime import datetime
+from pathlib import Path
 
 class Engine():
 
@@ -166,8 +167,10 @@ class Engine():
                         self._handle_player_commands()
                 except Exception as e:
                     self._logger.exception(f'game loop iteration error. step={step_number}', exc_info=e)
-                    if DEBUG:
-                        raise e
+                    raise e
+                    
+                if self._world.current_step % BACKUP_EVERY_STEP:
+                    self._make_world_state_backup()
                 
                 iteration_end = time.time()
                 iteration_time = iteration_end - iteration_start
@@ -258,6 +261,22 @@ class Engine():
         self._personal_actions = {}
         self._common_actions = []
         return (serialized_common_actions, serialized_personal_actions)
+    
+    def _make_world_state_backup(self):
+        keep_last_n = 3
+        path = Path("backups")
+        path.mkdir(exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M")
+        filename = path / f"snapshot_{timestamp}.json"
+
+        with open(filename, "w") as f:
+            world_state = self._world_serializer.serialize(self._world)
+            json.dump(world_state, f)
+
+        snapshots = sorted(path.glob("snapshot_*.json"), reverse=True)
+        for old_file in snapshots[keep_last_n:]:
+            old_file.unlink()
 
     def _on_action(self, action: Action):
         if action.is_personal():
@@ -351,8 +370,7 @@ class Engine():
             except Exception as e:
                 self._logger.exception('admin command error', exc_info=e)
                 self._send_command_error(command_id, 'admin_command_error')
-                if DEBUG:
-                    raise e
+                raise e
     
     def _handle_init_world_admin_command(self, command: Dict):
         if self._is_world_inited:
