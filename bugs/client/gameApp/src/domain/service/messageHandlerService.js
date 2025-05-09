@@ -11,14 +11,11 @@ class MessageHandlerService {
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
+        this._serverConnection.events.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
     }
 
     connect(socketURL) {
         return this._serverConnection.connect(socketURL);
-    }
-
-    disconnect() {
-        this._serverConnection.disconnect();
     }
 
     _onMessage(msg) {
@@ -77,6 +74,10 @@ class MessageHandlerService {
 
     _handleEmailVerifiedMsg() {
         this._userService.verifyEmailForUser();
+    }
+
+    _onConnectionClosedFromServer() {
+        this._mainEventBus.emit('connectionClosedFromServer');
     }
 
 }

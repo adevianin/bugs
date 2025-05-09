@@ -13,11 +13,14 @@ class ServerConnection {
             this._socket.onopen = () => {
                 res();
             }
+            this._socket.onclose = (event) => {
+                if (event.code == 4001) {
+                    setTimeout(() => {
+                        this.events.emit('connectionClosedFromServer');
+                    }, 10000);
+                }
+            };
         });
-    }
-
-    disconnect() {
-        this._socket.close();
     }
 
     send(msg) {

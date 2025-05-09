@@ -1,3 +1,4 @@
+import redis.exceptions
 from core.world.utils.event_emiter import EventEmitter
 
 from core.world.services.notification_serivce import NotificationService
@@ -68,17 +69,25 @@ class Engine():
         self._common_actions = []
         self._personal_actions = {}
         self._connection_thread: threading.Thread = None
+        self._redis_watcher_thread: threading.Thread = None
+        self._stop_engine_signal = threading.Event()
 
         self._event_bus.add_listener('action', self._on_action)
 
     def start(self):
         self._logger.info('engine start')
+        self._redis_watcher()
         self._listen_engine_in()
         self._run_game_loop()
 
     def stop(self):
-        self._redis.publish(Engine.CHANNEL_ENGINE_IN, '__exit__')
-        self._connection_thread.join()
+        self._stop_engine_signal.set()
+        try:
+            self._redis.publish(Engine.CHANNEL_ENGINE_IN, '__exit__')
+            self._connection_thread.join()
+        except Exception as e:
+            self._logger.error('stop listening engine in error')
+        self._redis_watcher_thread.join()
         self._logger.info('engine stopped')
 
     def _init_services(self, services):
@@ -127,21 +136,50 @@ class Engine():
         self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
 
+    def _redis_watcher(self):
+        def ping():
+            conn_fail_count = 0
+            while not self._stop_engine_signal.is_set():
+                try:
+                    self._redis.ping()
+                    if conn_fail_count > 0:
+                        print('connection restored')
+                        self._listen_engine_in()
+                    conn_fail_count = 0
+                except redis.exceptions.ConnectionError as e:
+                    self._disconnect_all_players()
+                    print('redis conn err')
+                    conn_fail_count += 1
+                    if conn_fail_count >= 5:
+                        self._logger.error('redis connection error', exc_info=e)
+                        self._stop_engine_signal.set()
+                time.sleep(1)
+
+            print('redis watcher stopped')
+
+        self._redis_watcher_thread = threading.Thread(target=ping, daemon=True)
+        self._redis_watcher_thread.start()
+
     def _listen_engine_in(self):
         self._logger.info('listening main connection')
         def listen():
-            pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-            pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
-            for msg in pubsub.listen():
+            try:
+                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
+                for msg in pubsub.listen():
+                    
+                    if msg['data'] == '__exit__':
+                        pubsub.unsubscribe()
+                        pubsub.close()
+                        self._logger.info('closed income channel')
+                        return
 
-                if msg['data'] == '__exit__':
-                    pubsub.unsubscribe()
-                    pubsub.close()
-                    self._logger.info('closed income channel')
-                    break
+                    msg_data_json = json.loads(msg['data'])
+                    self._on_client_msg(msg_data_json)
+            except redis.exceptions.ConnectionError as e:
+                self._logger.error('listening egning in channel connection error')
 
-                msg_data_json = json.loads(msg['data'])
-                self._on_client_msg(msg_data_json)
+            print('engine in listener stopped')
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
@@ -149,7 +187,7 @@ class Engine():
     def _run_game_loop(self):
         self._logger.info('running game loop')
 
-        while True:
+        while not self._stop_engine_signal.is_set():
             self._handle_admin_commands()
 
             if self._is_world_inited:
@@ -190,16 +228,25 @@ class Engine():
                 time.sleep(1)
 
     def _update_engine_status(self):
-        self._redis.set('engine_status', json.dumps({
-            'is_world_inited': self._is_world_inited,
-            'is_world_stepping': self._is_world_stepping
-        }), STEP_TIME + 3)
+        try:
+            self._redis.set('engine_status', json.dumps({
+                'is_world_inited': self._is_world_inited,
+                'is_world_stepping': self._is_world_stepping
+            }), STEP_TIME + 3)
+        except redis.exceptions.ConnectionError as e:
+            self._logger.error('engine_status setting redis conenction error')
 
     def _handle_player_disconnections(self):
         while not self._player_disconnect_q.empty():
             player_disconnect_msg = self._player_disconnect_q.get()
             if player_disconnect_msg['player_id'] in self._connected_player_ids:
                 self._connected_player_ids.remove(player_disconnect_msg['player_id'])
+
+    def _disconnect_all_players(self):
+        for player_id in self._connected_player_ids:
+            self._player_disconnect_q.put({
+                'player_id': player_id
+            })
 
     def _handle_player_connections(self):
         new_connected_ids = self._handle_player_connect_q()
@@ -316,10 +363,13 @@ class Engine():
                 raise GameError('unknown msg type')
             
     def _send_msg(self, type: str, data: Dict):
-        self._redis.publish(Engine.CHANNEL_ENGINE_OUT, json.dumps({
-            'type': type,
-            'data': data
-        }))
+        try:
+            self._redis.publish(Engine.CHANNEL_ENGINE_OUT, json.dumps({
+                'type': type,
+                'data': data
+            }))
+        except redis.exceptions.ConnectionError as e:
+            self._logger.error('sending msg redis connection error')
 
     def _send_command_result(self, command_id: int, result):
         self._send_msg('command_result', {

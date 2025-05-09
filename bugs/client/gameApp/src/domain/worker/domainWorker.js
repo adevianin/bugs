@@ -252,6 +252,7 @@ class DomainWorker {
 
         this._eventBus.on('emailVerified', this._onEmailVerified.bind(this));
         this._eventBus.on('ratingUpdated', this._onRatingUpdated.bind(this));
+        this._eventBus.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
     }
 
     _handleChangePlayerViewPointCommand(command) {
@@ -681,6 +682,10 @@ class DomainWorker {
         this._sendEvent('ratingUpdated', { 
             rating: this._worldService.getRating() 
         });
+    }
+
+    _onConnectionClosedFromServer() {
+        this._sendEvent('connectionClosedFromServer');
     }
 
 }

@@ -18,6 +18,7 @@ class MainSocketConsumer(WebsocketConsumer):
         event_bus.add_listener('email_verified', self._on_email_verified)
         event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
         event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
+        event_bus.add_listener('engine_connection_error', self._on_engine_connection_error)
 
         if self._user.is_authenticated and self._engine_facade.is_game_working:
             self.accept()
@@ -30,6 +31,7 @@ class MainSocketConsumer(WebsocketConsumer):
         event_bus.remove_listener('email_verified', self._on_email_verified)
         event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
         event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)
+        event_bus.remove_listener('engine_connection_error', self._on_engine_connection_error)
         return super().disconnect(code)
 
     def _on_init_step_data_pack_ready(self, data: Dict):
@@ -66,4 +68,7 @@ class MainSocketConsumer(WebsocketConsumer):
             self.send(json.dumps({
                 'type': 'email_verified'
             }))
+
+    def _on_engine_connection_error(self):
+        self.close(4001)
             

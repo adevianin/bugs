@@ -148,6 +148,9 @@ class DomainFacade {
             case 'ratingUpdated':
                 this._onRatingUpdatedEvent(data);
                 break;
+            case 'connectionClosedFromServer':
+                this._onConnectionClosedFromServer(data);
+                break;
             default:
                 throw 'unknown type of event';
         }
@@ -160,6 +163,10 @@ class DomainFacade {
 
     _onRatingUpdatedEvent({ rating }) {
         this._ratingContainer.ratingPlaces = rating;
+    }
+
+    _onConnectionClosedFromServer() {
+        location.reload();
     }
 
     getEntities() {

@@ -3351,14 +3351,11 @@ class MessageHandlerService {
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
         this._serverConnection.events.on('message', this._onMessage.bind(this));
+        this._serverConnection.events.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
     }
 
     connect(socketURL) {
         return this._serverConnection.connect(socketURL);
-    }
-
-    disconnect() {
-        this._serverConnection.disconnect();
     }
 
     _onMessage(msg) {
@@ -3417,6 +3414,10 @@ class MessageHandlerService {
 
     _handleEmailVerifiedMsg() {
         this._userService.verifyEmailForUser();
+    }
+
+    _onConnectionClosedFromServer() {
+        this._mainEventBus.emit('connectionClosedFromServer');
     }
 
 }
@@ -4074,6 +4075,7 @@ class DomainWorker {
 
         this._eventBus.on('emailVerified', this._onEmailVerified.bind(this));
         this._eventBus.on('ratingUpdated', this._onRatingUpdated.bind(this));
+        this._eventBus.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
     }
 
     _handleChangePlayerViewPointCommand(command) {
@@ -4503,6 +4505,10 @@ class DomainWorker {
         this._sendEvent('ratingUpdated', { 
             rating: this._worldService.getRating() 
         });
+    }
+
+    _onConnectionClosedFromServer() {
+        this._sendEvent('connectionClosedFromServer');
     }
 
 }
@@ -6220,11 +6226,14 @@ class ServerConnection {
             this._socket.onopen = () => {
                 res();
             }
+            this._socket.onclose = (event) => {
+                if (event.code == 4001) {
+                    setTimeout(() => {
+                        this.events.emit('connectionClosedFromServer');
+                    }, 10000);
+                }
+            };
         });
-    }
-
-    disconnect() {
-        this._socket.close();
     }
 
     send(msg) {

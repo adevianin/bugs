@@ -1,3 +1,4 @@
+import redis.exceptions
 from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, DEBUG
 from typing import List, Dict
 import threading, redis, json, time
@@ -6,6 +7,7 @@ from infrastructure.event_bus import event_bus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
+import logging
 
 class EngineFacade:
     _instance = None
@@ -32,6 +34,7 @@ class EngineFacade:
         self._last_used_command_id = 0
         self._command_futures = {}
 
+        self._redis_watcher()
         self._listen_engine_out()
         self._start_rating_generation_command_sender()
 
@@ -289,22 +292,47 @@ class EngineFacade:
             finally:
                 del self._command_futures[command_id]
 
+    def _redis_watcher(self):
+        def ping():
+            conn_fail_count = 0
+            while True:
+                try:
+                    print('ping redis')
+                    self._redis.ping()
+                    if conn_fail_count > 0:
+                        print('connection restored')
+                        self._listen_engine_out()
+                    conn_fail_count = 0
+                except redis.exceptions.ConnectionError as e:
+                    print('redis error')
+                    conn_fail_count += 1
+                    event_bus.emit('engine_connection_error')
+                time.sleep(1)
+
+        redis_watcher_thread = threading.Thread(target=ping, daemon=True)
+        redis_watcher_thread.start()
+
     def _listen_engine_out(self):
+        logger = logging.getLogger('request_logger')
+
         def listen():
-            pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-            pubsub.subscribe(EngineFacade.CHANNEL_ENGINE_OUT)
-            for redis_msg in pubsub.listen():
-                msg = json.loads(redis_msg['data'])
-                data = msg['data']
-                match (msg['type']):
-                    case 'init_step_data_pack':
-                        self._on_init_step_data_pack_msg(data)
-                    case 'step_data_pack':
-                        self._on_step_data_pack_msg(data)
-                    case 'command_result':
-                        self._on_command_result(data)
-                    case 'command_error':
-                        self._on_command_error(data)
+            try:
+                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                pubsub.subscribe(EngineFacade.CHANNEL_ENGINE_OUT)
+                for redis_msg in pubsub.listen():
+                    msg = json.loads(redis_msg['data'])
+                    data = msg['data']
+                    match (msg['type']):
+                        case 'init_step_data_pack':
+                            self._on_init_step_data_pack_msg(data)
+                        case 'step_data_pack':
+                            self._on_step_data_pack_msg(data)
+                        case 'command_result':
+                            self._on_command_result(data)
+                        case 'command_error':
+                            self._on_command_error(data)
+            except redis.exceptions.ConnectionError as e:
+                logger.error('redis connection error', exc_info=e)
 
         world_thread = threading.Thread(target=listen, daemon=True)
         world_thread.start()
