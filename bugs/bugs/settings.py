@@ -6,19 +6,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = True
+DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'b9d0-37-139-176-92.ngrok-free.app',
     'evolutionofants.click'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1',
-    'https://b9d0-37-139-176-92.ngrok-free.app',
     'https://evolutionofants.click'
 ]
 
