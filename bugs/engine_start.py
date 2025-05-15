@@ -159,7 +159,7 @@ def main():
     bug_corpse_spawner_service = BugCorpseSpawnerService(event_bus)
     vision_serivce = VisionService(event_bus)
     thermal_service = ThermalService(event_bus)
-    item_service = ItemService(event_bus)
+    item_service = ItemService(event_bus, logger)
     world_service = WorldService(event_bus, world_factory, map_factory, colony_factory, climate_factory, tree_factory, item_area_factory, item_source_factory)
 
     gene_deserializer = GeneDeserializer()

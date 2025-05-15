@@ -2,14 +2,17 @@ from .base_service import BaseService
 from core.world.entities.item.items.base.item import Item
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.base.entity_types import EntityTypes
+from core.world.utils.event_emiter import EventEmitter
 from typing import List
+import logging
 
 class ItemService(BaseService):
 
-    def __init__(self, event_bus):
+    def __init__(self, event_bus: EventEmitter, logger: logging.Logger):
         super().__init__(event_bus)
         self._item_die_schedule = {}
         self._bug_corpses: List[Item] = []
+        self._logger = logger
 
         event_bus.add_listener('items_step_pulse', self._on_items_step_pulse)
         event_bus.add_listener('item_born', self._on_item_born)
@@ -20,10 +23,12 @@ class ItemService(BaseService):
         self._sort_all_items()
 
     def _handle_stucked_items(self):
-        stucked_items = self._world.map.get_entities(entity_types=[EntityTypes.ITEM], filter=self._check_is_item_stucked)
+        stucked_items: List[Item] = self._world.map.get_entities(entity_types=[EntityTypes.ITEM], filter=self._check_is_item_stucked)
+        self._logger.warning(f'world has stucked items count={len(stucked_items)}')
         if len(stucked_items):
             for item in stucked_items:
-                item.simple_die()
+                item.die_step = self._world.current_step + 10
+        self._logger.warning(f'stucked items rescheduled')
 
     def _sort_all_items(self):
         items: List[Item] = self._world.map.get_entities(entity_types=[EntityTypes.ITEM])
