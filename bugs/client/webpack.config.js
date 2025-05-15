@@ -4,10 +4,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
 const staticClientPath = path.resolve(__dirname, 'static/client');
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    mode: 'development',
-    devtool: "source-map",
+    mode: isProduction ? 'production' : 'development',
+    devtool: isProduction ? false : 'source-map',
     entry: {
         domainWorker: './gameApp/src/domainWorkerStart.js',
         gameApp: './gameApp/src/index.js',

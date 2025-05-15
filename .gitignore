@@ -1,4 +1,5 @@
 bugs/client/node_modules
+bugs/client/static
 venv
 .venv
 __pycache__/
