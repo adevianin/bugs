@@ -297,14 +297,11 @@ class EngineFacade:
             conn_fail_count = 0
             while True:
                 try:
-                    print('ping redis')
                     self._redis.ping()
                     if conn_fail_count > 0:
-                        print('connection restored')
                         self._listen_engine_out()
                     conn_fail_count = 0
                 except redis.exceptions.ConnectionError as e:
-                    print('redis error')
                     conn_fail_count += 1
                     event_bus.emit('engine_connection_error')
                 time.sleep(1)

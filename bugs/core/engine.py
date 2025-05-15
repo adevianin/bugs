@@ -143,19 +143,15 @@ class Engine():
                 try:
                     self._redis.ping()
                     if conn_fail_count > 0:
-                        print('connection restored')
                         self._listen_engine_in()
                     conn_fail_count = 0
                 except redis.exceptions.ConnectionError as e:
                     self._disconnect_all_players()
-                    print('redis conn err')
                     conn_fail_count += 1
                     if conn_fail_count >= 5:
                         self._logger.error('redis connection error', exc_info=e)
                         self._stop_engine_signal.set()
                 time.sleep(1)
-
-            print('redis watcher stopped')
 
         self._redis_watcher_thread = threading.Thread(target=ping, daemon=True)
         self._redis_watcher_thread.start()
@@ -178,8 +174,6 @@ class Engine():
                     self._on_client_msg(msg_data_json)
             except redis.exceptions.ConnectionError as e:
                 self._logger.error('listening egning in channel connection error')
-
-            print('engine in listener stopped')
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
