@@ -12,7 +12,7 @@ import logging
 class EngineFacade:
     _instance = None
 
-    WAIT_COMMAND_RESULT_TIMEOUT = 4 if not DEBUG else 180
+    WAIT_COMMAND_RESULT_TIMEOUT = 30 if not DEBUG else 180
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
