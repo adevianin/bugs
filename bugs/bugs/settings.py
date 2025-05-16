@@ -123,7 +123,7 @@ LANGUAGES = [
 
 
 STATIC_URL = 'static/'
-# STATIC_ROOT = BASE_DIR / 'client/static'
+STATIC_ROOT = BASE_DIR / 'client/static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

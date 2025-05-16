@@ -7,7 +7,7 @@ import { EventEmitter } from '@common/utils/eventEmitter';
 async function initApp() {
     let initialData = readInitialData();
 
-    let domainWorker = new Worker(`${STATIC_CLIENT_PATH}/domainWorker.js`);
+    let domainWorker = new Worker(new URL('./domainWorkerStart.js', import.meta.url));
     let eventBus = new EventEmitter();
     let domainFacade = new DomainFacade(eventBus, domainWorker);
     await initViewLayer(domainFacade);

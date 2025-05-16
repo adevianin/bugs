@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from bugs.settings import BASE_DIR
+from bugs.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
 import os
 import subprocess
 
@@ -25,6 +25,6 @@ class Command(BaseCommand):
             subprocess.run(['npm', 'install'], cwd=client_dir, env=env, check=True)
 
         self.stdout.write(self.style.WARNING(f'Building frontend in mode = "{mode}"...'))
-        subprocess.run(['npx', 'webpack'], cwd=client_dir, env=env, check=True)
+        subprocess.run(['npx', 'webpack', '--env', f'staticRoot={STATIC_ROOT}'], cwd=client_dir, env=env, check=True)
 
         self.stdout.write(self.style.SUCCESS(f'Frontend is built in mode = "{mode}"'))
