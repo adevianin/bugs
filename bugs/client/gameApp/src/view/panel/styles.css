@@ -41,7 +41,18 @@
     background-color: darkgray;
     flex-grow: 0;
     flex-shrink: 0;
-    height: 10px;
+    height: 20px;
+    position: relative;
+}
+
+.panel__handler::before {
+    content: "⇕";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: black;
 }
 
 .panel__tab-switcher {
