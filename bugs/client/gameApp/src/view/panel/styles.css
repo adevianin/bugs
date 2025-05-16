@@ -1,5 +1,5 @@
 .panel {
-    background-color: beige;
+    background-color: var(--main-color);
     z-index: 3;
     display: flex;
     flex-direction: column;
