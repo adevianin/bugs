@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -20,7 +21,7 @@ module.exports = (env = {}) => {
             initialStylesEmailVerificationPage: './emailVerificationPage/initialStyles.css',
         },
         output: {
-            filename: '[name].js',
+            filename: isProduction ? '[name].[contenthash].js' : '[name].js',
             path: env.staticRoot,
             assetModuleFilename: '[hash][ext]',
             chunkFilename: 'chunk-[contenthash].js',
@@ -64,7 +65,14 @@ module.exports = (env = {}) => {
         },
         plugins: [
             new RemoveEmptyScriptsPlugin(),
-            new MiniCssExtractPlugin()
+            new MiniCssExtractPlugin({
+                filename: isProduction ? '[name].[contenthash].css' : '[name].css',
+            }),
+            new WebpackManifestPlugin({
+                fileName: 'manifest.json',
+                publicPath: '',
+                writeToFileEmit: true
+            })
         ],
     }
 };

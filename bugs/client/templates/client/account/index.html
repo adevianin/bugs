@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load static %}
+{% load hashed_static %}
 
 {% block title %}
     {% trans "Enter the Game: Sign In / Sign Up" %}
@@ -11,12 +11,12 @@
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'initialStylesAccountApp.css' %}">
+    <link rel="stylesheet" href="{% hashed_static 'initialStylesAccountApp.css' %}">
 {% endblock %}
 
 {% block javascript %}
     <script src="https://accounts.google.com/gsi/client"></script>
-    <script src="{% static 'accountApp.js' %}"></script>
+    <script src="{% hashed_static 'accountApp.js' %}"></script>
 {% endblock %}
 
 {% block content %}

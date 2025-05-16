@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load static %}
+{% load hashed_static %}
 
 {% block title %}
     {% trans "Evolution Of Ants" %}
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'initialStylesGameApp.css' %}">
+    <link rel="stylesheet" href="{% hashed_static 'initialStylesGameApp.css' %}">
 {% endblock %}
 
 {% block javascript %}
     {{ initial_data|json_script:"initial-data" }}
-    <script src="{% static 'gameApp.js' %}"></script>
+    <script src="{% hashed_static 'gameApp.js' %}"></script>
 {% endblock %}
 
 {% block content %}

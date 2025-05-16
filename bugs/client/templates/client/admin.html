@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load hashed_static %}
 
 {% block title %}Admin{% endblock %}
 
 {% block javascript %}
-    <script src="{% static 'adminApp.js' %}"></script>
+    <script src="{% hashed_static 'adminApp.js' %}"></script>
 {% endblock %}
 
 {% block content %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load static %}
+{% load hashed_static %}
 
 {% block title %}
     {% trans "Email Verification" %}
@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'initialStylesEmailVerificationPage.css' %}">
+    <link rel="stylesheet" href="{% hashed_static 'initialStylesEmailVerificationPage.css' %}">
 {% endblock %}
 
 {% block content %}
