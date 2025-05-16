@@ -15,6 +15,8 @@ import { HelpTabView } from './tabs/helpTab/helpTabView';
 
 class PanelView extends BaseGameHTMLView {
 
+    static PANEL_START_HEIGHT = 300;
+
     constructor(el) {
         super(el);
         this._onMouseMoveBound = this._onMouseMove.bind(this);
@@ -38,7 +40,7 @@ class PanelView extends BaseGameHTMLView {
 
     _render() {
         this._el.classList.add('panel');
-        this._height = 320;
+        this._height = PanelView.PANEL_START_HEIGHT;
         this._renderTabViews();
 
         let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
@@ -84,21 +86,23 @@ class PanelView extends BaseGameHTMLView {
     }
 
     _onMouseMove(e) {
-        let minHeight = this._handlerHeight;
-        let panelClientRect = this._el.getBoundingClientRect();
         let cursorY;
         if (e.touches) {
             cursorY = e.touches[0].clientY;
         } else {
             cursorY = e.clientY;
         }
+        if (cursorY < 0) {
+            return;
+        }
+        let minHeight = this._handlerHeight;
+        let panelClientRect = this._el.getBoundingClientRect();
         let panelTop = panelClientRect.top;
         let diff = panelTop - cursorY;
         let newHeight = parseInt(this._el.style.height) + diff;
         window.getSelection().removeAllRanges();
         if (newHeight >= minHeight) {
             this._el.style.height = newHeight + 'px';
-            this.$pixiApp.resize();
         }
     }
 

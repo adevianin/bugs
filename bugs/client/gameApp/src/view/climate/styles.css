@@ -39,7 +39,7 @@
 .climate__container {
     position: absolute;
     z-index: 2;
-    margin: 3px;
+    top: 3px;
     left: 0;
     right: 0;
     pointer-events: none;

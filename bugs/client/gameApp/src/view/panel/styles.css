@@ -3,9 +3,32 @@
     z-index: 3;
     display: flex;
     flex-direction: column;
-    position: relative;
-    flex-grow: 0;
-    flex-shrink: 0;
+    position: absolute;
+    bottom: 0;
+}
+
+@media (max-width: 599px) {
+    .panel {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .panel__handler {
+        border-radius: 0;
+    }
+}
+
+@media (min-width: 600px) {
+    .panel {
+        width: 550px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    .panel__handler {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
 }
 
 .panel__tab-container {
