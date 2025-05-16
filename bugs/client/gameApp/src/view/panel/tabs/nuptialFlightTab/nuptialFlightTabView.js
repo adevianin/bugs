@@ -68,7 +68,7 @@ class NuptialFlightTabView extends BaseGameHTMLView {
     }
 
     _getStepsCountToNuptialSeasonStart() {
-        let nuptSeasonStartYearStep = CONSTS.SPRING_START_YEAR_STEP;
+        let nuptSeasonStartYearStep = CONSTS.SUMMER_START_YEAR_STEP;
         let currentStep = this.$domain.currentStep;
         let currentYearStep = currentStep % CONSTS.STEPS_IN_YEAR;
         if (currentYearStep <= nuptSeasonStartYearStep) {
