@@ -12,10 +12,12 @@ import { RatingTabView } from './tabs/ratingTab';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { NotificationIndicatorView } from './tabs/notificationsTab/indicator/notificationIndicatorView';
 import { HelpTabView } from './tabs/helpTab/helpTabView';
+import { isMobileCheck } from '@utils/isMobileCheck';
 
 class PanelView extends BaseGameHTMLView {
 
-    static PANEL_START_HEIGHT = 300;
+    static PANEL_START_HEIGHT = 420;
+    static PANEL_START_HEIGHT_SMALL = 220;
 
     constructor(el) {
         super(el);
@@ -38,9 +40,17 @@ class PanelView extends BaseGameHTMLView {
         this._el.style.height = val + 'px';
     }
 
+    _determinePanelStartHeight() {
+        if (isMobileCheck()) {
+            return PanelView.PANEL_START_HEIGHT_SMALL;
+        } else {
+            return PanelView.PANEL_START_HEIGHT;
+        }
+    }
+
     _render() {
         this._el.classList.add('panel');
-        this._height = PanelView.PANEL_START_HEIGHT;
+        this._height = this._determinePanelStartHeight();
         this._renderTabViews();
 
         let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
@@ -99,12 +109,12 @@ class PanelView extends BaseGameHTMLView {
         let panelClientRect = this._el.getBoundingClientRect();
         let panelTop = panelClientRect.top;
         let diff = panelTop - cursorY;
-        let newHeight = parseInt(this._el.style.height) + diff;
+        let newHeight = parseInt(this._height) + diff;
         window.getSelection().removeAllRanges();
         if (newHeight < minHeight) {
             newHeight = minHeight;
         }
-        this._el.style.height = newHeight + 'px';
+        this._height = newHeight;
     }
 
     _onMouseUp(e) {
