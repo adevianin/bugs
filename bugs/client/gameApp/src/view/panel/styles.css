@@ -5,7 +5,7 @@
     flex-direction: column;
     position: absolute;
     bottom: 0;
-    left: 0;
+    right: 0;
 }
 
 @media (max-width: 599px) {
@@ -22,11 +22,11 @@
 @media (min-width: 600px) {
     .panel {
         width: 550px;
-        border-top-right-radius: 6px;
+        border-top-left-radius: 6px;
     }
 
     .panel__handler {
-        border-top-right-radius: 6px;
+        border-top-left-radius: 6px;
     }
 }
 
