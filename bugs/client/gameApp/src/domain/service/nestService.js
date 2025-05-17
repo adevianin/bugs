@@ -1,10 +1,9 @@
 import { BaseGameService } from "./base/baseGameService";
 import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
-import { Egg } from "@domain/entity/egg";
-import { Larva } from "@domain/entity/larva";
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
 import { GenericRequestError } from "@common/domain/errors/genericRequestError";
+import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class NestService extends BaseGameService {
 
@@ -68,15 +67,15 @@ class NestService extends BaseGameService {
 
         let queen = this._world.getQueenOfColony(nest.fromColony);
         if (!queen || queen.locatedInNestId != nest.id) {
-            return 'CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST';
+            return GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_CANT_LAY_EGG_WITHOUT_QUEEN_IN_NEST;
         }
 
         if (nest.storedCalories < CONSTS.NEW_EGG_FOOD_COST) {
-            return'NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG';
+            return GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_NOT_ENOUGHT_FOOD_IN_NEST_TO_LAY_EGG;
         }
 
         if (!CONSTS.LAY_EGG_SEASONS.includes(this._world.currentSeason)) {
-            return 'NOT_SUITABLE_SEASON_TO_LAY_EGG';
+            return GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_NOT_SUITABLE_SEASON_TO_LAY_EGG;
         }
 
         return null;

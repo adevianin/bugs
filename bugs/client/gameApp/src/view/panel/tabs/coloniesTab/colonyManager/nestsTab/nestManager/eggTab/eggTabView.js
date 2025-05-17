@@ -88,7 +88,7 @@ class EggTabView extends BaseGameHTMLView {
 
     async _validate() {
         let errorId = await this.$domain.validateLayingEggInNest(this._nest.id);
-        this._renderError(this.$messages[errorId]);
+        this._renderError(errorId ? this.$mm.get(errorId) : '');
 
         return !errorId;
     }
@@ -134,7 +134,7 @@ class EggTabView extends BaseGameHTMLView {
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
-                this._renderError(this.$messages['SOMETHING_WENT_WRONG']);
+                this._renderError(this.$mm.get(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG));
             }
         }
     }
