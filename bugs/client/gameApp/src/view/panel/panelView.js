@@ -93,7 +93,7 @@ class PanelView extends BaseGameHTMLView {
             cursorY = e.clientY;
         }
         if (cursorY < 0) {
-            return;
+            cursorY = 0;
         }
         let minHeight = this._handlerHeight;
         let panelClientRect = this._el.getBoundingClientRect();
@@ -101,9 +101,10 @@ class PanelView extends BaseGameHTMLView {
         let diff = panelTop - cursorY;
         let newHeight = parseInt(this._el.style.height) + diff;
         window.getSelection().removeAllRanges();
-        if (newHeight >= minHeight) {
-            this._el.style.height = newHeight + 'px';
+        if (newHeight < minHeight) {
+            newHeight = minHeight;
         }
+        this._el.style.height = newHeight + 'px';
     }
 
     _onMouseUp(e) {
