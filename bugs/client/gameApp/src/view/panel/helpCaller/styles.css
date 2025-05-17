@@ -1,4 +1,10 @@
 .help-sign {
-    font-size: 36px;
+    font-size: 22px;
     color: blue;
+}
+
+.help-sign-container {
+    position: absolute;
+    right: 3px;
+    top: 3px;
 }

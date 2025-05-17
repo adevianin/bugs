@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import breedingManagerTmpl from './breedingManagerTmpl.html';
 import { QueenSelectorView } from "./queenSelector/queenSelectorView";
@@ -75,7 +76,8 @@ class BreedingManagerView extends BaseGameHTMLView {
     }
 
     async _validateQueen() {
-        return await this.$domain.validateBreedingQueen(this._queenSelectorView.queen.id);
+        let queenId = this._queenSelectorView.queen ? this._queenSelectorView.queen.id : null;
+        return await this.$domain.validateBreedingQueen(queenId);
     }
 
     _renderQueenError(queenErrorId) {
@@ -122,7 +124,7 @@ class BreedingManagerView extends BaseGameHTMLView {
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
-                this._renderRequestError(GAME_MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                console.error(result);
             }
         }
     }
@@ -149,10 +151,6 @@ class BreedingManagerView extends BaseGameHTMLView {
         let marker = await this.$domain.buildMarker(MarkerTypes.POINTER, this._nestPositionView.value, { area: CONSTS.NEST_AREA })
         let markers = [marker];
         this.$eventBus.emit('showMarkersRequest', markers);
-    }
-
-    _renderRequestError(errId) {
-        this._requestErrorContainerEl.innerHTML = this.$mm.get(errId);
     }
 
     _onSomeTabSwitched() {

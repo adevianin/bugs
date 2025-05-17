@@ -1,7 +1,9 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import maleSelectorTmpl from './maleSelectorTmpl.html';
 import { MaleProfileView } from "./maleProfileView";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { ArrowButtonView } from '@view/panel/base/arrowButton/arrowButtonView';
 
 class MaleSelectorView extends BaseGameHTMLView {
 
@@ -12,8 +14,8 @@ class MaleSelectorView extends BaseGameHTMLView {
         this._render();
 
         this.$domain.myState.nuptialEnvironment.on('nuptialMalesChanged', this._onNuptialMalesChanged.bind(this));
-        this._nextMaleBtn.addEventListener('click', this._onNextMaleBtnClick.bind(this));
-        this._prevMaleBtn.addEventListener('click', this._onPrevMaleBtnClick.bind(this));
+        this._nextMaleBtnView.events.on('click', this._onNextMaleBtnClick.bind(this));
+        this._prevMaleBtnView.events.on('click', this._onPrevMaleBtnClick.bind(this));
     }
 
     get selectedMale() {
@@ -29,13 +31,11 @@ class MaleSelectorView extends BaseGameHTMLView {
 
         this._malesPlaceholder = this._el.querySelector('[data-males-place-holder]');
         this._malesEl = this._el.querySelector('[data-males]');
-        this._nextMaleBtn = this._el.querySelector('[data-next-btn]');
-        this._prevMaleBtn = this._el.querySelector('[data-previous-btn]');
+        this._nextMaleBtnView = new ArrowButtonView(this._el.querySelector('[data-next-btn]'), true);
+        this._prevMaleBtnView = new ArrowButtonView(this._el.querySelector('[data-previous-btn]'), false);
         this._maleProfile = new MaleProfileView(this._el.querySelector('[data-male-profile]'));
 
         this._malesPlaceholder.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES);
-        this._nextMaleBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NEXT_MALE);
-        this._prevMaleBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_PREV_MALE);
 
         this._renderMales();
     }
@@ -56,8 +56,8 @@ class MaleSelectorView extends BaseGameHTMLView {
     }
 
     _renderChoosingMaleBtnsStatus() {
-        this._nextMaleBtn.disabled = this._selectedMaleIndex + 1 == this._males.length;
-        this._prevMaleBtn.disabled = this._selectedMaleIndex == 0;
+        this._nextMaleBtnView.toggleIsDisabled(this._selectedMaleIndex + 1 == this._males.length);
+        this._prevMaleBtnView.toggleIsDisabled(this._selectedMaleIndex == 0);
     }
 
     _selectMale(index) {

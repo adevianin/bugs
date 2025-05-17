@@ -1,3 +1,7 @@
+.ant-stats__table {
+    width: 100%;
+}
+
 .ant-stats__stat_title {
     image-rendering: pixelated;
     background-repeat: no-repeat;

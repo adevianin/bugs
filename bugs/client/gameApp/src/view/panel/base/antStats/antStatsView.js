@@ -30,6 +30,7 @@ class AntStatsView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = antStatsTmpl;
         this._el.classList.add('g-table');
+        this._el.classList.add('ant-stats__table');
         
         if (this._stats) {
             this._renderStats();

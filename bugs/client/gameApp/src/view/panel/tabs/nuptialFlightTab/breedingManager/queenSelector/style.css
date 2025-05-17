@@ -1,0 +1,24 @@
+.queen-selector__name {
+    margin-top: 3px;
+}
+
+.queen-selector__profile-stats {
+    margin-top: 3px;
+}
+
+.queen-selector__choose-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    gap: 3px;
+}
+
+.queen-selector__analize-genome-btn-container {
+    margin-top: 3px;
+}
+
+.queen-selector__born-antara-container {
+    display: flex;
+    flex-direction: row;
+}

@@ -1,0 +1,30 @@
+.breeding-manager__section_title {
+    font-weight: var(--strong-font-weight);
+    font-size: var(--large-font-fize);
+}
+
+.breeding-manager__colony-name-input {
+    margin-top: 3px;
+    width: 100%;
+}
+
+.breeding-manager__building-site {
+    margin-top: 3px;
+}
+
+.breeding-manager__building-site-choose-btn {
+    margin-top: 3px;
+}
+
+.breeding-manager__breed-btn-container {
+    display: flex;
+    justify-content: center;
+}
+
+.breeding-manager__queen-section {
+    min-height: 100px;
+}
+
+.breeding-manager__male-section {
+    min-height: 100px;
+}

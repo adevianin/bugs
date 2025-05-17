@@ -14,4 +14,23 @@
 
 .g-error-container {
     color: red;
+    min-height: 20px;
+    font-weight: var(--font-weight);
+    font-size: var(--font-fize);
+}
+
+.g-button {
+    font-weight: var(--font-weight);
+    font-size: var(--font-fize);
+    padding: 3px;
+    height: 30px;
+}
+
+.g-button--main {
+    font-weight: var(--strong-font-weight);
+    font-size: var(--large-font-fize);
+}
+
+.g-input {
+    height: 20px;
 }

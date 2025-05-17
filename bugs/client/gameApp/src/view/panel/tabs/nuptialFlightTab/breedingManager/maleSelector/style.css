@@ -1,0 +1,15 @@
+.male-selector__choose-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    gap: 3px;
+}
+
+.male-selector__analize-genome-btn-container {
+    margin-top: 3px;
+}
+
+.male-selector__profile-stats {
+    margin-top: 3px;
+}

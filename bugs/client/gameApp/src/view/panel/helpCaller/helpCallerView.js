@@ -1,3 +1,4 @@
+import './styles.css';
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 
 class HelpCallerView extends BaseHTMLView {
@@ -10,6 +11,7 @@ class HelpCallerView extends BaseHTMLView {
     }
 
     _render() {
+        this._el.classList.add('help-sign-container');
         let aEl = document.createElement('a');
         aEl.classList.add('help-sign');
         aEl.setAttribute('href', '#');

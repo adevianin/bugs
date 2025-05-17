@@ -1,3 +1,7 @@
 :root {
     --main-color: beige;
+    --font-fize: 14px;
+    --large-font-fize: 20px;
+    --font-weight: 400;
+    --strong-font-weight: 700;
 }

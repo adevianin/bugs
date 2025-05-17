@@ -21,7 +21,7 @@
 
 @media (min-width: 600px) {
     .panel {
-        width: 450px;
+        width: 470px;
         border-top-left-radius: 6px;
     }
 
@@ -31,8 +31,9 @@
 }
 
 .panel__tab-container {
-    padding: 5px;
+    padding: 10px;
     overflow-y: auto;
+    position: relative;
 }
 
 .panel__handler {
@@ -73,4 +74,10 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     word-break: break-all;
+}
+
+.panel__tab-title-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
 }
