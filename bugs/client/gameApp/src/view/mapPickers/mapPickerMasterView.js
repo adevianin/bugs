@@ -3,6 +3,7 @@ import { BaseGraphicView } from "@view/base/baseGraphicView";
 import { RaidNestPickerView } from "./raidNestPickerView";
 import { NewNestPositionPickerView } from "./newNestPositionPickerView";
 import { BorderView } from './borderView';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class MapPickerMasterView extends BaseGraphicView {
 
@@ -39,7 +40,7 @@ class MapPickerMasterView extends BaseGraphicView {
             callback(nest);
             this._deactivateAll();
         });
-        this._borderView.activate(this.$messages.pick_nest);
+        this._borderView.activate(this.$mm.get(GAME_MESSAGE_IDS.MAP_PICKER_NEST_TITLE));
     }
 
     _onNewNestPositionPickRequest(mainNestPosition, callback) {
@@ -50,7 +51,7 @@ class MapPickerMasterView extends BaseGraphicView {
             callback(point);
             this._deactivateAll();
         });
-        this._borderView.activate(this.$messages.pick_position);
+        this._borderView.activate(this.$mm.get(GAME_MESSAGE_IDS.MAP_PICKER_POSITION_TITLE));
     }
 
     _onPickerDeactivateRequest() {
