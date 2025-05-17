@@ -5,7 +5,6 @@ class BaseView {
     static domain;
     static eventBus;
     static mm;
-    static messages;
 
     get $domain() {
         return BaseView.domain;
@@ -19,10 +18,6 @@ class BaseView {
         return BaseView.mm;
     }
 
-    get $messages() {
-        return BaseView.messages;
-    }
-
     static useDomain(domain) {
         BaseView.domain = domain;
     }
@@ -33,10 +28,6 @@ class BaseView {
 
     static useMessageMaster(mm) {
         BaseView.mm = mm;
-    }
-
-    static useMessages(messages) {
-        BaseView.messages = messages;
     }
 
     constructor() {

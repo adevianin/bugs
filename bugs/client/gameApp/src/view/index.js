@@ -3,7 +3,6 @@ import { AppView } from './appView';
 import { Requester } from '@common/utils/requester';
 import { WorldSpritesheetManager } from './world/worldSpritesheetManager';
 import { BaseGraphicView } from './base/baseGraphicView';
-import { uaMessages } from '../messages/uaMessagesLib';
 import { EventEmitter } from '@common/utils/eventEmitter.js';
 import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
 import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
@@ -34,7 +33,6 @@ async function initViewLayer(domainFacade) {
     BaseView.useDomain(domainFacade);
     BaseView.useEventBus(eventBus);
     BaseView.useMessageMaster(mm);
-    BaseView.useMessages(uaMessages);
     BaseGameHTMLView.usePixiApp(pixiApp);
     BaseGraphicView.useStepProgressChecker(stepProgressChecker);
     BaseGraphicView.useTextureManager(spritesheetManager);
