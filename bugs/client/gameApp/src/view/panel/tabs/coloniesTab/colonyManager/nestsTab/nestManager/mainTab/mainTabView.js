@@ -10,7 +10,6 @@ class MainTabView extends BaseGameHTMLView {
 
         this._render();
 
-        this._showNestBtn.addEventListener('click', this._onShowNestBtnClick.bind(this));
     }
 
     manageNest(nest) {
@@ -41,8 +40,6 @@ class MainTabView extends BaseGameHTMLView {
         this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyNestName.bind(this));
         this._isMainNestEl = this._el.querySelector('[data-is-main-nest]');
-        this._showNestBtn = this._el.querySelector('[data-show-nest]');
-        this._showNestBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_SHOW_NEST_BTN_LABEL);
 
         this._el.querySelector('[data-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_NAME_LABEL);
         this._el.querySelector('[data-food-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_FOOD_COUNT_LABEL);
@@ -64,10 +61,6 @@ class MainTabView extends BaseGameHTMLView {
     async _applyNestName(newName) {
         await this.$domain.renameNest(this._nest.id, newName);
         return true;
-    }
-
-    _onShowNestBtnClick() {
-        this.$eventBus.emit('showPointRequest', this._nest.position);
     }
 
 }
