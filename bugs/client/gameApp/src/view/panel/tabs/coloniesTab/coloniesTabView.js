@@ -16,6 +16,7 @@ class ColoniesTabView extends BaseGameHTMLView {
         this._coloniesList.events.on('selectedColonyChanged', this._manageSelectedColony.bind(this));
         this.$domain.myState.on('colonyBorn', this._renderMode.bind(this));
         this.$domain.myState.on('colonyDied', this._renderMode.bind(this));
+        this._showColonyBtn.addEventListener('click', this._onShowColonyClick.bind(this));
     }
 
     showNestManagerFor(nest){
@@ -32,6 +33,9 @@ class ColoniesTabView extends BaseGameHTMLView {
         this._coloniesList = new ColoniesSelectView(this._el.querySelector('[data-colonies-select]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
         this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'colonies');
+
+        this._showColonyBtn = this._el.querySelector('[data-show-colony-btn]');
+        this._showColonyBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_SHOW_COLONY_BTN);
 
         this._colonySelectorEl = this._el.querySelector('[data-colony-selector]');
 
@@ -58,6 +62,21 @@ class ColoniesTabView extends BaseGameHTMLView {
             this._noColoniesPlaceholderEl.classList.add('g-hidden');
             this._colonySelectorEl.classList.remove('g-hidden');
         }
+    }
+
+    _onShowColonyClick() {
+        let nests = this.$domain.myState.getNestsFromColony(this._coloniesList.selectedColony.id);
+        let xSum = 0;
+        let ySum = 0;
+        for (let nest of nests) {
+            xSum += nest.position.x;
+            ySum += nest.position.y;
+        }
+
+        let x = parseInt(xSum / nests.length);
+        let y = parseInt(ySum / nests.length);
+
+        this.$eventBus.emit('showPointRequest', {x,y});
     }
 
 }
