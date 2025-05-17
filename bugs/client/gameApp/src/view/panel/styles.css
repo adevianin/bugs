@@ -82,3 +82,8 @@
     justify-content: center;
     margin-bottom: 5px;
 }
+
+.panel__tab-title {
+    font-weight: var(--strong-font-weight);
+    font-size: var(--huge-font-fize);
+}
