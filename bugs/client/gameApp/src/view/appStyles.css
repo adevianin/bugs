@@ -1,5 +1,10 @@
 @import "./cssVariables.css";
 
+html, body {
+    position: fixed; /* fix mobile viewport jump */
+    width: 100%;
+}
+
 .app {
     height: 100%;
     display: flex;
