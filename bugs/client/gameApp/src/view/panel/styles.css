@@ -80,7 +80,7 @@
 .panel__tab-title-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 
 .panel__tab-title {
