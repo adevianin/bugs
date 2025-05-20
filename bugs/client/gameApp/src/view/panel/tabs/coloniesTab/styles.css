@@ -1,9 +1,9 @@
 .colonies-tab__colony-selector-controls {
     display: flex;
     flex-direction: row;
-    gap: var(--margin-small);
 }
 
 .colonies-tab__colony-select {
     width: 200px;
+    margin-right: var(--margin-small);;
 }
