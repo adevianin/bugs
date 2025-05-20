@@ -2,9 +2,10 @@ import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
 import { BreedingManagerView } from './breedingManager/breedinManagerView';
-import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
+// import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 import { CONSTS } from '@domain/consts';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
 
 class NuptialFlightTabView extends BaseGameHTMLView {
 
@@ -20,14 +21,14 @@ class NuptialFlightTabView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = nuptialFlightTabTmpl;
 
-        this._el.querySelector('[data-nuptial-flight-tab-label-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME);
         this._el.querySelector('[data-nuptial-flight-tab-label-season-start-after]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NUPT_SEASON_START_AFTER);
 
+        let tabName = this.$mm.get(GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME);
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName, 'breeding');
         this._timeToNuptialSeasonEl = this._el.querySelector('[data-time-to-nuptial-season]');
         this._nuptialFlightModeEl = this._el.querySelector('[data-nuptial-flight-mode]');
         this._waitingNuptialFlightModeEl = this._el.querySelector('[data-waiting-nuptial-flight-mode]');
         this._breedingManagerView = new BreedingManagerView(this._el.querySelector('[data-breeding-manager]'));
-        this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'breeding');
         this._renderIsNuptialSeasonState();
         this._renderTimeToNuptialSeason();
     }

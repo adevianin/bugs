@@ -1,0 +1,19 @@
+.panel-tab-head {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.panel-tab-head__tab-name {
+    font-weight: var(--strong-font-weight);
+    font-size: var(--huge-font-fize);
+}
+
+.panel-tab-head__help-sign-container {
+    position: absolute;
+    right: 0;
+    top: -15px;
+}

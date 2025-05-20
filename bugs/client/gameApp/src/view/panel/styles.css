@@ -76,14 +76,3 @@
     border-top-right-radius: 10px;
     word-break: break-all;
 }
-
-.panel__tab-title-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.panel__tab-title {
-    font-weight: var(--strong-font-weight);
-    font-size: var(--huge-font-fize);
-}
