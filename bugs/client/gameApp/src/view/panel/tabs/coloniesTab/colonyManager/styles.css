@@ -1,6 +1,6 @@
 .colony_manager {
-    padding: 5px;
-    width: 350px;
+    width: 100%;
+    margin-top: var(--margin-large);
 }
 
 .colony-manager__nest-tab {

@@ -1,12 +1,13 @@
 :root {
     --main-color: beige;
     --font-size: 14px;
-    --font-size-large: 20px;
+    --font-size-large: 18px;
     --font-size-huge: 30px;
     --font-weight: 400;
     --font-weight-strong: 700;
     --margin-small: 3px;
     --margin: 5px;
     --margin-large: 10px;
+    --margin-huge: 15px;
     --control-height: 30px;
 }

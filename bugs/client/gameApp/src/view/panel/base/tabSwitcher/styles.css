@@ -1,10 +1,13 @@
 .tab-switcher {
-    padding: 5px;
     display: flex;
+    margin-top: var(--margin);
+    margin-bottom: var(--margin);
+    border-bottom: 1px solid gray;
 }
 
 .tab-switcher--horizontal {
     flex-direction: row;
+    justify-content: space-around;
 }
 
 .tab-switcher--vertical {
@@ -12,9 +15,13 @@
 }
 
 .tab-switcher__activator {
-    margin: 1px;
+    border: none;
+    background-color: unset;
+    font-size: var(--font-size-large);
+    color: darkgray;
 }
 
 .tab-switcher__activator--active {
-    outline: solid 3px blue;
+    color: black;
+    border-bottom: 2px solid black;
 }
