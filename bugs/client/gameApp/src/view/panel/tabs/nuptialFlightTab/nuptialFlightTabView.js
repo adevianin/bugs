@@ -2,7 +2,6 @@ import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nuptialFlightTabTmpl from './nuptialFlightTab.html';
 import { BreedingManagerView } from './breedingManager/breedinManagerView';
-// import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 import { CONSTS } from '@domain/consts';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
