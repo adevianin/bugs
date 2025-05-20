@@ -16,21 +16,29 @@
     color: red;
     min-height: 20px;
     font-weight: var(--font-weight);
-    font-size: var(--font-fize);
+    font-size: var(--font-size);
 }
 
 .g-button {
     font-weight: var(--font-weight);
-    font-size: var(--font-fize);
+    font-size: var(--font-size);
     padding: 3px;
-    height: 30px;
+    height: var(--control-height);
 }
 
 .g-button--main {
-    font-weight: var(--strong-font-weight);
-    font-size: var(--large-font-fize);
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
 }
 
 .g-input {
-    height: 20px;
+    height: var(--control-height);
+    font-weight: var(--font-weight);
+    font-size: var(--font-size);
+}
+
+.g-select {
+    height: var(--control-height);
+    font-weight: var(--font-weight);
+    font-size: var(--font-size);
 }

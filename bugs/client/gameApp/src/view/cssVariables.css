@@ -1,8 +1,12 @@
 :root {
     --main-color: beige;
-    --font-fize: 14px;
-    --large-font-fize: 20px;
-    --huge-font-fize: 30px;
+    --font-size: 14px;
+    --font-size-large: 20px;
+    --font-size-huge: 30px;
     --font-weight: 400;
-    --strong-font-weight: 700;
+    --font-weight-strong: 700;
+    --margin-small: 3px;
+    --margin: 5px;
+    --margin-large: 10px;
+    --control-height: 30px;
 }

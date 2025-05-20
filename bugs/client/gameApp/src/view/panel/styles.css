@@ -76,3 +76,8 @@
     border-top-right-radius: 10px;
     word-break: break-all;
 }
+
+.panel__field-label {
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
+}

@@ -8,8 +8,8 @@
 }
 
 .panel-tab-head__tab-name {
-    font-weight: var(--strong-font-weight);
-    font-size: var(--huge-font-fize);
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-huge);
 }
 
 .panel-tab-head__help-sign-container {

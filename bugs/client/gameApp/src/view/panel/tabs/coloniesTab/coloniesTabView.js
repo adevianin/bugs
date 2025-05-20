@@ -2,9 +2,9 @@ import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import coloniesTabTmpl from "./coloniesTab.html";
 import { ColonyManager } from './colonyManager';
-import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 import { ColoniesSelectView } from './coloniesSelect/coloniesSelectView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
 
 class ColoniesTabView extends BaseGameHTMLView {
 
@@ -32,14 +32,15 @@ class ColoniesTabView extends BaseGameHTMLView {
 
         this._coloniesList = new ColoniesSelectView(this._el.querySelector('[data-colonies-select]'));
         this._colonyManager = new ColonyManager(this._el.querySelector('[data-colony-manager]'));
-        this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'colonies');
 
         this._showColonyBtn = this._el.querySelector('[data-show-colony-btn]');
         this._showColonyBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_SHOW_COLONY_BTN);
 
         this._colonySelectorEl = this._el.querySelector('[data-colony-selector]');
 
-        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_TITLE);
+        let tabName = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_TITLE);
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName, 'colonies');
+
         this._el.querySelector('[data-colony-selector-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.COLONIES_TAB_LABEL_COLONY_SELECTOR);
 
         this._renderMode();
