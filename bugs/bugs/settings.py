@@ -11,13 +11,15 @@ DEBUG = config("DEBUG", cast=bool)
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'evolutionofants.click'
+    'evolutionofants.click',
+    '917a-91-244-59-135.ngrok-free.app',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1',
-    'https://evolutionofants.click'
+    'https://evolutionofants.click',
+    'https://917a-91-244-59-135.ngrok-free.app',
 ]
 
 MAIN_SOCKET_URL = '/mainsocket'

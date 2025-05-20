@@ -9,10 +9,16 @@ import { NuptialFlightTabView } from './tabs/nuptialFlightTab';
 import { SpecieBuilderTabView } from './tabs/specieBuilderTab';
 import { NotificationsTabView } from './tabs/notificationsTab';
 import { RatingTabView } from './tabs/ratingTab';
-import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { NotificationIndicatorView } from './tabs/notificationsTab/indicator/notificationIndicatorView';
 import { HelpTabView } from './tabs/helpTab/helpTabView';
 import { isMobileCheck } from '@utils/isMobileCheck';
+import '@view/panel/icons/mainTabSwitcherIcons/breedingIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/coloniesIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/specieIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/notificationsIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/ratingIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/accountIcon.png';
+import '@view/panel/icons/mainTabSwitcherIcons/helpIcon.png';
 
 class PanelView extends BaseGameHTMLView {
 
@@ -72,13 +78,13 @@ class PanelView extends BaseGameHTMLView {
         this._helpTab = new HelpTabView(this._el.querySelector('[data-help-tab]'));
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
-            { name: 'breeding', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_BREEDING), tab: this._nuptialFlightTab },
-            { name: 'colonies', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_COLONIES), tab: this._coloniesTab },
-            { name: 'specie_builder', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_SPECIE), tab: this._specieBuildertTab },
-            { name: 'notifications', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_NOTIFICATIONS), tab: this._notificationsTab },
-            { name: 'rating', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_RATING), tab: this._ratingTab },
-            { name: 'user', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_ACCOUNT), tab: this._userTab },
-            { name: 'help', label: this.$mm.get(GAME_MESSAGE_IDS.TAB_HELP), tab: this._helpTab }
+            { name: 'breeding', label: '', tab: this._nuptialFlightTab, activatorClass: 'panel__breeding-tab-activator' },
+            { name: 'colonies', label: '', tab: this._coloniesTab, activatorClass: 'panel__colonies-tab-activator' },
+            { name: 'specie_builder', label: '', tab: this._specieBuildertTab, activatorClass: 'panel__specie-tab-activator' },
+            { name: 'notifications', label: '', tab: this._notificationsTab, activatorClass: 'panel__notifications-tab-activator' },
+            { name: 'rating', label: '', tab: this._ratingTab, activatorClass: 'panel__rating-tab-activator' },
+            { name: 'user', label: '', tab: this._userTab, activatorClass: 'panel__user-tab-activator' },
+            { name: 'help', label: '', tab: this._helpTab, activatorClass: 'panel__help-tab-activator' }
         ]);
     }
 

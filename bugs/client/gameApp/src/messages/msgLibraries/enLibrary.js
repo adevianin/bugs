@@ -5,14 +5,6 @@ const EN_LIBRARY = {
     ...COMMON_EN_LIBRARY,
     [GAME_MESSAGE_IDS.OLD_PASSWORD_NEEDED]: 'Old password is not specified.',
 
-    [GAME_MESSAGE_IDS.TAB_BREEDING]: 'Breeding',
-    [GAME_MESSAGE_IDS.TAB_COLONIES]: 'Colonies',
-    [GAME_MESSAGE_IDS.TAB_SPECIE]: 'Specie',
-    [GAME_MESSAGE_IDS.TAB_NOTIFICATIONS]: 'Notifications',
-    [GAME_MESSAGE_IDS.TAB_RATING]: 'Rating',
-    [GAME_MESSAGE_IDS.TAB_ACCOUNT]: 'Account',
-    [GAME_MESSAGE_IDS.TAB_HELP]: '?',
-
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_NEEDED]: 'The female needs a location to settle down.',
     [GAME_MESSAGE_IDS.BREEDING_PLACE_TO_SETTLE_BLOCKED]: 'The location for settling down is already occupied.',
     [GAME_MESSAGE_IDS.BREEDING_QUEEN_NEEDED]: 'A female is required for breeding.',

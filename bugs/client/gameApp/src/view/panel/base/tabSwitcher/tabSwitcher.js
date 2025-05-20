@@ -33,6 +33,9 @@ class TabSwitcher extends BaseGameHTMLView {
             btn.setAttribute('data-tab-activator', tabData.name);
             btn.innerHTML = tabData.label;
             btn.classList.add('tab-switcher__activator');
+            if (tabData.activatorClass) {
+                btn.classList.add(tabData.activatorClass);
+            }
             this._el.append(btn);
             btn.addEventListener('click', this._onTabActivatorClick.bind(this));
         });

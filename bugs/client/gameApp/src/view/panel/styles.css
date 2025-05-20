@@ -56,28 +56,63 @@
     color: black;
 }
 
+.panel__field-label {
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
+}
+
 .panel__tab-switcher {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     position: absolute;
-    width: 360px;
+    width: 100%;
     left: 50%;
     transform: translateY(-100%) translateX(-50%);
+    padding-bottom: 10px;
 }
 
 .panel__tab-switcher button {
     margin: 0;
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     cursor: pointer;
     border: none;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-    word-break: break-all;
+    background-position: center;
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+    background-repeat: no-repeat;
 }
 
-.panel__field-label {
-    font-weight: var(--font-weight-strong);
-    font-size: var(--font-size-large);
+.panel__tab-switcher button.tab-switcher__activator--active {
+    outline: var(--contrasting-color) solid 4px;
+    z-index: 99;
+}
+
+.panel__breeding-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/breedingIcon.png');
+}
+
+.panel__colonies-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/coloniesIcon.png');
+}
+
+.panel__specie-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/specieIcon.png');
+}
+
+.panel__notifications-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/notificationsIcon.png');
+}
+
+.panel__rating-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/ratingIcon.png');
+}
+
+.panel__user-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/accountIcon.png');
+}
+
+.panel__help-tab-activator {
+    background-image: url('@view/panel/icons/mainTabSwitcherIcons/helpIcon.png');
 }
