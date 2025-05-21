@@ -27,6 +27,10 @@
     margin-top: var(--margin-huge);
 }
 
+.operation-creator__field-section--large-margin-bottom {
+    margin-bottom: var(--margin-huge);
+}
+
 .operation-creator__nest-selector-container {
     max-width: 200px;
 }

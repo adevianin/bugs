@@ -88,7 +88,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         let nestId = this._nestSelector.nestId;
         let workersCount = this._workersCountView.value;
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let result = await this.$domain.buildFortificationsOpearation(this._performingColony.id, nestId, workersCount);
 
         if (result.success) {
@@ -96,7 +96,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
             } else {

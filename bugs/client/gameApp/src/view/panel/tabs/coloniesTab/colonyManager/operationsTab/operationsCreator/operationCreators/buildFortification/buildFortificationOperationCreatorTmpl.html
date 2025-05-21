@@ -1,15 +1,21 @@
-<div data-operation-title></div>
+<div class="operation-creator__title-container">
+    <span class="operation-creator__title" data-operation-title></span>
+</div>
 <div>
-    <label data-nest-label></label>
-    <select data-nest-selector></select>
+    <label class="operation-creator__field-label" data-nest-label></label>
+    <div class="operation-creator__nest-selector-container">
+        <select class="g-select" data-nest-selector></select>
+    </div>
     <div class="g-error-container" data-nest-err></div>
 </div>
-<div>
-    <label data-workers-count-label></label>
-    <input data-workers-count type="number">
-    <span class="g-error-container" data-workers-count-err></span>
+<div class="operation-creator__field-section--large-margin-bottom">
+    <label class="operation-creator__field-label" data-workers-count-label></label>
+    <div>
+        <input class="g-input" data-workers-count type="number">
+        <span class="g-error-container" data-workers-count-err></span>
+    </div>
 </div>
-<div>
-    <button data-start-btn></button>
+<div class="operation-creator__start-btn-container">
+    <button class="g-button g-button--main" data-start-btn></button>
     <div data-loader></div>
 </div>
