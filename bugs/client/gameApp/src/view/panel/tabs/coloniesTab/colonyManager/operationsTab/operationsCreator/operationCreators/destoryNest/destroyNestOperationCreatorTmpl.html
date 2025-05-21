@@ -1,23 +1,29 @@
-<div data-operation-title></div>
-<div>
-    <label data-nest-to-destroy-label></label>
-    <span data-choosed-nest></span>
-    <button data-choose-nest-btn></button>
-    <span class="g-error-container" data-choosed-nest-err></span>
+<div class="operation-creator__title-container">
+    <span class="operation-creator__title" data-operation-title></span>
 </div>
 <div>
-    <label data-workers-count-label></label>
-    <input data-workers-count type="number">
-    <span class="g-error-container" data-workers-count-err></span>
+    <label class="operation-creator__field-label" data-nest-to-destroy-label></label>
+    <div><span data-choosed-nest></span></div>
+    <button class="g-button" data-choose-nest-btn></button>
+    <div class="g-error-container" data-choosed-nest-err></div>
 </div>
 <div>
-    <label data-warriors-count-label></label>
-    <input data-warriors-count type="number">
-    <span class="g-error-container" data-warriors-count-err></span>
+    <label class="operation-creator__field-label" data-workers-count-label></label>
+    <div>
+        <input class="g-input" data-workers-count type="number">
+        <span class="g-error-container" data-workers-count-err></span>
+    </div>
 </div>
-<div class="g-error-container" data-min-ants-count-error-container></div>
+<div class="operation-creator-destroy-nest__warriors-count-field-section">
+    <label class="operation-creator__field-label" data-warriors-count-label></label>
+    <div>
+        <input class="g-input" data-warriors-count type="number">
+        <span class="g-error-container" data-warriors-count-err></span>
+    </div>
+    <div class="g-error-container" data-min-ants-count-error-container></div>
+</div>
 <div class="g-error-container" data-main-error-container></div>
-<div>
-    <button data-start-btn>start</button>
+<div class="operation-creator__start-btn-container">
+    <button class="g-button g-button--main" data-start-btn></button>
     <div data-loader></div>
 </div>

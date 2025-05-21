@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import destroyNestOperationCreatorTmpl from './destroyNestOperationCreatorTmpl.html';
 import { MarkerTypes } from "@domain/enum/markerTypes";
@@ -38,6 +39,8 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
         this._el.innerHTML = destroyNestOperationCreatorTmpl;
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
+
         this._mainErrorContainerEl = this._el.querySelector('[data-main-error-container]');
         this._minAntsCountErrorContainerEl = this._el.querySelector('[data-min-ants-count-error-container]');
 
@@ -157,7 +160,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
             return
         }
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
 
         let result = await this.$domain.destroyNestOperation(this._performingColony.id, this._warriorsCount.value, this._workersCount.value, this._nestToDestroyData.id);
         
@@ -166,7 +169,7 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
