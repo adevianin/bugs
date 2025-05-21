@@ -22,3 +22,11 @@
     gap: var(--margin-small);
     margin-bottom: var(--margin-huge);
 }
+
+.operation-creator__field-section--large-margin-top {
+    margin-top: var(--margin-huge);
+}
+
+.operation-creator__nest-selector-container {
+    max-width: 200px;
+}

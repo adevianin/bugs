@@ -173,7 +173,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         let nestForLootId = this._nestForLootSelector.nestId;
         let nestToPillageId = this._nestToPillageData.id;
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let result = await this.$domain.pillageNestOperation(this._performingColony.id, nestToPillageId, nestForLootId, warriorsCount, workersCount);
 
         if (result.success) {
@@ -181,7 +181,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
