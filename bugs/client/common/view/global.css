@@ -6,6 +6,9 @@
     border-collapse: collapse;
     border-spacing: 0px;
     border: solid 1px;
+    table-layout: fixed;
+    width: 100%;
+    background-color: var(--table-bg-color);
 }
 
 .g-table thead td {
@@ -14,6 +17,7 @@
 
 .g-table td {
     border: solid 1px;
+    overflow: auto;
 }
 
 .g-error-container {
