@@ -1,5 +1,7 @@
+@import "@common/view/cssVariables.css";
 @import '@common/view/basic.css';
 @import '@common/view/global.css';
+
 
 .game-loader {
     position: absolute;

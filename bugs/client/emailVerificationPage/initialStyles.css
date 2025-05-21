@@ -1,3 +1,4 @@
+@import "@common/view/cssVariables.css";
 @import '@common/view/basic.css';
 
 .verification-container {

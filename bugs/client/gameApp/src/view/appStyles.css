@@ -1,5 +1,3 @@
-@import "./cssVariables.css";
-
 html, body {
     position: fixed; /* fix mobile viewport jump */
     width: 100%;
