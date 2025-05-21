@@ -33,6 +33,7 @@
     font-size: var(--font-size);
     padding: 3px;
     height: var(--control-height);
+    text-transform: capitalize;
 }
 
 .g-button--main {
@@ -41,6 +42,7 @@
 }
 
 .g-input {
+    padding: 3px;
     height: var(--control-height);
     font-weight: var(--font-weight);
     font-size: var(--font-size);

@@ -59,7 +59,6 @@ class TextInputView extends BaseGameHTMLView {
     }
 
     _render() {
-        this._el.classList.add('text-input');
         this._el.setAttribute('type', 'text');
         this._el.setAttribute('minlength', this._minLength);
         this._el.setAttribute('maxlength', this._maxLength);

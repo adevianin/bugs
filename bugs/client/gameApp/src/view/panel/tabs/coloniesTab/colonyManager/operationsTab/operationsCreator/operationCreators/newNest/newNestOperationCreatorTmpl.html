@@ -1,26 +1,32 @@
-<div data-operation-title></div>
-<div>
-    <label data-nest-position-label></label>
-    <span data-building-position></span>
-    <button data-choose-building-position></button>
-    <span class="g-error-container" data-building-position-err></span>
+<div class="operation-creator__title-container">
+    <span class="operation-creator__title" data-operation-title></span>
 </div>
 <div>
-    <div data-worker-requirements-label></div>
-    <label for="workers-count" data-workers-count-label></label>
-    <input id="workers-count" data-workers-count-input type="number">
-    <span class="g-error-container" data-workers-count-err></span>
+    <label class="operation-creator__field-label" data-nest-name-label></label>
+    <div><input class="g-input operation-creator-new-nest__nest-name-input" data-nest-name></div>
+    <div class="g-error-container" data-nest-name-err></div>
 </div>
 <div>
-    <label for="warriors-count" data-warriors-count-label></label>
-    <input id="warriors-count" data-warriors-count-input type="number">
-    <span class="g-error-container" data-warriors-count-err></span>
+    <label class="operation-creator__field-label" data-nest-position-label></label>
+    <div><span data-building-position></span></div>
+    <button class="g-button" data-choose-building-position></button>
+    <div class="g-error-container" data-building-position-err></div>
 </div>
 <div>
-    <label data-nest-name-label></label>
-    <input data-nest-name>
-    <span class="g-error-container" data-nest-name-err></span>
+    <label class="operation-creator__field-label" data-workers-count-label></label>
+    <div>
+        <input class="g-input" data-workers-count-input type="number">
+    </div>
+    <div class="operation-creator-new-nest__field-worker-requirements-label" data-worker-requirements-label></div>
+    <div class="g-error-container" data-workers-count-err></div>
+</div>
+<div>
+    <label class="operation-creator__field-label" data-warriors-count-label></label>
+    <div><input class="g-input" data-warriors-count-input type="number"></div>
+    <div class="g-error-container" data-warriors-count-err></div>
 </div>
 <div class="g-error-container" data-error-container></div>
-<button data-start>старт</button>
-<div data-loader></div>
+<div class="operation-creator__start-btn-container">
+    <button class="g-button g-button--main" data-start></button>
+    <div data-loader></div>
+</div>

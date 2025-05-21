@@ -1,3 +1,23 @@
-.operation-creator__error {
-    color: red
+.operation-creator__title-container {
+    display: flex;
+    justify-content: center;
+}
+
+.operation-creator__title {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-strong);
+    margin-bottom: var(--margin-large);
+    text-transform: capitalize;
+}
+
+.operation-creator__field-label {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-strong);
+    text-transform: capitalize;
+}
+
+.operation-creator__start-btn-container {
+    display: flex;
+    justify-content: center;
+    gap: var(--margin-small);
 }

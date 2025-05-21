@@ -1,7 +1,3 @@
-.text-input {
-    width: 100px;
-}
-
 .text-input--error {
     border: 2px solid red;
     box-shadow: 0 0 5px red;

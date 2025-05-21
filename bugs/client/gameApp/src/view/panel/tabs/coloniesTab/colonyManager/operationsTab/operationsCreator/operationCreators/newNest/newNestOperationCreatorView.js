@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import newNestOperationCreatorTmpl from './newNestOperationCreatorTmpl.html';
 import { MarkerTypes } from "@domain/enum/markerTypes";

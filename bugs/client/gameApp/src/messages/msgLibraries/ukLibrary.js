@@ -263,7 +263,7 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_TITLE]: 'Будування гнізда сателіта',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_POSITION_LABEL]: 'позиція гнізда:',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_CHOOSE_NEST_POSITION_BTN_LABEL]: 'вибрать',
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_WORKER_REQUIREMENTS_LABEL]: 'Робочі мурахи повинні мати ген будування гнізд сателітів',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_WORKER_REQUIREMENTS_LABEL]: '*Робочі мурахи повинні мати ген будування гнізд сателітів',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_NAME_LABEL]: 'назва гнізда:',
 
     [GAME_MESSAGE_IDS.DESTROY_NEST_OP_CR_TITLE]: 'Зруйнувать гніздо',
