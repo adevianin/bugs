@@ -1,5 +1,18 @@
+.operations-creator {
+    margin-top: var(--margin-large);
+}
+
 .operations-creator__new-operation-btns-list {
     display: flex;
     flex-wrap: wrap;
     gap: var(--margin);       
+}
+
+.operations-creator__new-operation-btn {
+    text-transform: capitalize;
+}
+
+.operations-creator__title {
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-strong);
 }
