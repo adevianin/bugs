@@ -5,7 +5,3 @@
 .operation-creator-new-nest__nest-name-input {
     width: 100%;
 }
-
-.operation-creator-new-nest__warriors-count-field-section {
-    margin-top: var(--margin-huge);
-}

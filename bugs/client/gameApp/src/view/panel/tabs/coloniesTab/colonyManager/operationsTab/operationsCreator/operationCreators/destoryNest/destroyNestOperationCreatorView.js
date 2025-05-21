@@ -1,4 +1,3 @@
-import './style.css';
 import { BaseOperationCreatorView } from "../baseOperationCreatorView";
 import destroyNestOperationCreatorTmpl from './destroyNestOperationCreatorTmpl.html';
 import { MarkerTypes } from "@domain/enum/markerTypes";
