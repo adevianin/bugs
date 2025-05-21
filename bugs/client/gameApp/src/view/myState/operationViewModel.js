@@ -57,6 +57,14 @@ class OperationViewModel extends BaseViewModel {
         this._applyProps(patch.props);
     }
 
+    markAsStopping() {
+        this._isStopping = true;
+    }
+
+    isMarkedAsStopping() {
+        return !!this._isStopping;
+    }
+
 }
 
 export {

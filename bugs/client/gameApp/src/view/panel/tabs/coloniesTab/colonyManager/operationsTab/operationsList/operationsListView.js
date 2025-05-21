@@ -29,11 +29,13 @@ class OperationsListView extends BaseGameHTMLView {
         this._el.innerHTML = operationsListTmpl;
 
         this._operationsContainerEl = this._el.querySelector('[data-operations-container]');
+        this._noOperationsPlacehiolder = this._el.querySelector('[data-no-operations-placeholder]');
 
         this._el.querySelector('[data-col-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_NAME);
         this._el.querySelector('[data-col-name-status]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_STATUS);
         this._el.querySelector('[data-col-name-hiring]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_HIRING);
         this._el.querySelector('[data-col-name-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_COL_LABEL_ACTIONS);
+        this._el.querySelector('[data-no-operations-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_LIST_NO_OPERATIONS_LABEL);
     }
 
     manageColony(colony) {
@@ -58,6 +60,7 @@ class OperationsListView extends BaseGameHTMLView {
 
     _onOperationAdded(operation) {
         this._renderOperation(operation);
+        this._renderEmptyState();
     }
 
     _onOperationChanged(operation) {
@@ -70,6 +73,7 @@ class OperationsListView extends BaseGameHTMLView {
         if (this._selectedOperationId == operationId) {
             this._clearOperationSelect();
         }
+        this._renderEmptyState();
     }
 
     _stopListenColony() {
@@ -84,6 +88,7 @@ class OperationsListView extends BaseGameHTMLView {
         this._colony.operations.forEach(operation => {
             this._renderOperation(operation);
         });
+        this._renderEmptyState();
     }
 
     _renderOperation(operation) {
@@ -91,6 +96,7 @@ class OperationsListView extends BaseGameHTMLView {
         el.classList.add('colony-manager__operation');
         let view = new OperationView(el, operation, this._colony.id);
         view.events.on('activate', () => this._onOperationViewActivateClick(operation));
+        view.events.on('stopRequest', () => this._onOperationViewStopRequest(operation));
         this._operationViews[operation.id] = view;
         this._operationsContainerEl.append(el);
     }
@@ -124,12 +130,31 @@ class OperationsListView extends BaseGameHTMLView {
         }
     }
 
+    _renderEmptyState() {
+        let isEmpty = true;
+        for (let operation of this._colony.operations) {
+            if (!operation.isMarkedAsStopping()) {
+                isEmpty = false;
+                break;
+            }
+        }
+
+        this._noOperationsPlacehiolder.classList.toggle('g-hidden', !isEmpty);
+    }
+
     _onOperationViewActivateClick(operation) {
         if (this._selectedOperationId == operation.id) {
             this._clearOperationSelect();
         } else {
             this._selectOperation(operation);
         }
+    }
+
+    _onOperationViewStopRequest(operation) {
+        operation.markAsStopping();
+        this._operationViews[operation.id].toggle(false);
+        this.$domain.stopOperation(this._colony.id, operation.id);
+        this._renderEmptyState();
     }
 
     _onSomeTabSwitched() {
