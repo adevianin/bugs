@@ -34,6 +34,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
         this._bugCorpseErrContainer = this._el.querySelector('[data-bug-corpse-err]');
 
         this._startBtn = this._el.querySelector('[data-start-btn]');
+        this._startBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_CREATOR_START_BTN_LABEL);
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
@@ -95,7 +96,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
             return;
         }
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
 
         let result = await this.$domain.bringBugOpearation(this._performingColony.id, this._nestSelector.nestId);
 
@@ -104,7 +105,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
             } else {
