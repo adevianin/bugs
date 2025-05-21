@@ -12,7 +12,11 @@ class DotsLoaderView extends BaseHTMLView {
 
     _render() {
         this._el.innerHTML = dotsLoaderTmpl;
-        this._el.classList.add('dots-loader', 'g-hidden');
+        this._el.classList.add('dots-loader', 'g-not-visible');
+    }
+
+    toggleVisibility(isVisible) {
+        this._el.classList.toggle('g-not-visible', !isVisible);
     }
     
 }

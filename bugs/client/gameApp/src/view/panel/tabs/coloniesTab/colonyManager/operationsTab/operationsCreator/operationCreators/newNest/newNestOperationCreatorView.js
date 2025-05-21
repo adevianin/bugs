@@ -158,7 +158,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         let warriorsCount = this._warriorsCount.value;
         let nestName = this._nestNameView.value;
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         
         let result = await this.$domain.buildNewSubNestOperation(this._performingColony.id, this._buildingPosition.value, workersCount, warriorsCount, nestName);
         
@@ -167,7 +167,7 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {

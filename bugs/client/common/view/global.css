@@ -2,6 +2,10 @@
     display: none !important
 }
 
+.g-not-visible {
+    visibility: hidden;
+}
+
 .g-table {
     border-collapse: collapse;
     border-spacing: 0px;
