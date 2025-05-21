@@ -18,23 +18,12 @@
     flex-direction: column;
 }
 
-.colony-manager__operations-list {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
-    margin-top: 3px;
-}
-
 .colony-manager__operation {
     
 }
 
 .colony-manager__operation--selected {
     color: red;
-}
-
-.colony-manager__operations-list td {
-    border: solid 1px;
 }
 
 .colony-manager__operations-creator {

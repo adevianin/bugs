@@ -17,12 +17,6 @@ class OperationsTab extends BaseGameHTMLView {
         this._operationsList.manageColony(colony);
     }
 
-    remove() {
-        super.remove();
-        this._operationsList.remove();
-        this._operationsCreator.remove();
-    }
-
     _render() {
         this._el.innerHTML = operationsTabTmpl;
 

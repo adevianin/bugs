@@ -8,6 +8,10 @@
     border: solid 1px;
 }
 
+.g-table thead td {
+    text-transform: capitalize;
+}
+
 .g-table td {
     border: solid 1px;
 }
