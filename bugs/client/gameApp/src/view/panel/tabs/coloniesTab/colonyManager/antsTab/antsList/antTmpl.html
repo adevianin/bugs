@@ -1,38 +1,66 @@
 <tr>
-    <td data-name rowspan="2"></td>
-    <td data-type></td>
-    <td>
+    <td class="ants-list__table-col-name" data-name></td>
+    <td class="ants-list__table-col-type" data-type></td>
+    <td class="ants-list__table-col-nest">
         <select data-nest></select>
     </td>
-    <td data-actions>
-        <button data-profile-btn></button>
+    <td class="ants-list__table-col-more" data-actions>
+        <button class="g-button ants-list__more-btn" data-profile-btn></button>
     </td>
 </tr>
 <tr data-ant-profile>
-    <td colspan="5">
-        <div data-ant-stats></div>
-        <div>
-            <span data-guardian-behavior-label></span>:
-            <select data-guardian-type>
-                <option value="none" data-guardian-behavior-option-none></option>
-                <option value="nest" data-guardian-behavior-option-nest></option>
-                <option value="colony" data-guardian-behavior-option-colony></option>
-            </select>
-        </div>
-        <div>
-            <span data-cooperative-behavior-label></span>:
-            <input data-is-cooperactive type="checkbox">
-        </div>
-        <div data-genome></div>
-        <div data-breeding-male-genome-container>
-            <span data-breeding-male-genome-label></span>:
-            <div data-breeding-male-genome></div>
-        </div>
+    <td class="ants-list__ant-profile" colspan="4">
         <div data-id></div>
-        <div><span data-age-label></span>: <span data-age></span></div>
-        <div><span data-current-activity-label></span>: <span data-current-activity></span></div>
-        <div><span data-is-hungry-label></span>: <span data-is-hungry></span></div>
-        <button data-nuptial-flight></button>
-        <button data-show-ant></button>
+        <div data-ant-stats></div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-ant-genom-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <div data-genome></div>
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-field" data-breeding-male-genome-container>
+            <label class="ants-list__ant-profile-field-label">
+                <span data-breeding-male-genome-label></span>:
+            </label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <div data-breeding-male-genome></div>
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-age-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <span data-age></span>
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-current-activity-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <span data-current-activity></span>
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-is-hungry-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container"><span data-is-hungry></span></div>
+        </div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-cooperative-behavior-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <input data-is-cooperactive type="checkbox">
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-field">
+            <label class="ants-list__ant-profile-field-label"><span data-guardian-behavior-label></span>:</label>
+            <div class="ants-list__ant-profile-field-data-container">
+                <select class="g-select ants-list__ant-profile-field-control" data-guardian-type>
+                    <option value="none" data-guardian-behavior-option-none></option>
+                    <option value="nest" data-guardian-behavior-option-nest></option>
+                    <option value="colony" data-guardian-behavior-option-colony></option>
+                </select>
+            </div>
+        </div>
+        <div class="ants-list__ant-profile-action-btns-container">
+            <button class="g-button" data-show-ant></button>
+            <button class="g-button" data-nuptial-flight></button>
+        </div>
     </td>
 </tr>

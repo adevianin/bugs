@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import antsListTmpl from './antsListTmpl.html';
 import { AntView } from "./antView";

@@ -7,7 +7,7 @@ const VIEW_SETTINGS = {
     showItemAreaDot: false,
     isFastAnimations: false,
     renderNestId: false,
-    renderAntId: true
+    renderAntId: false
 }
 
 export {

@@ -97,6 +97,7 @@ class AntView extends BaseGameHTMLView {
         this._el.querySelector('[data-age-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANT_AGE_LABEL);
         this._renderAge();
 
+        this._el.querySelector('[data-ant-genom-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ANT_GENOME_LABEL);
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._ant.genome);
 
         this._antStatsView = new AntStatsView(this._ant.stats);

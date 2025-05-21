@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { NestOptionView } from './nestOptionView';
@@ -52,6 +53,8 @@ class NestSelectorView extends BaseGameHTMLView {
     }
 
     _render() {
+        this._el.classList.add('g-select');
+        this._el.classList.add('nest-selector');
         this._renderEmptyOption();
         
         for (let nest of this._nests) {
