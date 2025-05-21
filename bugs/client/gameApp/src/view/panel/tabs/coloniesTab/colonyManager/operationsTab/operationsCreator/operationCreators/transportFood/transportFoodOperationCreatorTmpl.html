@@ -1,26 +1,36 @@
-<div data-operation-title></div>
-<div>
-    <label data-from-nest-label></label>
-    <select data-nest-from-selector></select>
-    <span class="g-error-container" data-nest-from-err></span>
+<div class="operation-creator__title-container">
+    <span class="operation-creator__title" data-operation-title></span>
 </div>
 <div>
-    <label data-to-nest-label></label>
-    <select data-nest-to-selector></select>
-    <span class="g-error-container" data-nest-to-err></span>
+    <label class="operation-creator__field-label" data-from-nest-label></label>
+    <div class="operation-creator__nest-selector-container">
+        <select class="g-select" data-nest-from-selector></select>
+    </div>
+    <div class="g-error-container" data-nest-from-err></div>
 </div>
 <div>
-    <label data-workers-count-label></label>
-    <input data-workers-count type="number">
-    <span class="g-error-container" data-workers-count-err></span>
+    <label class="operation-creator__field-label" data-to-nest-label></label>
+    <div class="operation-creator__nest-selector-container">
+        <select class="g-select" data-nest-to-selector></select>
+    </div>
+    <div class="g-error-container" data-nest-to-err></div>
 </div>
 <div>
-    <label data-warriors-count-label></label>
-    <input data-warriors-count type="number">
-    <span class="g-error-container" data-warriors-count-err></span>
+    <label class="operation-creator__field-label" data-workers-count-label></label>
+    <div>
+        <input class="g-input" data-workers-count type="number">
+        <span class="g-error-container" data-workers-count-err></span>
+    </div>
+</div>
+<div class="operation-creator__field-section--large-margin-top">
+    <label class="operation-creator__field-label" data-warriors-count-label></label>
+    <div>
+        <input class="g-input" data-warriors-count type="number">
+        <span class="g-error-container" data-warriors-count-err></span>
+    </div>
 </div>
 <div class="g-error-container" data-selected-nests-error-container></div>
-<div>
-    <button data-start-btn></button>
+<div class="operation-creator__start-btn-container">
+    <button class="g-button g-button--main" data-start-btn></button>
     <div data-loader></div>
 </div>

@@ -146,7 +146,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
         let workersCount = this._workersCountView.value;
         let warriorsCount = this._warriorsCountView.value;
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
 
         let result = await this.$domain.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount);
 
@@ -155,7 +155,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
                 this._onDone();
             });
         } else {
-            this._loader.toggle(false);
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 this._validate();
             } else {
