@@ -1,0 +1,28 @@
+.operations-list__table {
+    margin-top: var(--margin);
+}
+
+.operations-list__table-col-status {
+    width: 70px;
+}
+
+.operations-list__table-col-hiring {
+    width: 90px;
+}
+
+.operations-list__table-col-actions {
+    width: 150px;
+}
+
+.operations-list__operation_actions_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--margin-small)
+}
+
+.operations-list__operation--selected {
+    background-color: var(--table-highlighted-bg-color);
+}
+
+

@@ -19,7 +19,7 @@ class OperationView extends BaseGameHTMLView {
 
     toggleSelect(isSelected) {
         this._isSelected = isSelected;
-        this._el.classList.toggle('colony-manager__operation--selected', isSelected);
+        this._el.classList.toggle('operations-list__operation--selected', isSelected);
         this._renderActivateBtnState();
     }
 
@@ -28,6 +28,7 @@ class OperationView extends BaseGameHTMLView {
         this._nameEl = this._el.querySelector('[data-name]')
         this._statusEl = this._el.querySelector('[data-status]')
         this._stopBtn = this._el.querySelector('[data-stop-btn]');
+        this._stopBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATION_STOP_BTN_LABEL);
         this._hiringProgressEl = this._el.querySelector('[data-hiring-progress]');
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
         this._renderActivateBtnState();

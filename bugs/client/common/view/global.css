@@ -13,6 +13,7 @@
 
 .g-table thead td {
     text-transform: capitalize;
+    text-align: center;
 }
 
 .g-table td {

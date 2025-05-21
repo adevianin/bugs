@@ -18,14 +18,6 @@
     flex-direction: column;
 }
 
-.colony-manager__operation {
-    
-}
-
-.colony-manager__operation--selected {
-    color: red;
-}
-
 .colony-manager__operations-creator {
     padding: 0;
 }

@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { OperationView } from "./operationView";
 import operationsListTmpl from "./operationsListTmpl.html";
