@@ -26,7 +26,6 @@
 }
 
 .nest-manager__fertilize-field-label {
-    font-size: var(--font-size-large);
     text-transform: capitalize;
 }
 
