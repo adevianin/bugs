@@ -95,6 +95,7 @@ class NameEditorView extends BaseGameHTMLView {
 
     _onEditBtnClick() {
         this._changeMode(NameEditorView.MODES.EDIT);
+        this._textInputView.focus();
     }
 
     _onCancelBtnClick() {

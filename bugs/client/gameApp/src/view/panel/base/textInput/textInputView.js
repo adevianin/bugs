@@ -37,6 +37,10 @@ class TextInputView extends BaseGameHTMLView {
         this._renderError(null);
     }
 
+    focus() {
+        this._el.focus();
+    }
+
     _checkErrors() {
         if (this.value.length < this._minLength) {
             return this.$mm.format(GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH, this._minLength);
