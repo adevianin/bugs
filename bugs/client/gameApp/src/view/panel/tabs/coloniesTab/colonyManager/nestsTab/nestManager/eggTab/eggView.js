@@ -36,15 +36,13 @@ class EggView extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = eggTmpl;
 
-        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._egg.genome);
-
-        this._el.querySelector('[data-is-fertilized]').innerHTML = this._egg.isFertilized ? '+' : '-';
+        this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome-btn-container]'), this._egg.genome);
 
         this._toLarvaChamberBtn = this._el.querySelector('[data-to-larva-chamber]');
         this._toLarvaChamberBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_EGG_TO_LARVA_BTN_LABEL);
         this._deleteBtn = this._el.querySelector('[data-delete]');
+        this._deleteBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_DELETE_EGG_BTN_LABEL);
 
-        this._progressEl = this._el.querySelector('[data-progress]');
         this._stateEl = this._el.querySelector('[data-state]');
         this._renderProgress();
 
@@ -63,9 +61,7 @@ class EggView extends BaseGameHTMLView {
     }
 
     _renderProgress() {
-        let progressValue = this._egg.isDevelopment ? this._egg.progress : 100;
-        this._progressEl.innerHTML = progressValue;
-        this._stateEl.innerHTML = this._getEggStateText(this._egg.state);
+        this._stateEl.innerHTML = this._egg.isDevelopment ? `${this._egg.progress}%` : this._getEggStateText(this._egg.state);
         this._renderToLarvaChamberBtnState();
     }
 
@@ -109,24 +105,23 @@ class EggView extends BaseGameHTMLView {
     }
 
     async _onEggtoLarvaChamberClick() {
-        this._toLarvaLoaderView.toggle(true);
+        this._toLarvaLoaderView.toggleVisibility(true);
         this._toggleToLarvaChamberBtnBlock(true);
         let result = await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
         if (result.success) {
             this._waitLarva(result.larvaId, () => {
-                this._toLarvaLoaderView.toggle(false);
+                this._toLarvaLoaderView.toggleVisibility(false);
                 this._toggleToLarvaChamberBtnBlock(false);
                 this.toggle(false);
             });
         } else {
-            this._toLarvaLoaderView.toggle(false);
+            this._toLarvaLoaderView.toggleVisibility(false);
             this._toggleToLarvaChamberBtnBlock(false);
         }
     }
 
-    async _onEggDeleteClick() {
-        this.toggle(false);
-        await this.$domain.deleteEggInNest(this._nest.id, this._egg.id);
+    _onEggDeleteClick() {
+        this.events.emit('deleteRequest');
     }
 
     _waitLarva(larvaId, callback) {

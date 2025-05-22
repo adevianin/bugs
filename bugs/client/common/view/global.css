@@ -37,7 +37,7 @@
     font-weight: var(--font-weight);
     font-size: var(--font-size);
     padding: 3px;
-    height: var(--control-height);
+    min-height: var(--control-height);
     text-transform: capitalize;
 }
 

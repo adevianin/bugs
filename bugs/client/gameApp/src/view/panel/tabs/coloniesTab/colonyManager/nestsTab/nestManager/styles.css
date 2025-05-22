@@ -7,6 +7,53 @@
 }
 
 .nest-manager__tab-title {
-    font-weight: 700;
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
     text-align: center;
+}
+
+.nest-manager__lay-egg-controls-container {
+    margin-top: var(--margin-large);
+    display: flex;
+    gap: var(--margin);
+    align-items: center;
+}
+
+.nest-manager__fertilize-field-label {
+    font-size: var(--font-size-large);
+}
+
+.nest-manager__eggs-list-actions-col {
+    width: 120px;
+}
+
+.nest-manager__eggs-list-state-col {
+    width: 65px;
+}
+
+.nest-manager__eggs-list-caste-col {
+    width: 85px;
+}
+
+.nest-manager__ant-type-selector {
+    width: 100%;
+}
+
+.nest-manger__eggs-table {
+    margin-top: var(--margin-large);
+}
+
+.nest-manger__eggs-table td {
+    vertical-align: top;
+}
+
+.nest-manager__egg_actions_container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin-small);
+}
+
+.nest-manager__egg-to-chamber-btn-container {
+    display: flex;
+    flex-direction: row;
 }

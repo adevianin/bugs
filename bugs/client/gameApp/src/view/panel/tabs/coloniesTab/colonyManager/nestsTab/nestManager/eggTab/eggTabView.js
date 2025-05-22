@@ -24,16 +24,15 @@ class EggTabView extends BaseGameHTMLView {
         this._isFertilizeCheckbox = this._el.querySelector('[data-is-fertilized]');
         this._errorContainerEl = this._el.querySelector('[data-error-container]');
         this._addEggLoader = new DotsLoaderView(this._el.querySelector('[data-lay-egg-loader]'));
+        this._noEggsPlaceholder = this._el.querySelector('[data-no-eggs-placeholder]');
 
         this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_TITLE);
         this._el.querySelector('[data-fertilize-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_FERTILIZE_LABEL);
         this._el.querySelector('[data-col-title-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_NAME);
-        this._el.querySelector('[data-col-title-genome]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_GENOME);
-        this._el.querySelector('[data-col-title-is-fertilized]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_FERTILIZED);
-        this._el.querySelector('[data-col-title-progress]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_PROGRESS);
         this._el.querySelector('[data-col-title-state]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_STATE);
         this._el.querySelector('[data-col-title-caste]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_CASTE);
         this._el.querySelector('[data-col-title-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_ACTIONS);
+        this._el.querySelector('[data-no-eggs-placeholder-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_NO_EGGS_LABEL);
     }
 
     manageNest(nest) {
@@ -42,6 +41,7 @@ class EggTabView extends BaseGameHTMLView {
         this._listenNest();
 
         this._renderEggsList();
+        this._renderNoEggsState();
         this._renderError('');
     }
 
@@ -71,6 +71,7 @@ class EggTabView extends BaseGameHTMLView {
         let el = document.createElement('tr');
         this._eggsListEl.append(el);
         let view = new EggView(el, egg, this._nest);
+        view.events.on('deleteRequest', () => this._onDeleteEggRequest(egg));
         this._eggsViews[egg.id] = view;
     }
 
@@ -97,16 +98,25 @@ class EggTabView extends BaseGameHTMLView {
         this._addEggBtn.disabled = !isEnabled;
     }
 
-    _onEggBecameLarva(egg) {
-        this._removeEggView(egg);
+    _renderNoEggsState() {
+        let isEmpty = true;
+        for (let egg of this._nest.eggs) {
+            if (!egg.isMarkedAsRemoving()) {
+                isEmpty = false;
+                break;
+            }
+        }
+        this._noEggsPlaceholder.classList.toggle('g-hidden', !isEmpty);
     }
 
     _onEggDeleted(egg) {
         this._removeEggView(egg);
+        this._renderNoEggsState();
     }
 
     _onEggAdded(egg) {
         this._renderEgg(egg);
+        this._renderNoEggsState();
     }
 
     async _onAddEggBtnClick() {
@@ -116,7 +126,7 @@ class EggTabView extends BaseGameHTMLView {
         }
 
         this._toggleAddEggBtn(false);
-        this._addEggLoader.toggle(true);
+        this._addEggLoader.toggleVisibility(true);
         
         let name = this._generateAntName();
         let isFertilized = this._isFertilizeCheckbox.checked;
@@ -126,11 +136,11 @@ class EggTabView extends BaseGameHTMLView {
         if (result.success) {
             this._waitEggAdding(result.eggId, () => {
                 this._toggleAddEggBtn(true);
-                this._addEggLoader.toggle(false);
+                this._addEggLoader.toggleVisibility(false);
             });
         } else {
             this._toggleAddEggBtn(true);
-            this._addEggLoader.toggle(false);
+            this._addEggLoader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
@@ -170,6 +180,13 @@ class EggTabView extends BaseGameHTMLView {
 
     _renderError(errText) {
         this._errorContainerEl.innerHTML = errText || '';
+    }
+
+    _onDeleteEggRequest(egg) {
+        egg.markAsRemoving();
+        this._eggsViews[egg.id].toggle(false);
+        this.$domain.deleteEggInNest(this._nest.id, egg.id);
+        this._renderNoEggsState();
     }
 
 }

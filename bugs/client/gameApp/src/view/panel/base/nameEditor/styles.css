@@ -1,13 +1,37 @@
 .name-editor {
-    padding: 3px;
-}
-
-.name-editor__edit-container {
-    display: flex;
-    flex-direction: row;
+    height: 50px;
 }
 
 .name-editor__preview-container {
     display: flex;
     flex-direction: row;
+    align-items: start;
+}
+
+.name-editor__preview-name-container {
+    word-break: break-all;
+}
+
+.name-editor__controls-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.name-editor__input-container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+}
+
+.name-editor__input {
+    width: 100%;
+}
+
+.name-editor__button {
+    margin-left: var(--margin-small);
+    flex: 0 0 auto;
+}
+
+.name-editor__loader {
+    flex: 0 0 auto;
 }

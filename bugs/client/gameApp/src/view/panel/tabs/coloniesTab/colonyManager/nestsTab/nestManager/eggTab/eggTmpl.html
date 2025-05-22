@@ -1,15 +1,17 @@
 <td>
     <div data-name-editor></div>
 </td>
-<td data-genome></td>
-<td data-is-fertilized></td>
-<td data-progress></td>
-<td data-state></td>
 <td>
-    <select data-ant-type-selector></select>
+    <select class="g-select nest-manager__ant-type-selector" data-ant-type-selector></select>
 </td>
+<td data-state></td>
 <td data-actions>
-    <button data-to-larva-chamber></button>
-    <div data-to-larva-loader></div>
-    <button data-delete>X</button>
+    <div class="nest-manager__egg_actions_container">
+        <div class="nest-manager__egg-to-chamber-btn-container">
+            <button class="g-button" data-to-larva-chamber></button>
+            <div data-to-larva-loader></div>
+        </div>
+        <button class="g-button" data-delete></button>
+        <div data-genome-btn-container></div>
+    </div>
 </td>

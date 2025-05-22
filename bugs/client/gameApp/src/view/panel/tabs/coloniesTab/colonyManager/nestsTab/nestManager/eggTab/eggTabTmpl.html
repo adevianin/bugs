@@ -1,25 +1,30 @@
 <div>
     <div class="nest-manager__tab-title" data-title></div>
     <div>
-        <span data-fertilize-label></span><input type="checkbox" data-is-fertilized checked>
-        <button data-add-egg></button>
-        <div data-lay-egg-loader></div>
-        <div class="g-error-container" data-error-container></div>
-    </div>
-    <div>
-        <table>
-            <tr>
-                <td data-col-title-name></td>
-                <td data-col-title-genome></td>
-                <td data-col-title-is-fertilized></td>
-                <td data-col-title-progress></td>
-                <td data-col-title-state></td>
-                <td data-col-title-caste></td>
-                <td data-col-title-actions></td>
-            </tr>
-            <tbody data-eggs-list>
-                
+        <table class="g-table nest-manger__eggs-table">
+            <thead>
+                <tr>
+                    <td data-col-title-name></td>
+                    <td class="nest-manager__eggs-list-caste-col" data-col-title-caste></td>
+                    <td class="nest-manager__eggs-list-state-col" data-col-title-state></td>
+                    <td class="nest-manager__eggs-list-actions-col" data-col-title-actions></td>
+                </tr>
+            </thead>
+            <tbody data-eggs-list></tbody>
+            <tbody data-no-eggs-placeholder>
+                <tr>
+                    <td colspan="4" data-no-eggs-placeholder-label></td>
+                </tr>
             </tbody>
         </table>
+    </div>
+    <div>
+        <div class="nest-manager__lay-egg-controls-container">
+            <label class="nest-manager__fertilize-field-label" data-fertilize-label></label>
+            <input class="g-input" type="checkbox" data-is-fertilized checked>
+            <button class="g-button" data-add-egg></button>
+            <div data-lay-egg-loader></div>
+        </div>
+        <div class="g-error-container" data-error-container></div>
     </div>
 </div>
