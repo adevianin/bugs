@@ -1,0 +1,22 @@
+.nests-tab__nest-selector-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--margin-large);
+    margin-top: var(--margin-large);
+}
+
+.nests-tab__nest-selector-label {
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
+    text-transform: capitalize;
+}
+
+.nests-tab__nest-selector-container {
+    display: flex;
+    flex-direction: row;
+    gap: var(--margin-small);
+}
+
+.nests-tab__nest-select {
+    width: 200px;
+}

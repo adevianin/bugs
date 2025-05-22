@@ -37,6 +37,7 @@ class NestManagerView extends BaseGameHTMLView {
 
     _render() {
         this._el.innerHTML = nestManagerTmpl;
+        this._el.classList.add('nest-manager');
         this._eggTab = new EggTabView(this._el.querySelector('[data-egg-tab]'));
         this._larvaTab = new LarvaTabView(this._el.querySelector('[data-larva-tab]'));
         this._mainTab = new MainTabView(this._el.querySelector('[data-main-tab]'));

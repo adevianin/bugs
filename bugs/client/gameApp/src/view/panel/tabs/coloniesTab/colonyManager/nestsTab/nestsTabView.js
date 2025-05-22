@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import nestsTabTmpl from './nestsTabTmpl.html';
 import { NestsSelectView } from './nestsSelect/nestsSelectView';

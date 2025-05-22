@@ -1,9 +1,13 @@
+.nest-manager {
+    margin-top: var(--margin-huge);
+}
+
 .nest-manager__tab {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid lightgray;
 }
 
 .nest-manager__tab:first-child {
-    border-top: 1px solid black;
+    border-top: 1px solid lightgray;
 }
 
 .nest-manager__tab-title {
