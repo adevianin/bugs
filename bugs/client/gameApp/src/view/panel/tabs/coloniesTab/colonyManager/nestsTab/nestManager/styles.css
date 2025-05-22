@@ -10,10 +10,12 @@
     font-weight: var(--font-weight-strong);
     font-size: var(--font-size-large);
     text-align: center;
+    margin-top: var(--margin-large);
+    margin-bottom: var(--margin-large);
 }
 
 .nest-manager__lay-egg-controls-container {
-    margin-top: var(--margin-large);
+    margin-top: var(--margin-small);
     display: flex;
     gap: var(--margin);
     align-items: center;
@@ -21,6 +23,7 @@
 
 .nest-manager__fertilize-field-label {
     font-size: var(--font-size-large);
+    text-transform: capitalize;
 }
 
 .nest-manager__eggs-list-actions-col {
@@ -39,10 +42,6 @@
     width: 100%;
 }
 
-.nest-manger__eggs-table {
-    margin-top: var(--margin-large);
-}
-
 .nest-manger__eggs-table td {
     vertical-align: top;
 }
@@ -56,4 +55,10 @@
 .nest-manager__egg-to-chamber-btn-container {
     display: flex;
     flex-direction: row;
+}
+
+.nest-manager__lay-egg-title {
+    margin-top: var(--margin-large);
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-large);
 }

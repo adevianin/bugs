@@ -33,6 +33,7 @@ class EggTabView extends BaseGameHTMLView {
         this._el.querySelector('[data-col-title-caste]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_CASTE);
         this._el.querySelector('[data-col-title-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_COL_TITLE_ACTIONS);
         this._el.querySelector('[data-no-eggs-placeholder-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_NO_EGGS_LABEL);
+        this._el.querySelector('[data-lay-egg-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_LAY_EGG_TITLE);
     }
 
     manageNest(nest) {
