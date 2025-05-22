@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import enemiesListTmpl from './enemiesListTmpl.html';
 import { EnemyView } from './enemyView';
@@ -20,11 +21,6 @@ class EnemiesListView extends BaseGameHTMLView {
         this._renderAllEnemies();
     }
 
-    remove() {
-        super.remove();
-        this._stopListenColony();
-    }
-
     _listenColony(colony) {
         this._stopListenEnemiesChange = colony.on('enemiesChanged', this._onEnemiesChanged.bind(this));
     }
@@ -39,13 +35,14 @@ class EnemiesListView extends BaseGameHTMLView {
         this._el.innerHTML = enemiesListTmpl;
 
         this._enemiesListEl = this._el.querySelector('[data-enemies-list]');
-        this._enemiesPlaceholderEl = this._el.querySelector('[data-no-enemies-placeholder]');
-        this._enemiesPlaceholderEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_NO_ENEMY_LABEL);
+        this._noEnemiesPlaceholderEl = this._el.querySelector('[data-no-enemies-placeholder]');
+        this._el.querySelector('[data-no-enemies-placeholder-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_NO_ENEMY_LABEL);
+        this._el.querySelector('[data-colony-name-col]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_TABLE_COL_COLONY_NAME);
+        this._el.querySelector('[data-actions-col]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.ENEMIES_TAB_TABLE_COL_ACTIONS);
     }
 
     _renderEnemiesEmptyState() {
-        this._enemiesPlaceholderEl.classList.toggle('g-hidden', this._colony.enemies.length > 0);
-        this._enemiesListEl.classList.toggle('g-hidden', this._colony.enemies.length == 0);
+        this._noEnemiesPlaceholderEl.classList.toggle('g-hidden', this._colony.enemies.length > 0);
     }
 
     _renderAllEnemies() {
@@ -66,7 +63,7 @@ class EnemiesListView extends BaseGameHTMLView {
     }
 
     _renderEnemy(enemyColonyId) {
-        let el = document.createElement('li');
+        let el = document.createElement('tr');
         let view = new EnemyView(el, enemyColonyId);
         this._enemiesListEl.append(el);
         this._enemyViews[enemyColonyId] = view;
