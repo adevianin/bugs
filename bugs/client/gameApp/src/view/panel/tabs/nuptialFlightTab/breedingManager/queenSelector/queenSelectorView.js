@@ -158,7 +158,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onAntBorn() {
-        this._bornAntaraLoader.toggle(false);
+        this._bornAntaraLoader.toggleVisibility(false);
         this._renderBornAntaraBtnState();
     }
     
@@ -167,7 +167,7 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _onBornNewAntaraBtnClick() {
-        this._bornAntaraLoader.toggle(true);
+        this._bornAntaraLoader.toggleVisibility(true);
         this.$domain.bornNewAntara();
     }
 
