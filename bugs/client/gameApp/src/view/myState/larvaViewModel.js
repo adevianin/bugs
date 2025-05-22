@@ -39,6 +39,14 @@ class LarvaViewModel extends BaseViewModel {
         this._applyProps(patch.props);
     }
 
+    markAsRemoving() {
+        this._isRemoving = true;
+    }
+
+    isMarkedAsRemoving() {
+        return !!this._isRemoving;
+    }
+
 }
 
 export {

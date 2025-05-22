@@ -3,6 +3,7 @@ import larvaTmpl from './larvaTmpl.html';
 import { antTypesLabelIds } from '@view/labels/antTypesLabelIds';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class LarvaView extends BaseGameHTMLView {
 
@@ -25,6 +26,7 @@ class LarvaView extends BaseGameHTMLView {
         this._el.querySelector('[data-name]').innerHTML = this._larva.name;
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._larva.genome);
         this._deleteLarvaBtn = this._el.querySelector('[data-delete]');
+        this._deleteLarvaBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_REMOVE_LARVA_BTN_LABEL);
         this._renderProgress();
     }
 
@@ -47,9 +49,8 @@ class LarvaView extends BaseGameHTMLView {
         this._renderProgress();
     }
 
-    async _onDeleteBtnClick() {
-        this.toggle(false);
-        await this.$domain.deleteLarvaInNest(this._nest.id, this._larva.id);
+    _onDeleteBtnClick() {
+        this.events.emit('removeRequest');
     }
 }
 

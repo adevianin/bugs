@@ -19,6 +19,7 @@ class LarvaTabView extends BaseGameHTMLView {
         this._listenNest();
 
         this._renderLarvaeList();
+        this._renderNoLarvaeState();
     }
 
     _listenNest() {
@@ -38,13 +39,25 @@ class LarvaTabView extends BaseGameHTMLView {
         this._el.innerHTML = larvaTabTmpl;
 
         this._larvaeListEl = this._el.querySelector('[data-larvae-list]');
+        this._noLarvaPlaceholder = this._el.querySelector('[data-no-larva-placeholder]');
 
         this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_TITLE);
         this._el.querySelector('[data-col-title-name]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_NAME);
-        this._el.querySelector('[data-col-title-genome]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_GENOME);
         this._el.querySelector('[data-col-title-progress]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_PROGRESS);
         this._el.querySelector('[data-col-title-caste]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_CASTE);
         this._el.querySelector('[data-col-title-actions]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_COL_TITLE_ACTIONS);
+        this._el.querySelector('[data-no-larva-placeholder-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_NO_LARVA_LABEL);
+    }
+
+    _renderNoLarvaeState() {
+        let isEmpty = true;
+        for (let larva of this._nest.larvae) {
+            if (!larva.isMarkedAsRemoving()) {
+                isEmpty = false;
+                break;
+            }
+        }
+        this._noLarvaPlaceholder.classList.toggle('g-hidden', !isEmpty);
     }
 
     _renderLarvaeList() {
@@ -58,6 +71,7 @@ class LarvaTabView extends BaseGameHTMLView {
         let el = document.createElement('tr');
         this._larvaeListEl.append(el);
         let view = new LarvaView(el, larva, this._nest);
+        view.events.on('removeRequest', () => this._onLarvaRemoveRequest(larva));
         this._larvaeViews[larva.id] = view;
     }
 
@@ -70,6 +84,7 @@ class LarvaTabView extends BaseGameHTMLView {
 
     _onLarvaRemoved(larva) {
         this._removeLarvaView(larva);
+        this._renderNoLarvaeState();
     }
 
     _removeLarvaView(larva) {
@@ -79,10 +94,14 @@ class LarvaTabView extends BaseGameHTMLView {
 
     _onLarvaAdded(larva) {
         this._renderLarva(larva);
+        this._renderNoLarvaeState();
     }
 
-    remove() {
-        this._stopListenNest();
+    _onLarvaRemoveRequest(larva) {
+        larva.markAsRemoving();
+        this._larvaeViews[larva.id].toggle(false);
+        this.$domain.deleteLarvaInNest(this._nest.id, larva.id);
+        this._renderNoLarvaeState();
     }
 
 }

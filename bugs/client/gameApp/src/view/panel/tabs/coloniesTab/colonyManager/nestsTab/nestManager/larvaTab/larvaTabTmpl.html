@@ -1,15 +1,17 @@
-<div>
-    <div class="nest-manager__tab-title" data-title></div>
-    <table>
+<div class="nest-manager__tab-title" data-title></div>
+<table class="g-table nest-manager__larvae-table">
+    <thead>
         <tr>
             <td data-col-title-name></td>
-            <td data-col-title-genome></td>
-            <td data-col-title-progress></td>
-            <td data-col-title-caste></td>
-            <td data-col-title-actions></td>
+            <td class="nest-manager__larvae-list-caste-col" data-col-title-caste></td>
+            <td class="nest-manager__larvae-list-progress-col" data-col-title-progress></td>
+            <td class="nest-manager__larvae-list-actions-col" data-col-title-actions></td>
         </tr>
-        <tbody data-larvae-list>
-            
-        </tbody>
-    </table>
-</div>
+    </thead>
+    <tbody data-larvae-list></tbody>
+    <tbody data-no-larva-placeholder>
+        <tr>
+            <td colspan="4" data-no-larva-placeholder-label></td>
+        </tr>
+    </tbody>
+</table>

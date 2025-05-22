@@ -62,3 +62,29 @@
     font-weight: var(--font-weight-strong);
     font-size: var(--font-size-large);
 }
+
+.nest-manager__larvae-table {
+    margin-bottom: var(--margin-large);
+}
+
+.nest-manager__larvae-table td {
+    vertical-align: top;
+}
+
+.nest-manager__larvae-list-actions-col {
+    width: 120px;
+}
+
+.nest-manager__larvae-list-progress-col {
+    width: 90px;
+}
+
+.nest-manager__larvae-list-caste-col {
+    width: 60px;
+}
+
+.nest-manager__larva_actions_container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--margin-small);
+}
