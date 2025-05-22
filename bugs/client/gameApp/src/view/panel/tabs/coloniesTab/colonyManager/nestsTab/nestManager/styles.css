@@ -88,3 +88,17 @@
     flex-direction: column;
     gap: var(--margin-small);
 }
+
+.nest-manager__nest-field {
+    display: flex;
+    margin-top: var(--margin);
+}
+
+.nest-manager__nest-field-label {
+    flex: 0 0 120px;
+    text-transform: capitalize;
+}
+
+.nest-manager__nest-field-data-container {
+    flex: 1;
+}
