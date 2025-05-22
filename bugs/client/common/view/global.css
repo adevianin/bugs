@@ -23,6 +23,7 @@
 .g-table td {
     border: solid 1px;
     overflow: auto;
+    padding: var(--margin-small);
 }
 
 .g-error-container {
