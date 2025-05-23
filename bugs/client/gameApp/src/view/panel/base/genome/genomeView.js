@@ -40,10 +40,8 @@ class GenomeView extends BaseGameHTMLView {
         this._removeGeneViews();
         let maternalChrSetTitle = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOMESET_LABEL_MATERNAL);
         this._renderChromosomeSet(this._el.querySelector('[data-maternal-chromosomes-set]'), this._genome.maternal, maternalChrSetTitle);
-        if (this._genome.paternal) {
-            let paternalChrSetTitle = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOMESET_LABEL_PATERNAL);
-            this._renderChromosomeSet(this._el.querySelector('[data-paternal-chromosomes-set]'), this._genome.paternal, paternalChrSetTitle);
-        }
+        let paternalChrSetTitle = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOMESET_LABEL_PATERNAL);
+        this._renderChromosomeSet(this._el.querySelector('[data-paternal-chromosomes-set]'), this._genome.paternal, paternalChrSetTitle);
     }
 
     _renderChromosomeSet(el, chromosomesSet, title) {
@@ -51,15 +49,18 @@ class GenomeView extends BaseGameHTMLView {
 
         el.querySelector('[data-chromosome-set-title]').innerHTML = title;
 
-        el.querySelector('[data-body-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_BODY);
-        el.querySelector('[data-development-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_DEVELOPMENT);
-        el.querySelector('[data-adaptation-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_ADAPTATION);
-        el.querySelector('[data-specialization-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION);
+        if (chromosomesSet) {
+            el.querySelector('[data-body-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_BODY);
+            el.querySelector('[data-development-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_DEVELOPMENT);
+            el.querySelector('[data-adaptation-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_ADAPTATION);
+            el.querySelector('[data-specialization-chromosome-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION);
 
-        this._renderChromosome(el.querySelector('[data-body-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.BODY));
-        this._renderChromosome(el.querySelector('[data-development-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.DEVELOPMENT));
-        this._renderChromosome(el.querySelector('[data-adaptation-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.ADAPTATION));
-        this._renderChromosome(el.querySelector('[data-specialization-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.SPECIALIZATION));
+            this._renderChromosome(el.querySelector('[data-body-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.BODY));
+            this._renderChromosome(el.querySelector('[data-development-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.DEVELOPMENT));
+            this._renderChromosome(el.querySelector('[data-adaptation-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.ADAPTATION));
+            this._renderChromosome(el.querySelector('[data-specialization-chromosome]'), this._getChromosomeByType(chromosomesSet, ChromosomesTypes.SPECIALIZATION));
+        }
+
     }
 
     _getChromosomeByType(chromosomesSet, chromosomeType) {
@@ -75,9 +76,9 @@ class GenomeView extends BaseGameHTMLView {
     }
 
     _renderGene(geneContainerEl, gene) {
-        let li = document.createElement('li');
-        geneContainerEl.append(li);
-        let view = new GeneView(li, gene);
+        let el = document.createElement('div');
+        geneContainerEl.append(el);
+        let view = new GeneView(el, gene);
         this._genesViews.push(view);
     }
 

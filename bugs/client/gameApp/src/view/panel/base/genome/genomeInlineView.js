@@ -1,4 +1,3 @@
-import './genomeInlineStyles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import genomeInlineTmpl from './genomeInlineTmpl.html';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
