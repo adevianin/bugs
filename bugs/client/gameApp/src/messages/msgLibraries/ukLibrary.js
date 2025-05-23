@@ -24,10 +24,10 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Народити первинну самку',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'Немає самців із віддалених країв в шлюбному льоті.',
 
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.!!',
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.!!',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED]: 'Позиція для будування гнізда вже занята.',
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд сателітів.!!',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд сателітів.',
 
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN]: 'Без королеви мурахи не можуть атакувати інші гнізда.',
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED]: 'Мурахам треба вказати гніздо для атаки.',
@@ -53,13 +53,13 @@ const UK_LIBRARY = {
 
     [GAME_MESSAGE_IDS.NEST_SELECTOR_NOT_SELECTED]: 'не вибрано',
 
-    [GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(мін. {0}, макс. {1})!!',
-    [GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(мін. {0})!!',
-    [GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(макс. {0})!!',
+    [GAME_MESSAGE_IDS.INT_INPUT_MIN_MAX]: '(мін. {0}, макс. {1})',
+    [GAME_MESSAGE_IDS.INT_INPUT_MIN]: '(мін. {0})',
+    [GAME_MESSAGE_IDS.INT_INPUT_MAX]: '(макс. {0})',
 
-    [GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH]: 'Мінімальна довжина {0}.!!',
-    [GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH]: 'Максимальна довжина {0}.!!',
-    [GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR]: 'Тільки букви та цифри.!!',
+    [GAME_MESSAGE_IDS.TEXT_INPUT_MIN_STR_LENGTH]: 'Мінімальна довжина {0}.',
+    [GAME_MESSAGE_IDS.TEXT_INPUT_MAX_STR_LENGTH]: 'Максимальна довжина {0}.',
+    [GAME_MESSAGE_IDS.TEXT_INPUT_INVALID_CHAR]: 'Тільки букви та цифри.',
 
     [GAME_MESSAGE_IDS.POSITION_NOT_SPECIFIED]: 'не задано',
 
