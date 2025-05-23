@@ -115,7 +115,7 @@ class PanelView extends BaseGameHTMLView {
         let panelClientRect = this._el.getBoundingClientRect();
         let panelTop = panelClientRect.top;
         let diff = panelTop - cursorY;
-        let newHeight = parseInt(this._height) + diff;
+        let newHeight = parseInt(this._height) + diff + parseInt(this._handlerHeight / 2);
         window.getSelection().removeAllRanges();
         if (newHeight < minHeight) {
             newHeight = minHeight;
