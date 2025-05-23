@@ -42,4 +42,5 @@
     font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
     text-align: center;
+    text-transform: capitalize;
 }
