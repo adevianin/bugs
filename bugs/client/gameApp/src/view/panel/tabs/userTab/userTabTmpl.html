@@ -1,27 +1,29 @@
-<h2 data-tab-title></h2>
-<div data-main-contentainer>
-    <div>
-        <span data-username-label></span>
-        <span data-username></span>
-        <button data-edit-username-btn>(>)</button>
+<div data-tab-head></div>
+<div data-main-container>
+    <div class="user-tab__field_section">
+        <div class="user-tab__field_label" data-username-label></div>
+        <div class="user-tab__field_data_username" data-username></div>
+        <button class="g-button-svg g-button-svg--small user-tab__edit-username-btn" data-edit-username-btn></button>
     </div>
-    <div style="display: flex; flex-direction: row;">
-        <div data-email-label></div>
+    <div class="user-tab__field_section">
+        <div class="user-tab__field_label" data-email-label></div>
         <div>
-            <span data-email></span>
-            <button data-edit-email-btn>(>)</button>
-            <div data-not-verified-email-state>
-                <span class="g-error-container" data-not-verified-label></span>
-                <button data-verify-email-request-btn></button>
+            <div class="user-tab__email-container">
+                <span data-email></span>
+                <button class="g-button-svg g-button-svg--small" data-edit-email-btn></button>
             </div>
-            <div style="color: green;" data-verified-email-state></div>
+            <div data-not-verified-email-state>
+                <span class="user-tab__email-not-verified-state" data-not-verified-label></span>
+                <button class="g-button" data-verify-email-request-btn></button>
+            </div>
+            <div class="user-tab__email-verified-state" data-verified-email-state></div>
         </div>
     </div>
-    <div data-password-field>
-        <span data-password-label></span>
+    <div class="user-tab__field_section" data-password-field>
+        <div class="user-tab__field_label" data-password-label></div>
         <span>***</span>
-        <button data-edit-password-btn>(>)</button>
+        <button class="g-button-svg g-button-svg--small" data-edit-password-btn></button>
     </div>
-    <button data-logout-btn></button>
+    <button class="g-button" data-logout-btn></button>
 </div>
 <div data-field-editor-container></div>

@@ -13,17 +13,18 @@ class PanelTabHeadView extends BaseGameHTMLView {
         this._render();
     }
 
-    remove() {
-        super.remove();
-        this._helpSignView.remove();
-    }
-
     _render() {
         this._el.innerHTML = tabHeadTmpl;
         this._el.classList.add('panel-tab-head');
 
         this._el.querySelector('[data-tab-label-name]').innerHTML = this._tabName;
-        this._helpSignView = new HelpCallerView(this._el.querySelector('[data-help-sign]'), this._helpSectionId);
+
+        let helpSignEl = this._el.querySelector('[data-help-sign]');
+        if (this._helpSectionId) {
+            this._helpSignView = new HelpCallerView(helpSignEl, this._helpSectionId);
+        } else {
+            helpSignEl.remove();
+        }
 
     }
 }

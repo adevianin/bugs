@@ -1,3 +1,4 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import userTabTmpl from './userTabTmpl.html';
 import { EmailFieldEditorView } from './fieldEditors/emailFieldEditor/emailFieldEditorView';
@@ -5,6 +6,8 @@ import { UsernameFieldEditorView } from './fieldEditors/usernameFieldEditor/user
 import { PasswordFieldEditorView } from './fieldEditors/passwordFieldEditor/passwordFieldEditorView';
 import { DoneButtonView } from '@common/view/doneButton/doneButtonView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
+import editSvgTmpl from '@view/panel/svg/edit.html';
 
 class UserTab extends BaseGameHTMLView {
 
@@ -20,6 +23,7 @@ class UserTab extends BaseGameHTMLView {
         this._render();
 
         this.$domain.events.on('emailVerified', this._onEmailVerified.bind(this));
+        
 
         this._userLogoutBtnEl.addEventListener('click', this._onUserLogoutBtnClick.bind(this));
         this._emailEditBtnEl.addEventListener('click', this._onEmailEditBtnClick.bind(this));
@@ -31,12 +35,13 @@ class UserTab extends BaseGameHTMLView {
     _render() {
         this._el.innerHTML = userTabTmpl;
 
-        this._mainContainerEl = this._el.querySelector('[data-main-contentainer]');
+        this._mainContainerEl = this._el.querySelector('[data-main-container]');
         this._fieldEditorContainerEl = this._el.querySelector('[data-field-editor-container]');
 
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailNotVerifiedMarkerEl = this._el.querySelector('[data-not-verified-label]');
         this._emailEditBtnEl = this._el.querySelector('[data-edit-email-btn]');
+        this._emailEditBtnEl.innerHTML = editSvgTmpl;
         this._notVerifiedEmailStateEl = this._el.querySelector('[data-not-verified-email-state]');
         this._verifiedEmailStateEl = this._el.querySelector('[data-verified-email-state]');
         this._verifiedEmailStateEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_VERIFIED_LABEL);
@@ -44,9 +49,11 @@ class UserTab extends BaseGameHTMLView {
 
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameEditBtnEl = this._el.querySelector('[data-edit-username-btn]');
+        this._usernameEditBtnEl.innerHTML = editSvgTmpl;
 
         this._passwordFieldEl = this._el.querySelector('[data-password-field]');
         this._passwordEditBtnEl = this._el.querySelector('[data-edit-password-btn]');
+        this._passwordEditBtnEl.innerHTML = editSvgTmpl;
 
         this._userLogoutBtnEl = this._el.querySelector('[data-logout-btn]');
         this._userLogoutBtnEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_LOGOUT_BTN_LABEL);
@@ -55,7 +62,9 @@ class UserTab extends BaseGameHTMLView {
         this._renderUsername();
         this._renderPasswordField();
 
-        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_TITLE);
+        let tabName = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_TITLE);
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName);
+
         this._el.querySelector('[data-username-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_USERNAME_LABEL);
         this._el.querySelector('[data-email-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_EMAIL_LABEL);
         this._el.querySelector('[data-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.USER_TAB_PASSWORD_LABEL);

@@ -1,7 +1,6 @@
 .action-button {
     background-color: #007bff;
     transition: all 0.3s ease;
-    cursor: pointer;
     user-select: none;
 }
 
@@ -9,7 +8,6 @@
     background-color: #28a745;
     color: #28a745;
     position: relative;
-    cursor: default;
     pointer-events: none;
 }
 

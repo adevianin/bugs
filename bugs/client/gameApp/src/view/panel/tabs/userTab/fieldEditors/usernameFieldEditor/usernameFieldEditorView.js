@@ -43,11 +43,11 @@ class UsernameFieldEditorView extends BaseFieldEditor {
     }
 
     async _onOkBtnClick() {
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let newUsername = this._usernameEl.value;
         let err = await this.$domain.changeUsername(newUsername);
         this._errView.setErr(err);
-        this._loader.toggle(false);
+        this._loader.toggleVisibility(false);
         if (!err) {
             this._onDone(newUsername);
         }

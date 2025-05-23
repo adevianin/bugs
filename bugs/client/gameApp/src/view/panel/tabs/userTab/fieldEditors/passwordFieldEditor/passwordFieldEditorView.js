@@ -139,12 +139,12 @@ class PasswordFieldEditorView extends BaseFieldEditor {
             return;
         }
 
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let newPassword = this._newPasswordEl.value;
         let oldPassword = this._oldPasswordEl.value;
         let err = await this.$domain.changePassword(newPassword, oldPassword);
         this._renderRequestErr(err);
-        this._loader.toggle(false);
+        this._loader.toggleVisibility(false);
         if (!err) {
             this._onDone();
         }

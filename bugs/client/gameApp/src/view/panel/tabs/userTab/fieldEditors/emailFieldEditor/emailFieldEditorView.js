@@ -47,12 +47,12 @@ class EmailFieldEditorView extends BaseFieldEditor {
     }
 
     async _onOkBtnClick() {
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let newEmail = this._emailEl.value;
         let password = this._passwordEl.value;
         let err = await this.$domain.changeEmail(newEmail, password);
         this._renderErr(err);
-        this._loader.toggle(false);
+        this._loader.toggleVisibility(false);
         if (!err) {
             this._onDone(newEmail);
         }

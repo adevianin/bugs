@@ -1,0 +1,88 @@
+.user-tab__field_section {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: var(--margin-large);
+}
+
+.user-tab__field_label {
+    flex: 0 0 80px;
+}
+
+.user-tab__edit-username-btn {
+    margin-left: var(--margin-small);
+}
+
+.user-tab__field-editor-input {
+    width: 100%;
+}
+
+.user-tab__field-editor-large-err-container {
+    height: 40px;
+}
+
+.user-tab__username-editor-field-section {
+    display: flex;
+}
+
+.user-tab__username-editor-field-label {
+    flex: 0 0 70px;
+}
+
+.user-tab__username-editor-btns-container {
+    display: flex;
+    flex-direction: row;
+    gap: var(--margin-large);
+    justify-content: center;
+}
+
+.user-tab__field_data_username {
+    word-break: break-all;
+}
+
+.user-tab__email-container {
+    display: flex;
+    gap: var(--margin-small);
+    margin-bottom: var(--margin-small);
+}
+
+.user-tab__email-verified-state {
+    color: green;
+}
+
+.user-tab__email-not-verified-state {
+    color: red;
+}
+
+.user-tab__email-editor-field-section {
+    display: flex;
+    margin-top: var(--margin-large);
+}
+
+.user-tab__email-editor-field-label {
+    flex: 0 0 70px;
+}
+
+.user-tab__email-editor-btns-container {
+    display: flex;
+    justify-content: center;
+    gap: var(--margin-large);
+}
+
+.user-tab__pass-editor-field-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-tab__pass-editor-field-label {
+    flex: 0 0 145px;
+}
+
+.user-tab__pass-editor-btns-container {
+    display: flex;
+    justify-content: center;
+    gap: var(--margin-large);
+}
+
+.user-tab__pass-editor-input-container {
+    display: flex;
+}
