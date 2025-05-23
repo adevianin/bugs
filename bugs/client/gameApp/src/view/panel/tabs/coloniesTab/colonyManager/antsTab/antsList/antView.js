@@ -8,6 +8,8 @@ import { AntStatsView } from '@view/panel/base/antStats/antStatsView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { AntTypes } from "@domain/enum/antTypes";
 import { VIEW_SETTINGS } from '@view/viewSettings';
+import openSvgTmpl from '@view/panel/svg/open.html';
+import closeSvgTmpl from '@view/panel/svg/close.html';
 
 class AntView extends BaseGameHTMLView {
 
@@ -157,9 +159,7 @@ class AntView extends BaseGameHTMLView {
 
     _renderProfileState() {
         this._profileContainerEl.classList.toggle('g-hidden', !this._profileState);
-        let hideProfileBtnText = this.$mm.get(GAME_MESSAGE_IDS.ANT_VIEW_HIDE_PROFILE_BTN);
-        let showProfileBtnText = this.$mm.get(GAME_MESSAGE_IDS.ANT_VIEW_SHOW_PROFILE_BTN);
-        this._profileBtn.innerHTML = this._profileState ? hideProfileBtnText : showProfileBtnText;
+        this._profileBtn.innerHTML = this._profileState ? closeSvgTmpl : openSvgTmpl;
     }
 
     _renderCurrentActivity() {
