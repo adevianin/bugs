@@ -1,7 +1,9 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import specieGeneTmpl from './specieGeneTmpl.html';
-import { GeneView } from "../../base/genome/genes/geneView";
 import { CONSTS } from "@domain/consts";
+import { GeneView } from '@view/panel/base/genome/genes/geneView';
+import arrowToRightSvgTmpl from '@view/panel/svg/arrowToRight.html';
+import arrowToLeftSvgTmpl from '@view/panel/svg/arrowToLeft.html';
 
 class SpecieGeneView extends BaseGameHTMLView {
 
@@ -21,7 +23,9 @@ class SpecieGeneView extends BaseGameHTMLView {
         this._el.innerHTML = specieGeneTmpl;
         this._geneView = new GeneView(this._el.querySelector('[data-gene]'), this._specieGene.gene);
         this._activateBtn = this._el.querySelector('[data-activate-btn]');
+        this._activateBtn.innerHTML = arrowToLeftSvgTmpl;
         this._deactivateBtn = this._el.querySelector('[data-deactivate-btn]');
+        this._deactivateBtn.innerHTML = arrowToRightSvgTmpl;
         this._toggleActivationBtn(!this._isActivated);
         let isRequired = CONSTS.REQUIRED_GENES[this._chromosomeType].includes(this._specieGene.gene.type)
         this._toggleDeactivationBtn(this._isActivated && !isRequired);
@@ -33,11 +37,11 @@ class SpecieGeneView extends BaseGameHTMLView {
     }
 
     _toggleActivationBtn(isActive) {
-        this._activateBtn.classList.toggle('g-hidden', !isActive);
+        this._activateBtn.classList.toggle('g-not-visible', !isActive);
     }
 
     _toggleDeactivationBtn(isActive) {
-        this._deactivateBtn.classList.toggle('g-hidden', !isActive);
+        this._deactivateBtn.classList.toggle('g-not-visible', !isActive);
     }
 
     _onActivateBtnClick() {

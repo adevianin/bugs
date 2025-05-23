@@ -1,0 +1,69 @@
+.gene {
+    display: flex;
+    flex-direction: column;
+    width: 170px;
+    background-color: lightgray;
+    padding: var(--padding-small);
+    border-radius: 5px;
+}
+
+.gene--caste {
+    width: 210px;
+}
+
+.gene__title {
+    font-weight: var(--font-weight-strong);
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--margin-small);
+}
+
+.gene__value-section {
+    display: flex;
+    flex-direction: row;
+}
+
+.gene__value-section-label {
+    flex: 0 0 110px;
+}
+
+.gene__value-section-value {
+    flex-grow: 1;
+}
+
+.gene__caste-dev-table {
+    background-color: lightgray;
+}
+
+.gene__caste-dev-table thead td {
+    height: 32px;
+    width: 32px;
+    min-width: 32px;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    background-position: center;
+}
+
+.gene__caste-dev-table-head-col-strength {
+    background-image: url('@view/panel/icons/statsStrengthIcon.png');
+}
+
+.gene__caste-dev-table-head-col-defense {
+    background-image: url('@view/panel/icons/statsDefenseIcon.png');
+}
+
+.gene__caste-dev-table-head-col-max-hp {
+    background-image: url('@view/panel/icons/statsMaxHpIcon.png');
+}
+
+.gene__caste-dev-table-head-col-hp-regen-rate {
+    background-image: url('@view/panel/icons/statsHpRegenRateIcon.png');
+}
+
+.gene__caste-dev-table-head-col-speed {
+    background-image: url('@view/panel/icons/statsSpeedIcon.png');
+}
+
+.gene__caste-dev-table-head-col-life-span {
+    background-image: url('@view/panel/icons/statsLifeSpanIcon.png');
+}

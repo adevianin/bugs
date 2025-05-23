@@ -4,8 +4,8 @@ import specieBuilderTabTmpl from './specieBuilderTabTmpl.html';
 import { ChromosomeEditorTab } from "./chromosomeEditorTabView";
 import { TabSwitcher } from '../../base/tabSwitcher';
 import { ChromosomesTypes } from "@domain/enum/chromosomeTypes";
-import { HelpCallerView } from '@view/panel/helpCaller/helpCallerView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
 
 class SpecieBuilderTabView extends BaseGameHTMLView {
 
@@ -32,8 +32,9 @@ class SpecieBuilderTabView extends BaseGameHTMLView {
             { name: 'adaptation_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_ADAPTATION), tab: this._adaptationChromosomeEditorTab },
             { name: 'specialization_editor', label: this.$mm.get(GAME_MESSAGE_IDS.CHROMOSOME_LABEL_SPECIALIZATION), tab: this._specializationChromosomeEditorTab }
         ]);
-        this._helpCallerBreeding = new HelpCallerView(this._el.querySelector('[data-help-sign]'), 'specie');
-        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE);
+
+        let tabName = this.$mm.get(GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE);
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName, 'specie');
     }
 
     _onSpecieSchemaChanged() {

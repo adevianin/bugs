@@ -1,19 +1,17 @@
+import './style.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { GenesTypes } from '@domain/enum/genesTypes';
-import geneTmpl from './geneTmpl.html';
-import bodyStrengthTmpl from './bodyStrengthTmpl.html';
-import bodyDefenseTmpl from './bodyDefenseTmpl.html';
-import bodyMaxHpTmpl from './bodyMaxHpTmpl.html';
-import bodyHpRegenRateTmpl from './bodyHpRegenRateTmpl.html';
-import bodySightDistanceTmpl from './bodySightDistanceTmpl.html';
-import bodySpeedTmpl from './bodySpeedTmpl.html';
-import devCasteGeneTmpl from './developmentCasteGeneTmpl.html';
-import bodyLifeSpanTmpl from './bodyLifeSpanTmpl.html';
-import adaptationColdTmpl from './adaptationColdTmpl.html';
-import adaptationAppetiteTmpl from './adaptationAppetiteTmpl.html';
-import adaptationDevelopmentAppetiteTmpl from './adaptationDevelopmentAppetiteTmpl.html';
 import { convertStepsToYear } from '@utils/convertStepsToYear';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import valueGeneTmpl from './valueGeneTmpl.html';
+import titleGeneTmpl from './titleGeneTmpl.html';
+import casteGeneTmpl from './casteGeneTmpl.html';
+import '@view/panel/icons/statsStrengthIcon.png';
+import '@view/panel/icons/statsDefenseIcon.png';
+import '@view/panel/icons/statsMaxHpIcon.png';
+import '@view/panel/icons/statsHpRegenRateIcon.png';
+import '@view/panel/icons/statsSpeedIcon.png';
+import '@view/panel/icons/statsLifeSpanIcon.png';
 
 class GeneView extends BaseGameHTMLView {
 
@@ -25,11 +23,6 @@ class GeneView extends BaseGameHTMLView {
     }
 
     _render() {
-        this._el.innerHTML = geneTmpl;
-
-        this._el.querySelector('[data-domination-code]').innerHTML = this._gene.dominationCode;
-        this._el.querySelector('[data-domination-code-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DOMINATION_CODE);
-        this._geneEl = this._el.querySelector('[data-gene]');
         this._renderGene();
     }
 
@@ -79,65 +72,80 @@ class GeneView extends BaseGameHTMLView {
         }
     }
 
+    _renderValueGeneBase() {
+        this._el.innerHTML = valueGeneTmpl;
+        this._el.querySelector('[data-domination-code-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DOMINATION_CODE);
+        this._el.querySelector('[data-domination-code]').innerHTML = this._gene.dominationCode;
+        this._el.querySelector('[data-value-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_VALUE);
+    }
+
+    _renderTitleGeneBase() {
+        this._el.innerHTML = titleGeneTmpl;
+    }
+
+    _renderCasteGeneBase() {
+        this._el.innerHTML = casteGeneTmpl;
+
+        this._el.querySelector('[data-strength-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_STRENGTH));
+        this._el.querySelector('[data-defense-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_DEFENSE));
+        this._el.querySelector('[data-max-hp-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_MAX_HP));
+        this._el.querySelector('[data-hp-regen-rate-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_HP_REGEN_RATE));
+        this._el.querySelector('[data-speed-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_SPEED));
+        this._el.querySelector('[data-life-span-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_LIFE_SPAN));
+    }
+
     _renderBodyStrengthGene() {
-        this._geneEl.innerHTML = bodyStrengthTmpl;
-        this._geneEl.querySelector('[data-strength]').innerHTML = this._gene.strength;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_STRENGTH);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.strength;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_STRENGTH);
     }
 
     _renderBodyDefenseGene() {
-        this._geneEl.innerHTML = bodyDefenseTmpl;
-        this._geneEl.querySelector('[data-defense]').innerHTML = this._gene.defense;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_DEFENSE);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.defense;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_DEFENSE);
     }
 
     _renderBodyMaxHpGene() {
-        this._geneEl.innerHTML = bodyMaxHpTmpl;
-        this._geneEl.querySelector('[data-max-hp]').innerHTML = this._gene.maxHp;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_MAX_HP);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.maxHp;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_MAX_HP);
     }
 
     _renderBodyHpRegenRateGene() {
-        this._geneEl.innerHTML = bodyHpRegenRateTmpl;
-        this._geneEl.querySelector('[data-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_HP_REGEN_RATE);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.hpRegenRate;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_HP_REGEN_RATE);
     }
 
     _renderBodySightDistanceGene() {
-        this._geneEl.innerHTML = bodySightDistanceTmpl;
-        this._geneEl.querySelector('[data-sight-distance]').innerHTML = this._gene.sightDistance;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_SIGHT_DISTANCE);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.sightDistance;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_SIGHT_DISTANCE);
     }
 
     _renderBodySpeedGene() {
-        this._geneEl.innerHTML = bodySpeedTmpl;
-        this._geneEl.querySelector('[data-speed]').innerHTML = this._gene.speed;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_SPEED);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.speed;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_SPEED);
     }
 
     _renderBodyLifeSpanGene() {
-        this._geneEl.innerHTML = bodyLifeSpanTmpl;
-        this._geneEl.querySelector('[data-life-span]').innerHTML = convertStepsToYear(this._gene.lifeSpan, true);
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_LIFE_SPAN);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = convertStepsToYear(this._gene.lifeSpan, true);
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_BODY_LIFE_SPAN);
     }
 
     _renderCasteDevelopmentGene() {
-        this._geneEl.innerHTML = devCasteGeneTmpl;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this._getGeneTitleForDevelopmentGene();
+        this._renderCasteGeneBase();
+        this._el.querySelector('[data-title]').innerHTML = this._getGeneTitleForDevelopmentGene();
 
-        this._geneEl.querySelector('[data-strength-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_STRENGTH);
-        this._geneEl.querySelector('[data-defense-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_DEFENSE);
-        this._geneEl.querySelector('[data-max-hp-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_MAX_HP);
-        this._geneEl.querySelector('[data-hp-regen-rate-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_HP_REGEN_RATE);
-        this._geneEl.querySelector('[data-speed-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_SPEED);
-        this._geneEl.querySelector('[data-life-span-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_LIFE_SPAN);
-
-        this._geneEl.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
-        this._geneEl.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
-        this._geneEl.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
-        this._geneEl.querySelector('[data-dev-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
-        this._geneEl.querySelector('[data-dev-speed]').innerHTML = this._gene.speed;
-        this._geneEl.querySelector('[data-dev-life-span]').innerHTML = this._gene.lifeSpan;
+        this._el.querySelector('[data-dev-strength]').innerHTML = this._gene.strength;
+        this._el.querySelector('[data-dev-defense]').innerHTML = this._gene.defense;
+        this._el.querySelector('[data-dev-max-hp]').innerHTML = this._gene.maxHp;
+        this._el.querySelector('[data-dev-hp-regen-rate]').innerHTML = this._gene.hpRegenRate;
+        this._el.querySelector('[data-dev-speed]').innerHTML = this._gene.speed;
+        this._el.querySelector('[data-dev-life-span]').innerHTML = this._gene.lifeSpan;
     }
 
     _getGeneTitleForDevelopmentGene() {
@@ -156,25 +164,26 @@ class GeneView extends BaseGameHTMLView {
     }
 
     _renderSpecializationBuildingSubnestGene() {
-        this._geneEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST);
+        this._renderTitleGeneBase();
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST);
     }
 
     _renderAdaptationAppetiteGene() {
-        this._geneEl.innerHTML = adaptationAppetiteTmpl;
-        this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.multiplier;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE);
     }
 
     _renderAdaptationDevelopmentAppetiteGene() {
-        this._geneEl.innerHTML = adaptationDevelopmentAppetiteTmpl;
-        this._geneEl.querySelector('[data-multiplier]').innerHTML = this._gene.multiplier;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_DEVELOPMENT_APPETITE);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.multiplier;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_DEVELOPMENT_APPETITE);
     }
 
     _renderAdaptationColdGene() {
-        this._geneEl.innerHTML = adaptationColdTmpl;
-        this._geneEl.querySelector('[data-resistance-points]').innerHTML = this._gene.resistancePoints;
-        this._geneEl.querySelector('[data-gene-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_COLD);
+        this._renderValueGeneBase();
+        this._el.querySelector('[data-value]').innerHTML = this._gene.resistancePoints;
+        this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_COLD);
     }
 
 }

@@ -13,5 +13,8 @@
     --margin: 5px;
     --margin-large: 10px;
     --margin-huge: 20px;
+    --padding-small: 3px;
+    --padding: 5px;
     --control-height: 30px;
+    --control-height-small: 15px;
 }

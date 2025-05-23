@@ -46,6 +46,19 @@
     font-size: var(--font-size-large);
 }
 
+.g-button-svg {
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.g-button-svg svg {
+    width: 100%;
+    height: 100%;
+}
+
 .g-input {
     padding: 3px;
     height: var(--control-height);

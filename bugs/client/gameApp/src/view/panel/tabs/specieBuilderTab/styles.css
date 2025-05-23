@@ -1,10 +1,34 @@
 .specie-builder__chromosome-editor-tab {
     display: flex;
     flex-direction: row;
+    gap: var(--margin);
+    width: 100%;
+    overflow-x: auto;
 }
 
-.specie-builder__genes-list {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
+.specie-builder__genes-section {
+    flex: 1 1 0;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.specie-builder__genes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.specie-builder__genes-section-title {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--margin-large);
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-strong);
+}
+
+.specie-builder__specie-gene-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: var(--margin);
 }

@@ -1,6 +1,7 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import chromosomeEditorTabTmpl from './chromosomeEditorTabTmpl.html';
 import { SpecieGeneView } from "./specieGeneView";
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class ChromosomeEditorTab extends BaseGameHTMLView {
 
@@ -21,6 +22,9 @@ class ChromosomeEditorTab extends BaseGameHTMLView {
 
         this._specieGenesListEl = this._el.querySelector('[data-specie-genes-list]');
         this._activatedSpecieGenesListEl = this._el.querySelector('[data-activated-specie-genes-list]');
+
+        this._el.querySelector('[data-activated-genes-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SPECIE_BUILDER_ACTIVATED_GENES_TITLE);
+        this._el.querySelector('[data-not-activated-genes-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.SPECIE_BUILDER_NOT_ACTIVATED_GENES_TITLE);
         
         this._renderSpecieGenesList();
     }
@@ -33,7 +37,7 @@ class ChromosomeEditorTab extends BaseGameHTMLView {
 
     _renderSpecieGene(specieGene) {
         let isActivated = this._chromosome.checkIsGeneActivated(specieGene.id);
-        let el = document.createElement('li');
+        let el = document.createElement('div');
         let view = new SpecieGeneView(el, specieGene, isActivated, this._chromosome.type);
         view.events.on('actiovationGene', this._onActivationGene.bind(this));
         view.events.on('deactiovationGene', this._onDeactivationGene.bind(this));
