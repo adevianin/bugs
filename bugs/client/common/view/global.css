@@ -48,10 +48,23 @@
 
 .g-button-svg {
     padding: 0;
-    width: 16px;
-    height: 16px;
+    width: var(--control-height);
+    height: var(--control-height);
+    padding: 4px;
     display: flex;
     align-items: center;
+}
+
+.g-button-svg--small {
+    width: var(--control-height-small);
+    height: var(--control-height-small);
+    padding: 1px;
+}
+
+.g-button-svg--tiny {
+    width: var(--control-height-tiny);
+    height: var(--control-height-tiny);
+    padding: 0;
 }
 
 .g-button-svg svg {

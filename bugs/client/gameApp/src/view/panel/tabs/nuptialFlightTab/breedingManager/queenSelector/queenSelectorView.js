@@ -5,7 +5,8 @@ import { QueenProfileView } from "./queenProfileView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
-import { ArrowButtonView } from '@view/panel/base/arrowButton/arrowButtonView';
+import arrowToRightSvgTmpl from '@view/panel/svg/arrowToRight.html';
+import arrowToLeftSvgTmpl from '@view/panel/svg/arrowToLeft.html';
 
 class QueenSelectorView extends BaseGameHTMLView {
 
@@ -22,8 +23,8 @@ class QueenSelectorView extends BaseGameHTMLView {
         this.$domain.myState.on('antBorn', this._onAntBorn.bind(this));
         this.$domain.myState.on('antDied', this._onAntDied.bind(this));
 
-        this._prevBtnView.events.on('click', this._onPrevBtnClick.bind(this));
-        this._nextBtnView.events.on('click', this._onNextBtnClick.bind(this));
+        this._prevBtn.addEventListener('click', this._onPrevBtnClick.bind(this));
+        this._nextBtn.addEventListener('click', this._onNextBtnClick.bind(this));
         this._bornAntaraBtn.addEventListener('click', doubleClickProtection(this._onBornNewAntaraBtnClick.bind(this)));
 
     }
@@ -47,8 +48,10 @@ class QueenSelectorView extends BaseGameHTMLView {
         this._noQueensEl = this._el.querySelector('[data-no-queens]');
         this._bornAntaraBtn = this._el.querySelector('[data-born-new-antara-btn]');
 
-        this._prevBtnView = new ArrowButtonView(this._el.querySelector('[data-previous-btn]'), false);
-        this._nextBtnView = new ArrowButtonView(this._el.querySelector('[data-next-btn]'), true);
+        this._prevBtn = this._el.querySelector('[data-previous-btn]');
+        this._prevBtn.innerHTML = arrowToLeftSvgTmpl;
+        this._nextBtn = this._el.querySelector('[data-next-btn]');
+        this._nextBtn.innerHTML = arrowToRightSvgTmpl;
 
         this._bornAntaraBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA);
         this._el.querySelector('[data-queen-selector-label-no-queens]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NO_QUEENS);
@@ -78,8 +81,8 @@ class QueenSelectorView extends BaseGameHTMLView {
     }
 
     _renderChoosingBtnsState() {
-        this._prevBtnView.toggleIsDisabled(this._selectedQueenIndex == 0);
-        this._nextBtnView.toggleIsDisabled(this._selectedQueenIndex + 1 == this._queens.length);
+        this._prevBtn.disabled = this._selectedQueenIndex == 0;
+        this._nextBtn.disabled = this._selectedQueenIndex + 1 == this._queens.length;
     }
 
     _autoSelect() {

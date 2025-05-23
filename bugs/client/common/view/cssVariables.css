@@ -16,5 +16,6 @@
     --padding-small: 3px;
     --padding: 5px;
     --control-height: 30px;
-    --control-height-small: 15px;
+    --control-height-small: 20px;
+    --control-height-tiny: 16px;
 }

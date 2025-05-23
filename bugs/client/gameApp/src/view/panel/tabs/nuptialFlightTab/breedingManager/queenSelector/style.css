@@ -1,21 +1,21 @@
 .queen-selector__name {
-    margin-top: 3px;
+    margin-top: var(--margin-small);
 }
 
 .queen-selector__profile-stats {
-    margin-top: 3px;
+    margin-top: var(--margin-small);
 }
 
 .queen-selector__choose-btn-container {
     display: flex;
     justify-content: center;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    gap: 3px;
+    margin-top: var(--margin-small);
+    margin-bottom: var(--margin-small);
+    gap: var(--margin);
 }
 
 .queen-selector__analize-genome-btn-container {
-    margin-top: 3px;
+    margin-top: var(--margin-small);
 }
 
 .queen-selector__born-antara-container {
