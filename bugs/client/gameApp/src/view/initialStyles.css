@@ -1,13 +1,40 @@
-@import "@common/view/cssVariables.css";
-@import '@common/view/basic.css';
-@import '@common/view/global.css';
-
-
 .game-loader {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
-    background-color: blueviolet;
+    background-color: darkgray;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-loader__img-container {
+    display: flex;
+    justify-content: center;
+    min-height: 320px;
+    padding-top: 80px;
+}
+
+@media (max-width: 440px) {
+    .game-loader__img-container {
+        padding-top: 0;
+    }
+}
+
+.game-loader__text-container {
+    flex: 0 0 80px;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding-top: 10px;
+}
+
+.game-loader__img {
+    border-radius: 5px;
+    height: 100%;
+}
+
+.game-loader__text {
+    font-size: 32px;
 }

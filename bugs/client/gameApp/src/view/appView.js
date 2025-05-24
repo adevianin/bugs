@@ -11,6 +11,7 @@ import { randomInt } from '@utils/randomInt';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { WorldBackgroundView } from './world/worldBackgroundView';
 import { GenomeAnalizerView } from './panel/base/genomeAnalizer/genomeAnalizerView';
+import '@view/loader_screen_img.png';
 
 class AppView extends BaseGameHTMLView {
     constructor(el) {

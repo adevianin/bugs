@@ -19,6 +19,11 @@
     <div data-app></div>
     <div data-popup-container></div>
     <div class="game-loader" data-game-loader>
-        {% trans "Loading..." %}
+        <div class="game-loader__img-container">
+            <img class="game-loader__img" src="{% hashed_static 'loader_screen_img.png' %}" />
+        </div>
+        <div class="game-loader__text-container">
+            <div class="game-loader__text">{% trans "Loading..." %}</div>
+        </div>
     </div>
 {% endblock %}
