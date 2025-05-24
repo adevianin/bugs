@@ -1,9 +1,9 @@
 :root {
     --main-color: #F0F2BD;
     --contrasting-color-hard: #4B352A;
-    --contrasting-color-light: #FF9B45;
+    --contrasting-color-light: #ffbb80;
     --table-bg-color: #B2CD9C;
-    --btn-bg-color: #CA7842;
+    --btn-bg-color: #FF9B45;
     --err-color: #D5451B;
     --loader-color: #4B352A;
     --font-size-small: 12px;
