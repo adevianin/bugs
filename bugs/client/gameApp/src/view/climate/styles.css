@@ -47,13 +47,19 @@
 } 
 
 .climate__temp {
-    font-size: 28;
-    margin-left: 5px;
-    margin-top: 5px;
+    margin-left: var(--margin);
+    margin-top: var(--margin);
+}
+
+.climate__temp * {
+    font-size: var(--font-size-large);
 }
 
 .climate__year {
-    font-size: 28;
-    margin-left: 5px;
-    margin-top: 5px;
+    margin-left: var(--margin);
+    margin-top: var(--margin);
+}
+
+.climate__year * {
+    font-size: var(--font-size-large);
 }
