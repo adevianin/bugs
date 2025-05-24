@@ -33,6 +33,10 @@
     font-size: var(--font-size);
 }
 
+.g-error-container--tall {
+    min-height: 40px;
+}
+
 .g-button {
     border-radius: 3px;
     background-color: var(--btn-bg-color);

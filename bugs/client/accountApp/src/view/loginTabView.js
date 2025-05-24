@@ -21,12 +21,12 @@ class LoginTabView extends BaseHTMLView {
         this._emailEl.value = '';
         this._passwordEl.value = '';
         this._renderEmailErr(null);
-        this._renderPasswordErr(null);
+        this._renderMainErr(null);
     }
 
     _render() {
         this._loginBtn = this._el.querySelector('[data-login-btn]');
-        this._loginRequestErrContainer = this._el.querySelector('[data-login-request-err]');
+        this._mainErrContainer = this._el.querySelector('[data-main-err-container]');
         this._emailEl = this._el.querySelector('[data-email]');
         this._emailErrContainer = this._el.querySelector('[data-email-err]');
         this._passwordEl = this._el.querySelector('[data-password]');
@@ -44,7 +44,7 @@ class LoginTabView extends BaseHTMLView {
         }
 
         let passwordErr = this._validatePassword();
-        this._renderPasswordErr(passwordErr);
+        this._renderMainErr(passwordErr);
         if (passwordErr) {
             isError = true;
         }
@@ -74,10 +74,6 @@ class LoginTabView extends BaseHTMLView {
         return null;
     }
 
-    _renderPasswordErr(errId) {
-        this._passwordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
-    }
-
     async _onLoginBtnClick() {
         if (!this._validateLogin()) {
             return;
@@ -87,23 +83,23 @@ class LoginTabView extends BaseHTMLView {
         let password = this._passwordEl.value;
 
         try {
-            this._loginRequestLoader.toggle(true);
+            this._loginRequestLoader.toggleVisibility(true);
             await this.$domain.login(email, password);
-            this._renderLoginRequestErr();
+            this._renderMainErr();
             this._redirectToNext();
-            this._loginRequestLoader.toggle(false);
+            this._loginRequestLoader.toggleVisibility(false);
         } catch (e) {
             if (e instanceof UnauthorizedRequestError) {
-                this._renderLoginRequestErr(ACCOUNT_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
+                this._renderMainErr(ACCOUNT_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL);
             } else {
-                this._renderLoginRequestErr(ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                this._renderMainErr(ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
             }
-            this._loginRequestLoader.toggle(false);
+            this._loginRequestLoader.toggleVisibility(false);
         }
     }
 
-    _renderLoginRequestErr(errId) {
-        this._loginRequestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+    _renderMainErr(errId) {
+        this._mainErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
     _redirectToNext() {

@@ -2,24 +2,29 @@
 @import '@common/view/basic.css';
 @import '@common/view/global.css';
 
-.account {
+body {
+    background-color: var(--main-color);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    flex-direction: column;
-    margin: 0;
+    background-image: url('./account_bg.png');
+    background-repeat: repeat;
+    background-size: 256px;
+}
+
+.account {
+    height: 400px;
 }
 
 .account--title {
     text-align: center;
     font-size: 32px;
+    margin-bottom: 10px;
 }
 
 .account-tab {
-    height: 250px;
     width: 270px;
-    text-align: center;
 }
 
 .account--fields-list {
@@ -29,29 +34,55 @@
 }
 
 .account--fields-list li {
-    margin-top: 10px;
     padding: 0;
 }
 
 .account--fields-list li input {
     width: 100%;
-    font-size: 24px;
 }
 
 .account--buttons-container {
-    margin-top: 10px;
     display: flex;
     justify-content: space-between;
-}
-
-.account--error {
-    margin-top: 10px;
-    color: red;
-    text-align: left;
+    align-items: end;
 }
 
 .account__google-auth{
     border-bottom: solid 1px gray;
     margin-bottom: 20px;
     padding-bottom: 20px;
+}
+
+.account--login-btn-container {
+    display: flex;
+}
+
+.account--login-loader {
+    margin-left: var(--margin);
+}
+
+.account--login-registration-link {
+    text-transform: capitalize;
+}
+
+.account--login-link {
+    text-transform: capitalize;
+}
+
+.account--register-btn {
+    text-transform: capitalize;
+}
+
+.account--registration-btn-container {
+    display: flex;
+}
+
+.account--register-loader {
+    margin-left: var(--margin);
+}
+
+.account--content-wrapper {
+    padding: 20px;
+    background-color: #B2CD9C;
+    border-radius: 10px;
 }

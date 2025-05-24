@@ -2,6 +2,7 @@ import './styles.css';
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { LoginTabView } from './loginTabView';
 import { RegistrationTabView } from './registrationTabView';
+import './account_bg.png';
 
 class AccountAppView extends BaseHTMLView {
 

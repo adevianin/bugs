@@ -50,16 +50,13 @@ class RegistrationTabView extends BaseHTMLView {
         this._registrationBtn = this._el.querySelector('[data-registration-btn]');
         this._usernameEl = this._el.querySelector('[data-username]');
         this._usernameErrView = new AccountUsernameErrorView(this._el.querySelector('[data-username-err]'));
-        this._usernameLoader = new DotsLoaderView(this._el.querySelector('[data-username-loader]'));
         this._emailEl = this._el.querySelector('[data-email]');
-        this._emailLoader = new DotsLoaderView(this._el.querySelector('[data-email-loader]'));
         this._emailErrContainer = this._el.querySelector('[data-email-err]');
         this._passwordEl = this._el.querySelector('[data-password]');
         this._passwordErrView = new AccountPasswordErrorView(this._el.querySelector('[data-password-err]'));
         this._passwordConfirmEl = this._el.querySelector('[data-password-confirm]');
         this._passwordConfirmErrContainer = this._el.querySelector('[data-password-confirm-err]');
         this._reuqestLoader = new DotsLoaderView(this._el.querySelector('[data-registration-request-loader]'));
-        this._requestErrContainer = this._el.querySelector('[data-registration-request-err]');
     }
 
     async _validateRegistration() {
@@ -111,9 +108,7 @@ class RegistrationTabView extends BaseHTMLView {
     }
 
     async _onUsernameChanged() {
-        this._usernameLoader.toggle(true);
         let usernameErr = await this._validateUsername();
-        this._usernameLoader.toggle(false);
         this._renderUsernameError(usernameErr);
         this._approvedFields.username = !usernameErr;
     }
@@ -131,9 +126,7 @@ class RegistrationTabView extends BaseHTMLView {
     }
 
     async _onEmailChanged() {
-        this._emailLoader.toggle(true);
         let emailErr = await this._validateEmail();
-        this._emailLoader.toggle(false);
         this._renderEmailError(emailErr);
         this._approvedFields.email = !emailErr;
     }
@@ -186,23 +179,19 @@ class RegistrationTabView extends BaseHTMLView {
         let email = this._email;
         let password = this._passwordEl.value;
         try {
-            this._reuqestLoader.toggle(true);
+            this._reuqestLoader.toggleVisibility(true);
             await this.$domain.register(username, email, password);
             window.location.href = '/';
-            this._reuqestLoader.toggle(false);
+            this._reuqestLoader.toggleVisibility(false);
         } catch(e) {
             if (e instanceof ConflictRequestError) {
                 this._resetApprovedFields();
                 this._validateRegistration();
             } else {
-                this._renderRegistrationRequestErr(ACCOUNT_MESSAGE_IDS.SOMETHING_WENT_WRONG);
+                throw e;
             }
-            this._reuqestLoader.toggle(false);
+            this._reuqestLoader.toggleVisibility(false);
         }
-    }
-
-    _renderRegistrationRequestErr(errId) {
-        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 }
 

@@ -1,16 +1,16 @@
 import { COMMON_MESSAGE_IDS } from "../messageIds"
 
 const COMMON_EN_LIBRARY = {
-    [COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Username is too short. The minimum allowed length is {0}.',
-    [COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Username is too long. The maximum allowed length is {0}.',
-    [COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Username contains invalid characters.',
+    [COMMON_MESSAGE_IDS.USERNAME_MIN_LENGTH_ERR]: 'Minimum length is {0}.',
+    [COMMON_MESSAGE_IDS.USERNAME_MAX_LENGTH_ERR]: 'Maximum length is {0}.',
+    [COMMON_MESSAGE_IDS.USERNAME_INVALID_CHARS]: 'Contains invalid characters.',
     [COMMON_MESSAGE_IDS.USERNAME_TAKEN]: 'This username is already taken.',
     [COMMON_MESSAGE_IDS.USERNAME_NEEDED]: 'Username is empty.',
     [COMMON_MESSAGE_IDS.EMAIL_INVALID]: 'The email address is invalid.',
     [COMMON_MESSAGE_IDS.EMAIL_TAKEN]: 'The email address is already taken.',
     [COMMON_MESSAGE_IDS.EMAIL_NEEDED]: '"The email address is not specified.',
-    [COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Password is too short. The minimum allowed length is {0}.',
-    [COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Password is too long. The maximum allowed length is {0}.',
+    [COMMON_MESSAGE_IDS.PASSWORD_MIN_LENGTH_ERR]: 'Minimum length is {0}.',
+    [COMMON_MESSAGE_IDS.PASSWORD_MAX_LENGTH_ERR]: 'Maximum allowed length is {0}.',
     [COMMON_MESSAGE_IDS.PASSWORD_CONFIRMATION_IS_NOT_VALID]: '"The passwords do not match.',
     [COMMON_MESSAGE_IDS.PASSWORD_NEEDED]: 'Password not provided.',
     [COMMON_MESSAGE_IDS.NOT_VALID_PASSWORD_OR_EMAIL]: 'Incorrect password or email address.',
