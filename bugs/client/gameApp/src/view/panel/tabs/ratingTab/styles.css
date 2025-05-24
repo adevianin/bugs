@@ -1,13 +1,23 @@
-.rating-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
+.rating-tab__col-place {
+    width: 45px;
 }
 
-.rating-table td {
-    border: solid 1px;
+.rating-tab__col-ants-count {
+    width: 70px;
 }
 
-.rating-table thead {
-    font-weight: 700;
+.rating-tab__col-colonies-count {
+    width: 70px;
+}
+
+
+.rating-tab__username-container {
+    word-break: break-all;
+}
+
+.rating-tab__btns-container {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--margin-large);
+    gap: var(--margin);
 }

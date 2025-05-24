@@ -3,6 +3,9 @@ import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import ratingTabTmpl from './ratingTabTmpl.html';
 import ratingPlaceTmpl from './ratingPlaceTmpl.html';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
+import arrowToRightSvgTmpl from '@view/panel/svg/arrowToRight.html';
+import arrowToLeftSvgTmpl from '@view/panel/svg/arrowToLeft.html';
 
 class RatingTabView extends BaseGameHTMLView {
 
@@ -25,12 +28,16 @@ class RatingTabView extends BaseGameHTMLView {
         this._ratingPlacesListEl = this._el.querySelector('[data-rating-places-list]');
 
         this._prevBtn = this._el.querySelector('[data-prev]');
+        this._prevBtn.innerHTML = arrowToLeftSvgTmpl;
         this._nextBtn = this._el.querySelector('[data-next]');
+        this._nextBtn.innerHTML = arrowToRightSvgTmpl;
 
         this._renderCurrentPortion();
         this._renderBtnsState();
 
-        this._el.querySelector('[data-tab-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_TITLE);
+        let tabName = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_TITLE);
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName);
+
         this._el.querySelector('[data-col-title-place]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_PLACE);
         this._el.querySelector('[data-col-title-username]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_USERNAME);
         this._el.querySelector('[data-col-title-ants-count]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.RATING_TAB_COL_NAME_ANTS_COUNT);
@@ -50,6 +57,7 @@ class RatingTabView extends BaseGameHTMLView {
 
     _renderRatingPlace(ratingPlace) {
         let tr = document.createElement('tr');
+        tr.classList.add('rating-tab__username-container');
         tr.innerHTML = ratingPlaceTmpl;
         tr.querySelector('[data-place-number]').innerHTML = ratingPlace.place;
         tr.querySelector('[data-username]').innerHTML = ratingPlace.username;
