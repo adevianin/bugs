@@ -1,17 +1,7 @@
-.notifications-table {
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border: solid 1px;
+.notifications-tab__year-col {
+    width: 50px;
 }
 
-.notifications-table td {
-    border: solid 1px;
-}
-
-.notifications-table thead {
-    font-weight: 700;
-}
-
-.notifications-table__name {
-    font-weight: 700;
+.notifications-tab__table {
+    margin-bottom: var(--margin);
 }
