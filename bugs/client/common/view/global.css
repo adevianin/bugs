@@ -27,13 +27,15 @@
 }
 
 .g-error-container {
-    color: red;
+    color: var(--err-color);
     min-height: 20px;
     font-weight: var(--font-weight);
     font-size: var(--font-size);
 }
 
 .g-button {
+    border-radius: 3px;
+    background-color: var(--btn-bg-color);
     font-weight: var(--font-weight);
     font-size: var(--font-size);
     padding: 3px;
@@ -47,6 +49,8 @@
 }
 
 .g-button-svg {
+    border-radius: 3px;
+    background-color: var(--btn-bg-color);
     padding: 0;
     width: var(--control-height);
     height: var(--control-height);

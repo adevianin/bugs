@@ -39,7 +39,7 @@
 
 .panel__handler {
     cursor: row-resize;
-    background-color: darkgray;
+    background-color: var(--contrasting-color-light);
     flex-grow: 0;
     flex-shrink: 0;
     height: 20px;
@@ -82,7 +82,7 @@
 }
 
 .panel__tab-switcher button.tab-switcher__activator--active {
-    outline: var(--contrasting-color) solid 4px;
+    outline: var(--contrasting-color-hard) solid 4px;
     z-index: 1;
 }
 

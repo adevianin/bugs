@@ -1,8 +1,11 @@
 :root {
-    --main-color: beige;
-    --contrasting-color: blue;
-    --table-bg-color: lightblue;
-    --table-highlighted-bg-color: darkblue;
+    --main-color: #F0F2BD;
+    --contrasting-color-hard: #4B352A;
+    --contrasting-color-light: #FF9B45;
+    --table-bg-color: #B2CD9C;
+    --btn-bg-color: #CA7842;
+    --err-color: #D5451B;
+    --loader-color: #4B352A;
     --font-size-small: 12px;
     --font-size: 14px;
     --font-size-large: 18px;
