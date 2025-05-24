@@ -89,13 +89,13 @@ class SetPasswordModeView extends BaseHTMLView {
         let token = queryParams['t'];
         let id = queryParams['i'];
         let password = this._passwordEl.value;
-        this._loader.toggle(true);
+        this._loader.toggleVisibility(true);
         let err = await this.$domain.setNewPassword(password, token, id);
         this._renderRequestErr(err);
         if (!err) {
             this._switchSettedPasswordTab();
         }
-        this._loader.toggle(false);
+        this._loader.toggleVisibility(false);
     }
 
     _renderRequestErr(errId) {

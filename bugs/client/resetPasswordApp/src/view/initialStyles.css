@@ -2,3 +2,51 @@
 @import '@common/view/basic.css';
 @import '@common/view/global.css';
 
+body {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--main-color);
+}
+
+.reset-password__container {
+    display: flex;
+    justify-content: center;
+    width: 300px;
+}
+
+.reset-password__title {
+    font-size: 30px;
+    font-weight: var(--font-weight-strong);
+    margin-bottom: 10px;
+}
+
+.reset-password__text {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.reset-password__email-input {
+    width: 100%;
+}
+
+.reset-password__btns-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.reset-password__login-link {
+    text-transform: capitalize;
+}
+
+.reset-password__field-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.set-password__btns-container {
+    display: flex;
+    gap: 5px;
+}

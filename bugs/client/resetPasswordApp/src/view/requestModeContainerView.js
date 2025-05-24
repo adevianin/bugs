@@ -1,6 +1,5 @@
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { RESET_PASSWORD_MESSAGE_IDS } from "../messages/messageIds";
-import { DotsLoaderView } from "@common/view/dotsLoader/dotsLoaderView";
 
 class RequestModeContainerView extends BaseHTMLView {
     constructor(el) {
@@ -16,8 +15,6 @@ class RequestModeContainerView extends BaseHTMLView {
         this._requestCreatingSendBtn = this._requestCreatingTabEl.querySelector('[data-send]');
         this._emailEl = this._requestCreatingTabEl.querySelector('[data-email]');
         this._emailErrContainer = this._requestCreatingTabEl.querySelector('[data-email-err]');
-        this._requestErrContainer = this._requestCreatingTabEl.querySelector('[data-request-err]');
-        this._requestCreatingLoader = new DotsLoaderView(this._requestCreatingTabEl.querySelector('[data-loader]'));
         this._requestDoneTabEl = this._el.querySelector('[data-request-done-tab]');
     }
 
@@ -53,17 +50,8 @@ class RequestModeContainerView extends BaseHTMLView {
         }
 
         let email = this._emailEl.value;
-        this._requestCreatingLoader.toggle(true);
-        let err = await this.$domain.resetPasswordRequest(email);
-        this._renderRequestErr(err);
-        if (!err) {
-            this._switchRequestDoneTab();
-        }
-        this._requestCreatingLoader.toggle(false);
-    }
-
-    _renderRequestErr(errId) {
-        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
+        this.$domain.resetPasswordRequest(email);
+        this._switchRequestDoneTab();
     }
 
     _switchRequestDoneTab() {
