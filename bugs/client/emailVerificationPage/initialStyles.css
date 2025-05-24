@@ -1,6 +1,10 @@
 @import "@common/view/cssVariables.css";
 @import '@common/view/basic.css';
 
+body {
+    background-color: var(--main-color);
+}
+
 .verification-container {
     text-align: center;
     padding: 50px;
@@ -9,7 +13,7 @@
     color: #28a745;
 }
 .verification-failure {
-    color: #dc3545;
+    color: var(--err-color);
 }
 .icon {
     font-size: 50px;
@@ -19,14 +23,13 @@
     color: #28a745;
 }
 .failure-icon {
-    color: #dc3545;
+    color: var(--err-color);
 }
 .action-link {
     display: block;
     margin-top: 20px;
     font-size: 16px;
     text-decoration: none;
-    color: #007bff;
 }
 .action-link:hover {
     text-decoration: underline;
