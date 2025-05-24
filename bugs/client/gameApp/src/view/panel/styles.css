@@ -83,7 +83,7 @@
 
 .panel__tab-switcher button.tab-switcher__activator--active {
     outline: var(--contrasting-color) solid 4px;
-    z-index: 99;
+    z-index: 1;
 }
 
 .panel__breeding-tab-activator {

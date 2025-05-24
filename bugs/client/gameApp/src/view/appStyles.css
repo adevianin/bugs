@@ -28,12 +28,13 @@ html, body {
     bottom: 0;
     justify-content: center;
     display: flex;
+    z-index: 3;
 }
 
 .app__map-picker-label {
     color: red;
-    font-size: 24;
-    font-weight: 700;
-    margin-top: 20px;
+    font-size: 32px;
+    font-weight: var(--font-weight-strong);
+    margin-top: 30px;
 }
 

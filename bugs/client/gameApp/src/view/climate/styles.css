@@ -26,7 +26,7 @@
 }
 
 .season-bar__season--summer {
-    background-color: red;
+    background-color: #D5451B;
 }
 .season-bar__season--autumn {
     background-color: yellow;
@@ -39,7 +39,7 @@
 .climate__container {
     position: absolute;
     z-index: 2;
-    top: 3px;
+    top: 7px;
     left: 0;
     right: 0;
     pointer-events: none;
