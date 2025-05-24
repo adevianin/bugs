@@ -22,7 +22,7 @@ import '@view/panel/icons/mainTabSwitcherIcons/helpIcon.png';
 
 class PanelView extends BaseGameHTMLView {
 
-    static PANEL_START_HEIGHT = 420;
+    static PANEL_START_HEIGHT = 575;
     static PANEL_START_HEIGHT_SMALL = 220;
 
     constructor(el) {
