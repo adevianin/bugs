@@ -8,10 +8,11 @@ class MapController extends BaseGraphicView {
     static MAP_MARGIN = 5;
     static SHOW_POSITION_DURATION = 500;
 
-    constructor(container, worldBackgroundView, pixiApp) {
+    constructor(container, worldBackgroundView, zoomContainer, pixiApp) {
         super();
         this._container = container;
         this._worldBackgroundView = worldBackgroundView;
+        this._zoomContainer = zoomContainer;
         this._isDragingMode = false;
         this._anchorPoint = {x: null, y: null};
         this._startPoint = {x: null, y: null};
@@ -22,8 +23,13 @@ class MapController extends BaseGraphicView {
         };
         this._pixiApp = pixiApp;
         this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 500);
+        this._scale = 1;
 
         this._renderHandler();
+        this._worldBackgroundView.updateScale(this._scale);
+
+        this.$eventBus.on('zoomIn', this._onZoomIn.bind(this));
+        this.$eventBus.on('zoomOut', this._onZoomOut.bind(this));
 
         this._handler.on('pointerdown', this._onPointerDown.bind(this));
         this._handler.on('pointerup', this._onPointerUp.bind(this));
@@ -63,6 +69,9 @@ class MapController extends BaseGraphicView {
             let dx = this._anchorPoint.x - e.client.x;
             let dy = this._anchorPoint.y - e.client.y;
 
+            dx = dx / this._scale;
+            dy = dy / this._scale;
+
             this._anchorPoint.x = e.client.x;
             this._anchorPoint.y = e.client.y;
 
@@ -70,7 +79,7 @@ class MapController extends BaseGraphicView {
         }
     }
 
-    _showPosition(x, y) {
+    _showPosition(x, y, isFast=false) {
         let viewPointLocal = this._getLocalViewPoint();
         let dx = x - viewPointLocal.x;
         let dy = y - viewPointLocal.y;
@@ -85,24 +94,28 @@ class MapController extends BaseGraphicView {
         if (this._moveFn) {
             this._pixiApp.ticker.remove(this._moveFn);
         }
-        
-        this._moveFn = () => {
-            let currentTime = performance.now();
-            let elapsed = currentTime - startTime;
-            let progress = elapsed / MapController.SHOW_POSITION_DURATION;
 
-            if (progress <= 1) {
-                let currentDx = progress * dx;
-                let currentDy = progress * dy;
-                this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
-            } else {
-                this._setCameraPosition(destCameraX, destCameraY);
-                this._pixiApp.ticker.remove(this._moveFn);
-                this._moveFn = null;
-            }
-        };
+        if (isFast) {
+            this._setCameraPosition(destCameraX, destCameraY);
+        } else {
+            this._moveFn = () => {
+                let currentTime = performance.now();
+                let elapsed = currentTime - startTime;
+                let progress = elapsed / MapController.SHOW_POSITION_DURATION;
 
-        this._pixiApp.ticker.add(this._moveFn);
+                if (progress <= 1) {
+                    let currentDx = progress * dx;
+                    let currentDy = progress * dy;
+                    this._setCameraPosition(startCameraPosition.x + currentDx, startCameraPosition.y + currentDy);
+                } else {
+                    this._setCameraPosition(destCameraX, destCameraY);
+                    this._pixiApp.ticker.remove(this._moveFn);
+                    this._moveFn = null;
+                }
+            };
+
+            this._pixiApp.ticker.add(this._moveFn);
+        }
     }
 
     _moveCamera(dx, dy) {
@@ -121,12 +134,12 @@ class MapController extends BaseGraphicView {
             containerPosY = MapController.MAP_MARGIN;
         }
 
-        let minXPos = this._pixiApp.canvas.offsetWidth - this._mapSize.width - MapController.MAP_MARGIN
+        let minXPos = (this._pixiApp.canvas.offsetWidth / this._scale) - this._mapSize.width - MapController.MAP_MARGIN
         if (containerPosX < minXPos) {
             containerPosX = minXPos;
         }
 
-        let minPosY = this._pixiApp.canvas.offsetHeight - this._mapSize.height  - MapController.MAP_MARGIN;
+        let minPosY = (this._pixiApp.canvas.offsetHeight / this._scale) - this._mapSize.height  - MapController.MAP_MARGIN;
         if (containerPosY < minPosY) {
             containerPosY = minPosY;
         }
@@ -160,10 +173,10 @@ class MapController extends BaseGraphicView {
     }
 
     _buildViewRectForViewPoint(viewPoint) {
-        let viewRectWidth = window.screen.width * 1.5;
-        let viewRectHeight = window.screen.height * 1.5;
-        // let viewRectWidth = 300;
-        // let viewRectHeight = 300;
+        let viewRectWidth = (window.screen.width / this._scale) * 1.5;
+        let viewRectHeight = (window.screen.height / this._scale) * 1.5;
+        // let viewRectWidth = 300 / this._scale;
+        // let viewRectHeight = 300 / this._scale;
         return {
             x: viewPoint.x - viewRectWidth / 2,
             y: viewPoint.y - viewRectHeight / 2,
@@ -191,6 +204,26 @@ class MapController extends BaseGraphicView {
         }
 
         return {x, y};
+    }
+
+    _onZoomIn() {
+        this._scale = 1;
+        let viewPoint = this._getLocalViewPoint();
+        this._updateScale();
+        this._showPosition(viewPoint.x, viewPoint.y, true);
+    }
+
+    _onZoomOut() {
+        this._scale = 0.5;
+        let viewPoint = this._getLocalViewPoint();
+        this._updateScale();
+        this._showPosition(viewPoint.x, viewPoint.y, true);
+    }
+
+    _updateScale() {
+        this._zoomContainer.scale.x = this._scale;
+        this._zoomContainer.scale.y = this._scale;
+        this._worldBackgroundView.updateScale(this._scale);
     }
 }
 

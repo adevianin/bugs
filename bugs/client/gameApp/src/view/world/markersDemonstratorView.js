@@ -78,7 +78,7 @@ class MarkersDemonstratorView extends BaseGraphicView {
                 .circle(0,0, marker.params.area)
                 .stroke({
                     color: UI_CONSTS.WORLD_VIEW_NEST_AREA_COLOR,
-                    width: 1
+                    width: 2
                 });
             container.addChild(area);
         }

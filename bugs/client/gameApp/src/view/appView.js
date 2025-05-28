@@ -11,6 +11,7 @@ import { randomInt } from '@utils/randomInt';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { WorldBackgroundView } from './world/worldBackgroundView';
 import { GenomeAnalizerView } from './panel/base/genomeAnalizer/genomeAnalizerView';
+import { ZoomControlView } from './zoomControl/zoomControlView';
 import '@view/loader_screen_img.png';
 
 class AppView extends BaseGameHTMLView {
@@ -42,7 +43,9 @@ class AppView extends BaseGameHTMLView {
 
         let worldBackgroundView = new WorldBackgroundView(bgWorldContainer);
         this._worldView = new WorldView(scrollingWorldContainer);
-        new MapController(scrollingWorldContainer, worldBackgroundView, this.$pixiApp);
+        new MapController(scrollingWorldContainer, worldBackgroundView, worldContainer, this.$pixiApp);
+
+        new ZoomControlView(this._el.querySelector('[data-zoom-control]'));
 
         this._viewRectContainer = new PIXI.Container();
         scrollingWorldContainer.addChild(this._viewRectContainer);
@@ -52,7 +55,7 @@ class AppView extends BaseGameHTMLView {
         new MapPickerMasterView(mapPickerContainer, this._el.querySelector('[data-map-picker-border]'));
 
         new GenomeAnalizerView(this._el.querySelector('[data-genome-analizer]'));
-
+        
         this.$pixiApp.resize();
     }
 

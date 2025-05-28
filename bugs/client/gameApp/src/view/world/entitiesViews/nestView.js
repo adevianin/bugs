@@ -71,7 +71,7 @@ class NestView extends EntityView {
             .circle(0,0, this._entity.area)
             .stroke({
                 color: UI_CONSTS.WORLD_VIEW_NEST_AREA_COLOR,
-                width: 1
+                width: 2
             });
         this._nestArea.renderable = false;
         this._hudContainer.addChild(this._nestArea);

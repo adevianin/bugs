@@ -1,0 +1,25 @@
+.zoom-control {
+    position: absolute;
+    z-index: 2;
+}
+
+@media (max-width: 599px) {
+    .zoom-control {
+        top: 30px;
+        right: var(--margin-large);
+    }
+}
+
+@media (min-width: 600px) {
+    .zoom-control {
+        bottom: var(--margin-large);
+        left: var(--margin-large);
+    }
+}
+
+.zoom-btn {
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}

@@ -18,15 +18,17 @@ class WorldBackgroundView extends BaseGraphicView {
         this._bgSprite.tilePosition.y = cameraY % this._summerTexture.height;
     }
 
+    updateScale(scale) {
+        this._bgSprite.width = window.screen.width / scale;
+        this._bgSprite.height = window.screen.height / scale;
+    }
+
     _render() {
         this._summerTexture = this.$textureManager.getTexture('grass_summer.png');
         this._autumnTexture = this.$textureManager.getTexture('grass_autumn.png');
         this._winterTexture = this.$textureManager.getTexture('grass_winter.png');
 
-        this._bgSprite = new PIXI.TilingSprite({
-            width: window.screen.width,
-            height: window.screen.height
-        });
+        this._bgSprite = new PIXI.TilingSprite();
 
         this._container.addChild(this._bgSprite);
 
