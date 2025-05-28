@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { BaseGraphicView } from '@view/base/baseGraphicView';
 import { distance } from '@utils/distance';
 import { throttle } from '@common/utils/throttle';
+import { debounce } from '@common/utils/debounce';
 
 class MapController extends BaseGraphicView {
 
@@ -36,6 +37,8 @@ class MapController extends BaseGraphicView {
         this._handler.on('pointerupoutside', this._onPointerUp.bind(this));
         this._handler.on('pointermove', this._onPointerMove.bind(this));
         this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
+
+        window.addEventListener('resize', debounce(this._onWindowResize.bind(this), 200));
     }
 
     _renderHandler() {
@@ -224,6 +227,12 @@ class MapController extends BaseGraphicView {
         this._zoomContainer.scale.x = this._scale;
         this._zoomContainer.scale.y = this._scale;
         this._worldBackgroundView.updateScale(this._scale);
+    }
+
+    _onWindowResize() {
+        let camPos = this._getCameraPosition();
+        this._worldBackgroundView.resize();
+        this._setCameraPosition(camPos.x, camPos.y);
     }
 }
 
