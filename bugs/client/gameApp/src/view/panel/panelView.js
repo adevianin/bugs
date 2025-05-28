@@ -19,11 +19,13 @@ import '@view/panel/icons/mainTabSwitcherIcons/notificationsIcon.png';
 import '@view/panel/icons/mainTabSwitcherIcons/ratingIcon.png';
 import '@view/panel/icons/mainTabSwitcherIcons/accountIcon.png';
 import '@view/panel/icons/mainTabSwitcherIcons/helpIcon.png';
+import openSvgTmpl from '@view/panel/svg/open.html';
+import closeSvgTmpl from '@view/panel/svg/close.html';
 
 class PanelView extends BaseGameHTMLView {
 
     static PANEL_START_HEIGHT = 575;
-    static PANEL_START_HEIGHT_SMALL = 220;
+    static PANEL_START_HEIGHT_SMALL = 300;
 
     constructor(el) {
         super(el);
@@ -34,8 +36,11 @@ class PanelView extends BaseGameHTMLView {
 
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this.$eventBus.on('help', this._onHelpRequest.bind(this));
+        this.$eventBus.on('tabSwitched:panel', this._onPanelTabSwitched.bind(this));
         this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
         this._handler.addEventListener('touchstart', this._onHandlerMousedown.bind(this));
+        this._openPanelBtn.addEventListener('click', this._open.bind(this));
+        this._closePanelBtn.addEventListener('click', this._close.bind(this));
     }
 
     get _height() {
@@ -44,6 +49,11 @@ class PanelView extends BaseGameHTMLView {
 
     set _height(val) {
         this._el.style.height = val + 'px';
+        this._renderHandlerBtnsState();
+    }
+
+    get _isPanelClosed() {
+        return this._height <= this._handlerHeight;
     }
 
     _determinePanelStartHeight() {
@@ -55,19 +65,18 @@ class PanelView extends BaseGameHTMLView {
     }
 
     _render() {
-        this._el.classList.add('panel');
-        this._height = this._determinePanelStartHeight();
-        this._renderTabViews();
-
-        let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
-        this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
-    }
-
-    _renderTabViews() {
         this._el.innerHTML = panelTmpl;
+        this._el.classList.add('panel');
 
         this._handler = this._el.querySelector('[data-handler]');
         this._handlerHeight = this._handler.getBoundingClientRect().height;
+
+        this._openPanelBtn = this._el.querySelector('[data-open-panel-btn]');
+        this._openPanelBtn.innerHTML = closeSvgTmpl ;
+        this._closePanelBtn = this._el.querySelector('[data-close-panel-btn]');
+        this._closePanelBtn.innerHTML = openSvgTmpl;
+
+        this._height = this._determinePanelStartHeight();
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
@@ -86,6 +95,14 @@ class PanelView extends BaseGameHTMLView {
             { name: 'user', label: '', tab: this._userTab, activatorClass: 'panel__user-tab-activator' },
             { name: 'help', label: '', tab: this._helpTab, activatorClass: 'panel__help-tab-activator' }
         ]);
+
+        let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
+        this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
+    }
+
+    _renderHandlerBtnsState() {
+        this._openPanelBtn.classList.toggle('g-hidden', !this._isPanelClosed);
+        this._closePanelBtn.classList.toggle('g-hidden', this._isPanelClosed);
     }
 
     _onNestManageRequest(nestId) {
@@ -133,6 +150,33 @@ class PanelView extends BaseGameHTMLView {
     _onHelpRequest(sectionId) {
         this._tabSwitcher.activateTab('help');
         this._helpTab.showSection(sectionId);
+    }
+
+    _startResizingAnimation() {
+        this._el.classList.add('panel--smooth-resizing');
+        if (this._resizingAnimTimer) {
+            clearTimeout(this._resizingAnimTimer);
+        }
+        this._resizingAnimTimer = setTimeout(() => {
+            this._el.classList.remove('panel--smooth-resizing');
+            this._resizingAnimTimer = null;
+        }, 300);
+    }
+
+    _onPanelTabSwitched() {
+        if (this._isPanelClosed) {
+            this._open();
+        }
+    }
+
+    _open() {
+        this._startResizingAnimation();
+        this._height = this._determinePanelStartHeight();
+    }
+
+    _close() {
+        this._startResizingAnimation();
+        this._height = this._handlerHeight;
     }
 
 }
