@@ -14,8 +14,7 @@
 
 .name-editor__controls-container {
     display: flex;
-    flex-direction: row;
-    align-items: end;
+    flex-direction: column;
 }
 
 .name-editor__input-container {
@@ -35,4 +34,14 @@
 
 .name-editor__loader {
     flex: 0 0 auto;
+}
+
+.name-editor__btns-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+.name-editor__err-conainer {
+    flex: 1;
 }
