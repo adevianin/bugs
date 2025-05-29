@@ -50,7 +50,7 @@
         <key>dxtCompressionMode</key>
         <enum type="SettingsBase::DxtCompressionMode">DXT_PERCEPTUAL</enum>
         <key>ditherType</key>
-        <enum type="SettingsBase::DitherType">NearestNeighbour</enum>
+        <enum type="SettingsBase::DitherType">PngQuantLow</enum>
         <key>backgroundColor</key>
         <uint>0</uint>
         <key>libGdx</key>
@@ -176,49 +176,20 @@
             <key type="filename">images/ant_male_1.png</key>
             <key type="filename">images/ant_male_2.png</key>
             <key type="filename">images/ant_male_3.png</key>
-            <key type="filename">images/ant_male_4.png</key>
-            <key type="filename">images/ant_male_5.png</key>
-            <key type="filename">images/ant_male_6.png</key>
-            <key type="filename">images/ant_male_7.png</key>
-            <key type="filename">images/ant_male_8.png</key>
             <key type="filename">images/ant_male_dead.png</key>
             <key type="filename">images/ant_queen_1.png</key>
             <key type="filename">images/ant_queen_2.png</key>
             <key type="filename">images/ant_queen_3.png</key>
-            <key type="filename">images/ant_queen_4.png</key>
-            <key type="filename">images/ant_queen_5.png</key>
-            <key type="filename">images/ant_queen_6.png</key>
-            <key type="filename">images/ant_queen_7.png</key>
-            <key type="filename">images/ant_queen_8.png</key>
             <key type="filename">images/ant_queen_dead.png</key>
             <key type="filename">images/ant_warrior_1.png</key>
             <key type="filename">images/ant_warrior_2.png</key>
             <key type="filename">images/ant_warrior_3.png</key>
-            <key type="filename">images/ant_warrior_4.png</key>
-            <key type="filename">images/ant_warrior_5.png</key>
-            <key type="filename">images/ant_warrior_6.png</key>
-            <key type="filename">images/ant_warrior_7.png</key>
-            <key type="filename">images/ant_warrior_8.png</key>
             <key type="filename">images/ant_warrior_dead.png</key>
             <key type="filename">images/ant_worker_1.png</key>
             <key type="filename">images/ant_worker_2.png</key>
             <key type="filename">images/ant_worker_3.png</key>
-            <key type="filename">images/ant_worker_4.png</key>
-            <key type="filename">images/ant_worker_5.png</key>
-            <key type="filename">images/ant_worker_6.png</key>
-            <key type="filename">images/ant_worker_7.png</key>
-            <key type="filename">images/ant_worker_8.png</key>
             <key type="filename">images/ant_worker_dead.png</key>
             <key type="filename">images/enemy_icon.png</key>
-            <key type="filename">images/ground_beetle_1.png</key>
-            <key type="filename">images/ground_beetle_2.png</key>
-            <key type="filename">images/ground_beetle_3.png</key>
-            <key type="filename">images/ground_beetle_4.png</key>
-            <key type="filename">images/ground_beetle_5.png</key>
-            <key type="filename">images/ground_beetle_6.png</key>
-            <key type="filename">images/ground_beetle_7.png</key>
-            <key type="filename">images/ground_beetle_8.png</key>
-            <key type="filename">images/ground_beetle_dead.png</key>
             <key type="filename">images/item_ant_food_1v.png</key>
             <key type="filename">images/item_flower_1v.png</key>
             <key type="filename">images/item_flower_2v.png</key>
@@ -397,44 +368,20 @@
                     <filename>images/ant_warrior_1.png</filename>
                     <filename>images/ant_warrior_2.png</filename>
                     <filename>images/ant_warrior_3.png</filename>
-                    <filename>images/ant_warrior_4.png</filename>
-                    <filename>images/ant_warrior_5.png</filename>
-                    <filename>images/ant_warrior_6.png</filename>
-                    <filename>images/ant_warrior_7.png</filename>
-                    <filename>images/ant_warrior_8.png</filename>
                     <filename>images/ant_warrior_dead.png</filename>
                     <filename>images/ant_worker_1.png</filename>
                     <filename>images/ant_worker_2.png</filename>
                     <filename>images/ant_worker_3.png</filename>
-                    <filename>images/ant_worker_4.png</filename>
-                    <filename>images/ant_worker_5.png</filename>
-                    <filename>images/ant_worker_6.png</filename>
-                    <filename>images/ant_worker_7.png</filename>
-                    <filename>images/ant_worker_8.png</filename>
                     <filename>images/ant_worker_dead.png</filename>
                     <filename>images/ant_queen_1.png</filename>
                     <filename>images/ant_queen_2.png</filename>
                     <filename>images/ant_queen_3.png</filename>
-                    <filename>images/ant_queen_4.png</filename>
-                    <filename>images/ant_queen_5.png</filename>
-                    <filename>images/ant_queen_6.png</filename>
-                    <filename>images/ant_queen_7.png</filename>
-                    <filename>images/ant_queen_8.png</filename>
                     <filename>images/ant_queen_dead.png</filename>
                     <filename>images/nest.png</filename>
                     <filename>images/marker_pointer.png</filename>
                     <filename>images/nest_building.png</filename>
                     <filename>images/marker_cross.png</filename>
                     <filename>images/nest_destroyed.png</filename>
-                    <filename>images/ground_beetle_1.png</filename>
-                    <filename>images/ground_beetle_2.png</filename>
-                    <filename>images/ground_beetle_3.png</filename>
-                    <filename>images/ground_beetle_4.png</filename>
-                    <filename>images/ground_beetle_5.png</filename>
-                    <filename>images/ground_beetle_6.png</filename>
-                    <filename>images/ground_beetle_7.png</filename>
-                    <filename>images/ground_beetle_8.png</filename>
-                    <filename>images/ground_beetle_dead.png</filename>
                     <filename>images/item_leaf_1v.png</filename>
                     <filename>images/item_leaf_2v.png</filename>
                     <filename>images/item_leaf_3v.png</filename>
@@ -449,11 +396,6 @@
                     <filename>images/ant_male_1.png</filename>
                     <filename>images/ant_male_2.png</filename>
                     <filename>images/ant_male_3.png</filename>
-                    <filename>images/ant_male_4.png</filename>
-                    <filename>images/ant_male_5.png</filename>
-                    <filename>images/ant_male_6.png</filename>
-                    <filename>images/ant_male_7.png</filename>
-                    <filename>images/ant_male_8.png</filename>
                     <filename>images/ant_male_dead.png</filename>
                     <filename>images/item_stick_1v.png</filename>
                     <filename>images/item_stick_2v.png</filename>

@@ -73,13 +73,14 @@ class AntView extends LiveEntityView {
     }
 
     _buildStandSprite() {
-        let sprite = new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_4.png`));
+        let sprite = new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_1.png`));
         return sprite;
     }
 
     _buildWalkSprite() {
-        let sprite = new PIXI.AnimatedSprite(this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`));
-        sprite.animationSpeed = 0.2;
+        let ts = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`);
+        let sprite = new PIXI.AnimatedSprite([ts[0], ts[1], ts[0], ts[2]]);
+        sprite.animationSpeed = 0.15;
         return sprite;
     }
 

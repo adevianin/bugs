@@ -198,3 +198,9 @@ class World():
         queen: QueenAnt = self._map.get_entity_by_id(id)
         queen.body.male_chromosomes_set.inject_gene(SpecializationBuildingSubnestGene.build_new_for_specie_gene())
 
+    def inject_warrior_gene_to_queen(self, id):
+        from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
+        from core.world.entities.ant.queen.queen_ant import QueenAnt
+        queen: QueenAnt = self._map.get_entity_by_id(id)
+        queen.body.male_chromosomes_set.inject_gene(DevelopmentWarriorCasteGene.build_new_for_specie_gene())
+
