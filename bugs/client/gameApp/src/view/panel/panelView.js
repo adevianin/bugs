@@ -39,8 +39,11 @@ class PanelView extends BaseGameHTMLView {
         this.$eventBus.on('tabSwitched:panel', this._onPanelTabSwitched.bind(this));
         this._handler.addEventListener('mousedown', this._onHandlerMousedown.bind(this));
         this._handler.addEventListener('touchstart', this._onHandlerMousedown.bind(this));
-        this._openPanelBtn.addEventListener('click', this._open.bind(this));
-        this._closePanelBtn.addEventListener('click', this._close.bind(this));
+        this._openPanelBtn.addEventListener('click', this._onOpenBtnClick.bind(this));
+        this._closePanelBtn.addEventListener('click', this._onCloseBtnClick.bind(this));
+        this._controlBtnsContainer.addEventListener('click', this._stopPropagationHandler);
+        this._controlBtnsContainer.addEventListener('mousedown', this._stopPropagationHandler);
+        this._controlBtnsContainer.addEventListener('touchstart', this._stopPropagationHandler);
     }
 
     get _height() {
@@ -77,6 +80,8 @@ class PanelView extends BaseGameHTMLView {
         this._closePanelBtn.innerHTML = openSvgTmpl;
 
         this._height = this._determinePanelStartHeight();
+
+        this._controlBtnsContainer = this._el.querySelector('[data-control-btns-container]');
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
@@ -169,6 +174,16 @@ class PanelView extends BaseGameHTMLView {
         }
     }
 
+    _onOpenBtnClick(e) {
+        e.stopPropagation();
+        this._open();
+    }
+
+    _onCloseBtnClick(e) {
+        e.stopPropagation();
+        this._close();
+    }
+
     _open() {
         this._startResizingAnimation();
         this._height = this._determinePanelStartHeight();
@@ -177,6 +192,10 @@ class PanelView extends BaseGameHTMLView {
     _close() {
         this._startResizingAnimation();
         this._height = this._handlerHeight;
+    }
+
+    _stopPropagationHandler(e) {
+        e.stopPropagation();
     }
 
 }

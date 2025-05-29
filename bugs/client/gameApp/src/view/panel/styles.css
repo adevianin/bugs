@@ -12,28 +12,6 @@
     transition: height 0.3s ease-in-out;
 }
 
-@media (max-width: 599px) {
-    .panel {
-        width: 100%;
-        border-radius: 0;
-    }
-
-    .panel__handler {
-        border-radius: 0;
-    }
-}
-
-@media (min-width: 600px) {
-    .panel {
-        width: 470px;
-        border-top-left-radius: 6px;
-    }
-
-    .panel__handler {
-        border-top-left-radius: 6px;
-    }
-}
-
 .panel__tab-container {
     padding: 10px;
     overflow-y: auto;
@@ -48,32 +26,23 @@
     flex-shrink: 0;
     height: 25px;
     display: flex;
+    align-items: center;
     justify-content: right;
-    align-items: center;
     position: relative;
+    padding: 2px;
+    padding-right: 15px;
 }
 
-.panel__handler-resize-icon-container {
+.panel__control-btn {
+    height: 23px;
+    width: 25px;
+}
+
+.panel__resize-icon {
+    height: 18px;
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-}
-
-.panel__handler-btns-container {
-    display: flex;
-    padding: 2px;
-    padding-right: 20px;
-    z-index: 1;
-}
-
-.panel__handler-resize-icon-container svg {
-    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .panel__field-label {
@@ -135,4 +104,26 @@
 
 .panel__help-tab-activator {
     background-image: url('@view/panel/icons/mainTabSwitcherIcons/helpIcon.png');
+}
+
+@media (max-width: 599px) {
+    .panel {
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .panel__handler {
+        border-radius: 0;
+    }
+}
+
+@media (min-width: 600px) {
+    .panel {
+        width: 470px;
+        border-top-left-radius: 6px;
+    }
+
+    .panel__handler {
+        border-top-left-radius: 6px;
+    }
 }

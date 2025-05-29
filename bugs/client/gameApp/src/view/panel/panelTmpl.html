@@ -1,15 +1,13 @@
 <div class="panel__tab-switcher" data-tab-switcher></div>
 <div class="panel__handler" data-handler>
-    <div class="panel__handler-resize-icon-container">
-        <svg viewBox="2 2 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="8 7 12 3 16 7" />
-            <line x1="12" y1="3" x2="12" y2="21" />
-            <polyline points="8 17 12 21 16 17" />
-        </svg>
-    </div>
-    <div class="panel__handler-btns-container" data-handler-btns-container>
-        <button class="g-button-svg g-button-svg--small" data-open-panel-btn></button>
-        <button class="g-button-svg g-button-svg--small" data-close-panel-btn></button>
+    <svg class="panel__resize-icon" viewBox="2 2 20 20" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="8 7 12 3 16 7" />
+        <line x1="12" y1="3" x2="12" y2="21" />
+        <polyline points="8 17 12 21 16 17" />
+    </svg>
+    <div data-control-btns-container>
+        <button class="g-button-svg g-button-svg--small panel__control-btn" data-open-panel-btn></button>
+        <button class="g-button-svg g-button-svg--small panel__control-btn" data-close-panel-btn></button>
     </div>
 </div>
 <div class="panel__tab-container">
