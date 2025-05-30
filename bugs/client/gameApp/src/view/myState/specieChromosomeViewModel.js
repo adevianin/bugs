@@ -23,6 +23,17 @@ class SpecieChromosomeViewModel extends BaseViewModel {
         return this.activatedSpecieGenesIds.includes(id);
     }
 
+    getActivatedSpecieGenes() {
+        let specieGenes = [];
+        for (let specieGene of this.specieGenes) {
+            if (this.checkIsGeneActivated(specieGene.id)) {
+                specieGenes.push(specieGene);
+            }
+        }
+
+        return specieGenes;
+    }
+
     activateSpecieGene(activatingSpecieGene) {
         let specieGeneToDeactivating = this._getActivatedSpecieGeneByType(activatingSpecieGene.gene.type);
         this.activatedSpecieGenesIds.push(activatingSpecieGene.id);
@@ -32,6 +43,7 @@ class SpecieChromosomeViewModel extends BaseViewModel {
             this.emit('specieGeneActiveStatusChanged', specieGeneToDeactivating);
         }
         this.emit('change');
+        this.emit('geneActivationDone');
     }
 
     deactivateSpecieGene(specieGene) {
