@@ -121,6 +121,23 @@ class AntView extends LiveEntityView {
         this._statsContainer.position.set(0, this._entityHeight / 2);
         this._hudContainer.addChild(this._statsContainer);
 
+        let nameBottomY;
+        if (this._entity.isMine) {
+            let nameText = new PIXI.Text({
+                text: this._entity.name,
+                style: {
+                    fontFamily: UI_CONSTS.WORLD_VIEW_FONT_NAME,
+                    fontSize: UI_CONSTS.WORLD_VIEW_FONT_SIZE,
+                    fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
+                },
+            });
+            this._statsContainer.addChild(nameText);
+            nameText.anchor.set(0.5, 0);
+            nameBottomY = nameText.height + 2;
+        } else {
+            nameBottomY = 0;
+        }
+        
         let maxHpIcon = new PIXI.Sprite(this.$textureManager.getTexture('stats_max_hp_icon.png'));
         maxHpIcon.anchor.set(0.5, 0);
         let strengthIcon = new PIXI.Sprite(this.$textureManager.getTexture('stats_strength_icon.png'));
@@ -166,13 +183,15 @@ class AntView extends LiveEntityView {
         let strengthColCenterX = strengthColLeftX + strengthColWidth / 2;
         let defenseColLeftX = strengthColLeftX + strengthColWidth;
         let defenseColCenterX = defenseColLeftX + defenseColWidth / 2;
-
-        maxHpIcon.position.set(maxHpColCenterX, 0);
-        maxHpText.position.set(maxHpColCenterX, maxHpIcon.height);
-        strengthIcon.position.set(strengthColCenterX, 0);
-        strengthText.position.set(strengthColCenterX, maxHpIcon.height);
-        defenseIcon.position.set(defenseColCenterX, 0);
-        defenseText.position.set(defenseColCenterX, maxHpIcon.height);
+        
+        let statsTopY = nameBottomY;
+        let valuesTopY = statsTopY + maxHpIcon.height;
+        maxHpIcon.position.set(maxHpColCenterX, statsTopY);
+        maxHpText.position.set(maxHpColCenterX, valuesTopY);
+        strengthIcon.position.set(strengthColCenterX, statsTopY);
+        strengthText.position.set(strengthColCenterX, valuesTopY);
+        defenseIcon.position.set(defenseColCenterX, statsTopY);
+        defenseText.position.set(defenseColCenterX, valuesTopY);
 
         this._setTimeout(() => {
             this._removeStats();
