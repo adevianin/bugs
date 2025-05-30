@@ -110,6 +110,9 @@ class AntView extends LiveEntityView {
         this._removePickedItemView();
         let textureName = `item_${ item.itemType }_${ item.itemVariety }v.png`;
         this._pickedItemSprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
+        this._pickedItemSprite.anchor.set(0.5, 0.5);
+        this._pickedItemSprite.position.x = (this._entityWidth/2);
+        this._pickedItemSprite.position.y = 2;
         this._pickedItemContainer.addChild(this._pickedItemSprite);
     }
 

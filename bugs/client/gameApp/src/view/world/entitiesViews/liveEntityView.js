@@ -47,8 +47,8 @@ class LiveEntityView extends EntityView {
         this._hudContainer = new PIXI.Container();
         this._pickedItemContainer = new PIXI.Container();
         
+        this._bodyContainer.addChild(this._pickedItemContainer);
         this._entityContainer.addChild(this._bodyContainer);
-        this._entityContainer.addChild(this._pickedItemContainer);
         this._entityContainer.addChild(this._hudContainer);
 
         this._liveEntityHudLayer.attach(this._hudContainer);
@@ -70,10 +70,6 @@ class LiveEntityView extends EntityView {
         let halfEntityHeight = this._entityWidth / 2;
         
         this._bodyContainer.pivot.set(halfEntityWidth, halfEntityHeight);
-
-        this._pickedItemTopY =  -halfEntityHeight + 3;
-        this._pickedItemContainer.y = this._pickedItemTopY;
-        this._pickedItemContainer.pivot.set(halfEntityWidth, halfEntityHeight);
 
         this._hpTopY = -halfEntityHeight-8;
         this._hpLineView = new HpLineView({ x: -halfEntityWidth, y: this._hpTopY }, this._entityWidth, this._entity.maxHp, this._hudContainer);
