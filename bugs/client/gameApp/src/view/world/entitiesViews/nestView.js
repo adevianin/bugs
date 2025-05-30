@@ -81,12 +81,6 @@ class NestView extends EntityView {
 
         this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 
-        if (this._entity.isMine) {
-            this._builtNestSprite.eventMode = 'static';
-            this._builtNestSprite.cursor = 'pointer';
-            this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
-        }
-
         this._fortificationTopY = -nestHalfHeight - NestView.FORT_LINE_HEIGHT - 3;
         this._fortificationLine = new PIXI.Graphics();
         this._fortificationLine.position.set(-nestHalfWidth, this._fortificationTopY);
@@ -103,6 +97,7 @@ class NestView extends EntityView {
                 fill: UI_CONSTS.WORLD_VIEW_FONT_COLOR,
             },
         });
+
         this._nameText.anchor.set(0.5, 0);
         this._nameTopY = this._hpTopY - 2 - this._nameText.height;
         this._nameContainer.addChild(this._nameText);
@@ -111,6 +106,15 @@ class NestView extends EntityView {
         this._highlighterBottomY = this._nameTopY - 2;
         this._highlighterContainer.position.set(0, this._highlighterBottomY);
         this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
+
+        if (this._entity.isMine) {
+            this._builtNestSprite.eventMode = 'static';
+            this._builtNestSprite.cursor = 'pointer';
+            this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
+            this._nameText.eventMode = 'static';
+            this._nameText.cursor = 'pointer';
+            this._nameText.on('pointerdown', this._onClick.bind(this));
+        }
 
         this._renderEntityState();
     }
