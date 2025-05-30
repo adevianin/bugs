@@ -51,12 +51,21 @@ class PanelView extends BaseGameHTMLView {
     }
 
     set _height(val) {
-        this._el.style.height = val + 'px';
+        let minHeight = this._handlerHeight;
+        let maxHeight = window.innerHeight;
+        let height = val;
+        if (height > maxHeight) {
+            height = maxHeight;
+        }
+        if (height < minHeight) {
+            height = minHeight;
+        }
+        this._el.style.height = height + 'px';
         this._renderHandlerBtnsState();
     }
 
     get _isPanelClosed() {
-        return this._height <= this._handlerHeight;
+        return this._height <= this._handlerHeight + 10;
     }
 
     _determinePanelStartHeight() {
@@ -133,15 +142,11 @@ class PanelView extends BaseGameHTMLView {
         if (cursorY < 0) {
             cursorY = 0;
         }
-        let minHeight = this._handlerHeight;
         let panelClientRect = this._el.getBoundingClientRect();
         let panelTop = panelClientRect.top;
         let diff = panelTop - cursorY;
         let newHeight = parseInt(this._height) + diff + parseInt(this._handlerHeight / 2);
         window.getSelection().removeAllRanges();
-        if (newHeight < minHeight) {
-            newHeight = minHeight;
-        }
         this._height = newHeight;
     }
 
