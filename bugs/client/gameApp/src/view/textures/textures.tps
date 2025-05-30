@@ -177,10 +177,14 @@
             <key type="filename">images/ant_male_2.png</key>
             <key type="filename">images/ant_male_3.png</key>
             <key type="filename">images/ant_male_dead.png</key>
+            <key type="filename">images/ant_male_fly_1.png</key>
+            <key type="filename">images/ant_male_fly_2.png</key>
             <key type="filename">images/ant_queen_1.png</key>
             <key type="filename">images/ant_queen_2.png</key>
             <key type="filename">images/ant_queen_3.png</key>
             <key type="filename">images/ant_queen_dead.png</key>
+            <key type="filename">images/ant_queen_fly_1.png</key>
+            <key type="filename">images/ant_queen_fly_2.png</key>
             <key type="filename">images/ant_warrior_1.png</key>
             <key type="filename">images/ant_warrior_2.png</key>
             <key type="filename">images/ant_warrior_3.png</key>
@@ -438,6 +442,10 @@
                     <filename>images/stats_defense_icon.png</filename>
                     <filename>images/stats_max_hp_icon.png</filename>
                     <filename>images/stats_strength_icon.png</filename>
+                    <filename>images/ant_queen_fly_1.png</filename>
+                    <filename>images/ant_queen_fly_2.png</filename>
+                    <filename>images/ant_male_fly_1.png</filename>
+                    <filename>images/ant_male_fly_2.png</filename>
                 </array>
             </struct>
         </map>

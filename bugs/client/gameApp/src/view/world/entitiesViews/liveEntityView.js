@@ -9,6 +9,7 @@ class LiveEntityView extends EntityView {
         static DEAD = 'dead';
         static STANDING = 'standing';
         static WALKING = 'walking';
+        static FLYING = 'flying';
     };
 
     static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
@@ -37,6 +38,10 @@ class LiveEntityView extends EntityView {
         return this._standSprite.height;
     }
 
+    get _hasFlySprite() {
+        return !!this._flySprite;
+    }
+
     _render() {
         this._bodyContainer = new PIXI.Container();
         this._hudContainer = new PIXI.Container();
@@ -51,10 +56,15 @@ class LiveEntityView extends EntityView {
         this._standSprite = this._buildStandSprite();
         this._walkSprite = this._buildWalkSprite();
         this._deadSprite = this._buildDeadSprite();
-
+        
         this._bodyContainer.addChild(this._standSprite);
         this._bodyContainer.addChild(this._walkSprite);
         this._bodyContainer.addChild(this._deadSprite);
+
+        this._flySprite = this._buildFlySprite();
+        if (this._hasFlySprite) {
+            this._bodyContainer.addChild(this._flySprite);
+        }
 
         let halfEntityWidth = this._entityWidth / 2;
         let halfEntityHeight = this._entityWidth / 2;
@@ -99,6 +109,10 @@ class LiveEntityView extends EntityView {
         throw 'abstract method';
     }
 
+    _buildFlySprite() {
+        return null;
+    }
+
     _renderEntityAngle(angle) {
         this._bodyContainer.angle = angle;
     }
@@ -107,6 +121,7 @@ class LiveEntityView extends EntityView {
         this._toggleStandingState(state == LiveEntityView.VISUAL_STATES.STANDING);
         this._toggleWalkingState(state == LiveEntityView.VISUAL_STATES.WALKING);
         this._toggleDeadState(state == LiveEntityView.VISUAL_STATES.DEAD);
+        this._toggleFlyingState(state == LiveEntityView.VISUAL_STATES.FLYING);
     }
 
     _toggleWalkingState(isEnabling) {
@@ -125,6 +140,19 @@ class LiveEntityView extends EntityView {
 
     _toggleDeadState(isEnabling) {
         this._deadSprite.renderable = isEnabling;
+    }
+
+    _toggleFlyingState(isEnabling) {
+        if (!this._hasFlySprite) {
+            return;
+        }
+        if (isEnabling) {
+            this._flySprite.renderable = true;
+            this._flySprite.play();
+        } else {
+            this._flySprite.renderable = false;
+            this._flySprite.stop();
+        }
     }
 
     _playAnimation(animation) {

@@ -88,6 +88,16 @@ class AntView extends LiveEntityView {
         return new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
     }
 
+    _buildFlySprite() {
+        let ts = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_fly`);
+        if (!ts) {
+            return null;
+        }
+        let sprite = new PIXI.AnimatedSprite(ts);
+        sprite.animationSpeed = 0.5;
+        return sprite;
+    }
+
     _removePickedItemView() {
         if (this._pickedItemSprite) {
             this._pickedItemContainer.removeChild(this._pickedItemSprite);
@@ -256,6 +266,7 @@ class AntView extends LiveEntityView {
         const frequency = 0.00025;
 
         let prevPosition = null;
+        this._renderVisualState(LiveEntityView.VISUAL_STATES.FLYING);
         return this._runAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, (currentTime) => {
             let animTime = currentTime - flyStartTime;
             let progress = animTime / wholeAnimationTime;
@@ -281,6 +292,7 @@ class AntView extends LiveEntityView {
 
                 return false;
             } else {
+                this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
                 this._toggleEntityVisibility(false);
                 return true;
             }
