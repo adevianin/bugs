@@ -33,9 +33,13 @@
 }
 
 .genome-analizer__content {
-    padding: var(--padding-large);
     overflow-y: scroll;
     overflow-x: auto;
+}
+
+.genome-analizer__content-wrapper {
+    padding: var(--padding-large);
+    min-width: fit-content;
 }
 
 .genome-analizer__title {
