@@ -42,9 +42,6 @@ class TabSwitcher extends BaseGameHTMLView {
     }
 
     activateTab(activatingTabName) {
-        if (this._currentActiveTabName == activatingTabName) {
-            return
-        }
         this._tabsData.forEach(tabData => {
             tabData.tab.toggle(tabData.name == activatingTabName);
         });
