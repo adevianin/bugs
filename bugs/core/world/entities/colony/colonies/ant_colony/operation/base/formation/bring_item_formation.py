@@ -32,13 +32,16 @@ class BringItemFormation(BaseFormation):
         item_height = self._item_size.height
         item_angle = self._item.body.angle
         
+        offset_x = item_width * 0.3
+        offset_y = item_height * 0.2
+
         match(unit_place_number):
             case 0:
-                p = Point(self._current_position.x - (item_width/2) , self._current_position.y + item_height / 2)
+                p = Point(self._current_position.x - offset_x, self._current_position.y + offset_y)
             case 1:
-                p = Point(self._current_position.x + (item_width/2) - (self._unit_size.width / 2), self._current_position.y + item_height / 2)
+                p = Point(self._current_position.x + offset_x, self._current_position.y + offset_y)
             case 2:
-                p = Point(self._current_position.x + (item_width/2) - (self._unit_size.height / 2), self._current_position.y - item_height / 2)
+                p = Point(self._current_position.x + offset_x, self._current_position.y - offset_y)
             
         p = p.rotate(item_angle, self._current_position)
 
