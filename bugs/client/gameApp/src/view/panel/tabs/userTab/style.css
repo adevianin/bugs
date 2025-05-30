@@ -16,10 +16,6 @@
     width: 100%;
 }
 
-.user-tab__field-editor-large-err-container {
-    height: 40px;
-}
-
 .user-tab__username-editor-field-section {
     display: flex;
 }

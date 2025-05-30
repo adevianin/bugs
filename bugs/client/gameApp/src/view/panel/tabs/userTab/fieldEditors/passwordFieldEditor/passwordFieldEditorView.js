@@ -43,7 +43,6 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._newPasswordErr = new AccountPasswordErrorView(this._el.querySelector('[data-new-password-err-container]'));
         this._newPasswordConfirmErrContainer = this._el.querySelector('[data-new-password-confirm-err-container]');
         this._oldPasswordErrContainer = this._el.querySelector('[data-old-password-err-container]');
-        this._requestErrContainer = this._el.querySelector('[data-request-err-container]');
 
         this._el.querySelector('[data-new-password-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_NEW_PASSWORD_LABEL);
         this._el.querySelector('[data-new-password-confirm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.PASSWORD_EDITOR_NEW_PASSWORD_CONFIRM_LABEL);
@@ -114,10 +113,6 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         this._oldPasswordErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
     }
 
-    _renderRequestErr(errId) {
-        this._requestErrContainer.innerHTML = errId ? this.$mm.get(errId) : '';
-    }
-
     async _onNewPasswordChange() {
         let newPasswordErr = await this._validateNewPassword();
         this._renderNewPasswordErr(newPasswordErr);
@@ -143,7 +138,7 @@ class PasswordFieldEditorView extends BaseFieldEditor {
         let newPassword = this._newPasswordEl.value;
         let oldPassword = this._oldPasswordEl.value;
         let err = await this.$domain.changePassword(newPassword, oldPassword);
-        this._renderRequestErr(err);
+        this._renderOldPasswordErr(err);
         this._loader.toggleVisibility(false);
         if (!err) {
             this._onDone();
