@@ -1,11 +1,10 @@
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.entities.base.body import Body
 from core.world.exceptions import GameError
-import random
 
 class ItemSourceBody(Body):
 
-    MIN_ITEM_STRENGTH = 1
+    MIN_ITEM_STRENGTH = 100
 
     def __init__(self, events, stats, position, angle, hp, fertility: int, accumulated: int, max_item_strength: int, is_active: bool):
         super().__init__(events, stats, position, angle, hp)
