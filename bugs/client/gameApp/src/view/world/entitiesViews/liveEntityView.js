@@ -65,7 +65,7 @@ class LiveEntityView extends EntityView {
         this._pickedItemContainer.y = this._pickedItemTopY;
         this._pickedItemContainer.pivot.set(halfEntityWidth, halfEntityHeight);
 
-        this._hpTopY = -halfEntityHeight-5;
+        this._hpTopY = -halfEntityHeight-8;
         this._hpLineView = new HpLineView({ x: -halfEntityWidth, y: this._hpTopY }, this._entityWidth, this._entity.maxHp, this._hudContainer);
 
         this._renderEntityState();
