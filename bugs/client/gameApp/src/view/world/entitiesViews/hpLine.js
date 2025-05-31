@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js';
 
 class HpLineView extends BaseGraphicView {
 
-    static HP_LINE_HEIGHT = 5;
+    static HP_LINE_HEIGHT = 6;
     static HP_LINE_COLOR_SAFE = 0x00ff00;
     static HP_LINE_COLOR_WARNING = 0xffff00;
     static HP_LINE_COLOR_DANGER = 0xff0000;
@@ -48,11 +48,13 @@ class HpLineView extends BaseGraphicView {
         this._hpLine
             .clear()
             .rect(0, 0, lineWidth, HpLineView.HP_LINE_HEIGHT)
-            .fill({color})
+            .fill({color, alpha: 0.5 })
             .rect(0, 0, hpLineMaxWidth, HpLineView.HP_LINE_HEIGHT)
             .stroke({
+                width: 2,
                 color: HpLineView.HP_LINE_COLOR_SAFE,
-                alignment: 1
+                alignment: 1,
+                alpha: 0.5
             })
     }
 

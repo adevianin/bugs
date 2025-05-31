@@ -7,8 +7,9 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 
 class ItemSourceView extends EntityView { 
     
-    static ACCUMULATED_LINE_HEIGHT = 5;
-    static ACCUMULATED_LINE_COLOR = 0x0000ff;
+    static ACCUMULATED_LINE_HEIGHT = 6;
+    static ACCUMULATED_LINE_COLOR = 0xdfbc06;
+    static HP_BOTTOM_MARGIN = 2;
 
     static VISUAL_STATES = class {
         static DAMAGED = 'damaged';
@@ -70,7 +71,7 @@ class ItemSourceView extends EntityView {
         this._accumulatedLine = new PIXI.Graphics({position: { x: 0, y: this._accumulatedLineTop }});
         this._uiContainer.addChild(this._accumulatedLine);
         
-        this._hpLineTop = this._accumulatedLineTop - 1 - HpLineView.HP_LINE_HEIGHT;
+        this._hpLineTop = this._accumulatedLineTop - HpLineView.HP_LINE_HEIGHT - ItemSourceView.HP_BOTTOM_MARGIN;
         this._hpLineView = new HpLineView({ x: 0, y: this._hpLineTop }, this._entityWidth, this._entity.maxHp, this._uiContainer);
 
         this._renderFertility();
@@ -101,11 +102,13 @@ class ItemSourceView extends EntityView {
         this._accumulatedLine
             .clear()
             .rect(0, 0, lineWidth, lineHeight)
-            .fill({color})
+            .fill({ color, alpha: 0.5 })
             .rect(0, 0, maxLineWidth, lineHeight)
             .stroke({
                 color,
-                alignment: 1
+                alignment: 1,
+                width: 2,
+                alpha: 0.5
             })
     }
 

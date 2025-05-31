@@ -8,7 +8,8 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 class NestView extends EntityView { 
 
     static FORT_LINE_COLOR = 0x800080;
-    static FORT_LINE_HEIGHT = 5;
+    static FORT_LINE_HEIGHT = 6;
+    static HP_BOTTOM_MARGIN = 2;
 
     static VISUAL_STATES = class {
         static DEAD = 'dead';
@@ -86,7 +87,7 @@ class NestView extends EntityView {
         this._fortificationLine.position.set(-nestHalfWidth, this._fortificationTopY);
         this._hudContainer.addChild(this._fortificationLine);
 
-        this._hpTopY = this._fortificationTopY - HpLineView.HP_LINE_HEIGHT - 1;
+        this._hpTopY = this._fortificationTopY - HpLineView.HP_LINE_HEIGHT - NestView.HP_BOTTOM_MARGIN;
         this._hpLineView = new HpLineView({ x: -nestHalfWidth, y: this._hpTopY }, this._nestWidth, this._entity.maxHp, this._hudContainer);
 
         this._nameText = new PIXI.Text({
@@ -158,12 +159,15 @@ class NestView extends EntityView {
             .clear()
             .rect(0, 0, lineWidth, height)
             .fill({
-                color
+                color,
+                alpha: 0.5
             })
             .rect(0, 0, fortLineMaxWidth, height)
             .stroke({
                 color,
-                alignment: 1
+                width: 2,
+                alignment: 1,
+                alpha: 0.5
             });
     }
 
