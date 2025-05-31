@@ -3,7 +3,8 @@ import * as PIXI from 'pixi.js';
 
 class HpLineView extends BaseGraphicView {
 
-    static HP_LINE_HEIGHT = 6;
+    static HP_LINE_HEIGHT = 7;
+    static BORDER_WIDTH = 2;
     static HP_LINE_COLOR_SAFE = 0x00ff00;
     static HP_LINE_COLOR_WARNING = 0xffff00;
     static HP_LINE_COLOR_DANGER = 0xff0000;
@@ -39,6 +40,7 @@ class HpLineView extends BaseGraphicView {
         let hpInPercent = (value * 100) / this._maxHp;
         let lineWidth = (hpLineMaxWidth / 100) * hpInPercent;
         let color = HpLineView.HP_LINE_COLOR_SAFE;
+        let rectHeight = HpLineView.HP_LINE_HEIGHT - HpLineView.BORDER_WIDTH *2;
         if (hpInPercent < 70) {
             color = HpLineView.HP_LINE_COLOR_WARNING;
         }
@@ -47,14 +49,14 @@ class HpLineView extends BaseGraphicView {
         }
         this._hpLine
             .clear()
-            .rect(0, 0, lineWidth, HpLineView.HP_LINE_HEIGHT)
+            .rect(HpLineView.BORDER_WIDTH, 0, lineWidth, rectHeight)
             .fill({color, alpha: 0.5 })
-            .rect(0, 0, hpLineMaxWidth, HpLineView.HP_LINE_HEIGHT)
+            .rect(HpLineView.BORDER_WIDTH, 0, hpLineMaxWidth, rectHeight)
             .stroke({
-                width: 2,
+                width: HpLineView.BORDER_WIDTH,
                 color: HpLineView.HP_LINE_COLOR_SAFE,
-                alignment: 1,
-                alpha: 0.5
+                alignment: 0,
+                alpha: 0.7
             })
     }
 

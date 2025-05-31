@@ -7,7 +7,8 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 
 class ItemSourceView extends EntityView { 
     
-    static ACCUMULATED_LINE_HEIGHT = 6;
+    static ACCUMULATED_LINE_HEIGHT = 7;
+    static ACCUMULATED_LINE_BORDER_WIDTH = 2;
     static ACCUMULATED_LINE_COLOR = 0xdfbc06;
     static HP_BOTTOM_MARGIN = 2;
 
@@ -74,7 +75,7 @@ class ItemSourceView extends EntityView {
         this._hpLineTop = this._accumulatedLineTop - HpLineView.HP_LINE_HEIGHT - ItemSourceView.HP_BOTTOM_MARGIN;
         this._hpLineView = new HpLineView({ x: 0, y: this._hpLineTop }, this._entityWidth, this._entity.maxHp, this._uiContainer);
 
-        this._renderFertility();
+        this._renderFertility(this._hpLineTop - ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH, HpLineView.HP_LINE_HEIGHT + ItemSourceView.HP_BOTTOM_MARGIN + ItemSourceView.ACCUMULATED_LINE_HEIGHT);
         this._renderEntityState();
     }
 
@@ -97,22 +98,22 @@ class ItemSourceView extends EntityView {
         let maxLineWidth = this._entityWidth;
         let maxAccumulatedValue = this._entity.maxAccumulated;
         let lineWidth = (accumulated / maxAccumulatedValue) * maxLineWidth;
-        let lineHeight = ItemSourceView.ACCUMULATED_LINE_HEIGHT;
+        let lineHeight = ItemSourceView.ACCUMULATED_LINE_HEIGHT - ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH * 2;
         let color = ItemSourceView.ACCUMULATED_LINE_COLOR;
         this._accumulatedLine
             .clear()
-            .rect(0, 0, lineWidth, lineHeight)
+            .rect(ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH, 0, lineWidth, lineHeight)
             .fill({ color, alpha: 0.5 })
-            .rect(0, 0, maxLineWidth, lineHeight)
+            .rect(ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH, 0, maxLineWidth, lineHeight)
             .stroke({
                 color,
-                alignment: 1,
-                width: 2,
-                alpha: 0.5
+                alignment: 0,
+                width: ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH,
+                alpha: 0.7
             })
     }
 
-    _renderFertility() {
+    _renderFertility(containerTopY, fertilityBgHeight) {
         let fertilityText = new PIXI.Text({
             text: this._entity.fertility,
             style: {
@@ -123,7 +124,6 @@ class ItemSourceView extends EntityView {
         });
 
         let fertilityBgWidth = fertilityText.width + 2;
-        let fertilityBgHeight = fertilityText.height;
         let fertilityBg = new PIXI.Graphics();
         fertilityBg
             .rect(0,0, fertilityBgWidth, fertilityBgHeight)
@@ -134,7 +134,7 @@ class ItemSourceView extends EntityView {
         fertilityText.position.y = fertilityBgHeight / 2;
 
         let fertilityContainer = new PIXI.Container();
-        fertilityContainer.position.y = -fertilityBgHeight;
+        fertilityContainer.position.y = containerTopY;
         fertilityContainer.position.x = -fertilityBgWidth - 1;
 
         fertilityContainer.addChild(fertilityBg, fertilityText);

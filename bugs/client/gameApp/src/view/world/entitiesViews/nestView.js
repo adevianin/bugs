@@ -8,7 +8,8 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 class NestView extends EntityView { 
 
     static FORT_LINE_COLOR = 0x800080;
-    static FORT_LINE_HEIGHT = 6;
+    static FORT_LINE_HEIGHT = 7
+    static FORT_LINE_BORDER_WIDTH = 2;
     static HP_BOTTOM_MARGIN = 2;
 
     static VISUAL_STATES = class {
@@ -154,20 +155,20 @@ class NestView extends EntityView {
         let lineWidth = (fortLineMaxWidth / 100) * fortInPercent;
 
         let color = NestView.FORT_LINE_COLOR;
-        let height = NestView.FORT_LINE_HEIGHT;
+        let rectHeight = NestView.FORT_LINE_HEIGHT - NestView.FORT_LINE_BORDER_WIDTH * 2;
         this._fortificationLine
             .clear()
-            .rect(0, 0, lineWidth, height)
+            .rect(NestView.FORT_LINE_BORDER_WIDTH, 0, lineWidth, rectHeight)
             .fill({
                 color,
                 alpha: 0.5
             })
-            .rect(0, 0, fortLineMaxWidth, height)
+            .rect(NestView.FORT_LINE_BORDER_WIDTH, 0, fortLineMaxWidth, rectHeight)
             .stroke({
                 color,
-                width: 2,
-                alignment: 1,
-                alpha: 0.5
+                width: NestView.FORT_LINE_BORDER_WIDTH,
+                alignment: 0,
+                alpha: 0.7
             });
     }
 
