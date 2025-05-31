@@ -23,7 +23,7 @@ class MapController extends BaseGraphicView {
             height: worldSize[1]
         };
         this._pixiApp = pixiApp;
-        this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 500);
+        this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 200);
         this._scale = 1;
 
         this._renderHandler();
