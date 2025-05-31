@@ -29,6 +29,7 @@ class WorldBackgroundView extends BaseGraphicView {
     }
 
     _render() {
+        this._springTexture = this.$textureManager.getTexture('grass_spring.png');
         this._summerTexture = this.$textureManager.getTexture('grass_summer.png');
         this._autumnTexture = this.$textureManager.getTexture('grass_autumn.png');
         this._winterTexture = this.$textureManager.getTexture('grass_winter.png');
@@ -43,6 +44,8 @@ class WorldBackgroundView extends BaseGraphicView {
     _renderCurrentSeason() {
         switch(this.$domain.currentSeason) {
             case SEASON_TYPES.SPRING:
+                this._bgSprite.texture = this._springTexture;
+                break;
             case SEASON_TYPES.SUMMER:
                 this._bgSprite.texture = this._summerTexture;
                 break;

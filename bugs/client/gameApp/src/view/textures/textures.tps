@@ -256,6 +256,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/grass_spring.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9Paddings</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">images/item_bug_corpse_1v.png</key>
             <key type="filename">images/item_bug_corpse_2v.png</key>
             <struct type="IndividualSpriteSettings">
@@ -446,6 +461,7 @@
                     <filename>images/ant_queen_fly_2.png</filename>
                     <filename>images/ant_male_fly_1.png</filename>
                     <filename>images/ant_male_fly_2.png</filename>
+                    <filename>images/grass_spring.png</filename>
                 </array>
             </struct>
         </map>
