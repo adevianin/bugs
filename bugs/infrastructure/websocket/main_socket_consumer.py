@@ -35,20 +35,21 @@ class MainSocketConsumer(WebsocketConsumer):
         return super().disconnect(code)
 
     def _on_init_step_data_pack_ready(self, data: Dict):
-        player_id = self._user.id
-        msg = {
-            'type': 'init_step',
-            'step': data['step'],
-            'season': data['season'],
-            'world': data['world'],
-            'specie': data['players_data'][player_id]['specie'],
-            'nuptialMales': data['players_data'][player_id]['nuptial_males'],
-            'consts': data['consts'],
-            'notifications': data['players_data'][player_id]['notifications'],
-            'rating': data['rating']
-        }
-        self.send(json.dumps(msg))
-        self._init_pack_sent = True
+        if not self._init_pack_sent:
+            player_id = self._user.id
+            msg = {
+                'type': 'init_step',
+                'step': data['step'],
+                'season': data['season'],
+                'world': data['world'],
+                'specie': data['players_data'][player_id]['specie'],
+                'nuptialMales': data['players_data'][player_id]['nuptial_males'],
+                'consts': data['consts'],
+                'notifications': data['players_data'][player_id]['notifications'],
+                'rating': data['rating']
+            }
+            self.send(json.dumps(msg))
+            self._init_pack_sent = True
 
     def _on_step_data_pack_ready(self, data: Dict):
         if self._init_pack_sent:
