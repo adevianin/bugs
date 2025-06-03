@@ -69,13 +69,13 @@ class AppView extends BaseGameHTMLView {
         let nest = this.$domain.findMyFirstNest();
         if (nest) {
             this.$eventBus.emit('nestManageRequest', nest.id);
-            this.$eventBus.emit('showPointRequest', nest.position);
+            this.$eventBus.emit('showPointRequest', nest.position, true);
         } else {
             let worldSize = this.$domain.getWorldSize();
             this.$eventBus.emit('showPointRequest', {
                 x: randomInt(0, worldSize[0]),
                 y: randomInt(0, worldSize[1])
-            });
+            }, true);
         }
     }
 

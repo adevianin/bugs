@@ -167,8 +167,8 @@ class MapController extends BaseGraphicView {
         }
     }
 
-    _onShowPointRequest(position) {
-        this._showPosition(position.x, position.y);
+    _onShowPointRequest(position, isFast) {
+        this._showPosition(position.x, position.y, isFast);
     }
 
     _getLocalViewPoint() {
