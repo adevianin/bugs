@@ -71,9 +71,9 @@ class DomainWorker {
             case 'init':
                 this._handleInitCommand(command)
                 break;
-            // case 'findMyFirstNest':
-            //     this._handleFindMyFirstNestCommand(command)
-            //     break;
+            case 'checkIsConnected':
+                this._handleCheckIsConnectedCommand(command)
+                break;
             case 'changePlayerViewPoint':
                 this._handleChangePlayerViewPointCommand(command)
                 break;
@@ -253,6 +253,11 @@ class DomainWorker {
         this._eventBus.on('emailVerified', this._onEmailVerified.bind(this));
         this._eventBus.on('ratingUpdated', this._onRatingUpdated.bind(this));
         this._eventBus.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
+    }
+
+    _handleCheckIsConnectedCommand(command) {
+        let isConnected = this._messageHandlerService.isConnected();
+        this._sendCommandResult(command.id, isConnected);
     }
 
     _handleChangePlayerViewPointCommand(command) {

@@ -59,6 +59,10 @@ class DomainFacade {
         this._eventBus.emit('worldInited');
     }
 
+    checkIsConnected() {
+        return this._sendCommand('checkIsConnected', null, true);
+    }
+
     changePlayerViewPoint(viewPoint, viewRect) {
         return this._sendCommand('changePlayerViewPoint', {
             viewPoint, viewRect

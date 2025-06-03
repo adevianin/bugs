@@ -4,6 +4,7 @@ class ServerConnection {
 
     constructor() {
         this.events = new EventEmitter();
+        this._socket = null;
     }
 
     connect(socketURL) {
@@ -25,6 +26,10 @@ class ServerConnection {
 
     send(msg) {
         this._socket.send(JSON.stringify(msg));
+    }
+
+    isConnected() {
+        return this._socket.readyState == WebSocket.OPEN;
     }
 
     _emitMessage(event) {

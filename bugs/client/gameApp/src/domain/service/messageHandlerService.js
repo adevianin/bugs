@@ -18,6 +18,10 @@ class MessageHandlerService {
         return this._serverConnection.connect(socketURL);
     }
 
+    isConnected() {
+        return this._serverConnection.isConnected();
+    }
+
     _onMessage(msg) {
         switch(msg.type) {
             case 'init_step':

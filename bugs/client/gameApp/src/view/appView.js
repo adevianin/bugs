@@ -21,6 +21,7 @@ class AppView extends BaseGameHTMLView {
         this.$domain.events.on('worldInited', this._onWorldInited.bind(this));
         this.$domain.events.on('stepPack', this._onStepPack.bind(this));
         this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
+        document.addEventListener('visibilitychange', this._onDocumentVisibilityChanged.bind(this));
     }
 
     _render() {
@@ -118,6 +119,15 @@ class AppView extends BaseGameHTMLView {
             .rect(viewRect.x, viewRect.y, viewRect.width, viewRect.height)
             .stroke({width: 1, color: 0x0000FF});
         this._viewRectContainer.addChild(this._viewRectGraphics);
+    }
+
+    async _onDocumentVisibilityChanged() {
+        if (document.visibilityState === 'visible') {
+            let isConnected = await this.$domain.checkIsConnected();
+            if (!isConnected) {
+                location.reload();
+            }
+        }
     }
 }
 
