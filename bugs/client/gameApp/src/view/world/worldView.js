@@ -97,10 +97,10 @@ class WorldView extends BaseGraphicView {
                 }
 
                 if (entityContainer1.label == EntityTypes.ANT && entityContainer2.label == EntityTypes.NEST) {
-                    return 1;
+                    return -1;
                 }
                 if (entityContainer1.label == EntityTypes.NEST && entityContainer2.label == EntityTypes.ANT) {
-                    return -1;
+                    return 1;
                 }
                 return 0;
             }
