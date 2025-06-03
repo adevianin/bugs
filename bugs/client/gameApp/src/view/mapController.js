@@ -45,7 +45,16 @@ class MapController extends BaseGraphicView {
         this._handler = new PIXI.Container();
         this._container.addChildAt(this._handler, 0);
         this._handler.eventMode = 'static';
+        this._setRegularCursor();
         this._handler.hitArea = new PIXI.Rectangle(0, 0, this._mapSize.width, this._mapSize.height);
+    }
+
+    _setRegularCursor() {
+        this._handler.cursor = 'grab';
+    }
+
+    _setScrollingCursor() {
+        this._handler.cursor = 'grabbing';
     }
 
     _onPointerDown(e) {
@@ -55,6 +64,7 @@ class MapController extends BaseGraphicView {
         this._startPoint.x = e.client.x;
         this._startPoint.y = e.client.y;
         window.getSelection().removeAllRanges();
+        this._setScrollingCursor();
     }
 
     _onPointerUp(e) {
@@ -64,6 +74,7 @@ class MapController extends BaseGraphicView {
             console.log(this._getLocalPointFromClickEvent(e));
             this.$eventBus.emit('bgclick', this._getLocalPointFromClickEvent(e));
         }
+        this._setRegularCursor();
     }
 
     _onPointerMove(e) {
