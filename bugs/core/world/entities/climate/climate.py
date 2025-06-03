@@ -7,8 +7,8 @@ import math
 
 class Climate(iThermalStream):
 
-    MIN_TEMP = -15
-    MAX_TEMP = 30
+    MIN_TEMP = -10
+    MAX_TEMP = 35
 
     @property
     def daily_temperature(self):
