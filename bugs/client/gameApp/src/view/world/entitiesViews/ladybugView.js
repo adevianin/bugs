@@ -10,11 +10,12 @@ class LadybugView extends LiveEntityView {
     }
 
     _buildStandSprite() {
-        return new PIXI.Sprite(this.$textureManager.getTexture(`ladybug_4.png`));
+        return new PIXI.Sprite(this.$textureManager.getTexture(`ladybug_1.png`));
     }
 
     _buildWalkSprite() {
-        let sprite = new PIXI.AnimatedSprite(this.$textureManager.getAnimatedTextures(`ladybug`));
+        let ts = this.$textureManager.getAnimatedTextures(`ladybug`);
+        let sprite = new PIXI.AnimatedSprite([ts[0], ts[1], ts[0], ts[2]]);
         sprite.animationSpeed = 0.2;
         return sprite;
     }

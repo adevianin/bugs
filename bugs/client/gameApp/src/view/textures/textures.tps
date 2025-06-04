@@ -212,11 +212,6 @@
             <key type="filename">images/ladybug_1.png</key>
             <key type="filename">images/ladybug_2.png</key>
             <key type="filename">images/ladybug_3.png</key>
-            <key type="filename">images/ladybug_4.png</key>
-            <key type="filename">images/ladybug_5.png</key>
-            <key type="filename">images/ladybug_6.png</key>
-            <key type="filename">images/ladybug_7.png</key>
-            <key type="filename">images/ladybug_8.png</key>
             <key type="filename">images/ladybug_dead.png</key>
             <key type="filename">images/marker_cross.png</key>
             <key type="filename">images/marker_eat.png</key>
@@ -421,11 +416,6 @@
                     <filename>images/ladybug_1.png</filename>
                     <filename>images/ladybug_2.png</filename>
                     <filename>images/ladybug_3.png</filename>
-                    <filename>images/ladybug_4.png</filename>
-                    <filename>images/ladybug_5.png</filename>
-                    <filename>images/ladybug_6.png</filename>
-                    <filename>images/ladybug_7.png</filename>
-                    <filename>images/ladybug_8.png</filename>
                     <filename>images/ladybug_dead.png</filename>
                     <filename>images/item_bug_corpse_1v.png</filename>
                     <filename>images/item_bug_corpse_2v.png</filename>
