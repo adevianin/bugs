@@ -1,12 +1,12 @@
 import { EntityView } from './entityView';
 import * as PIXI from 'pixi.js';
 import { SEASON_TYPES } from '@domain/enum/season_types';
+import { distance_point } from '@utils/distance';
 
 class TreeView extends EntityView {
 
     constructor(entity, entityContainer, entitiesLayer) {
         super(entity, entityContainer, entitiesLayer);
-        this._treeRect = null
 
         this._render();
 
@@ -46,14 +46,12 @@ class TreeView extends EntityView {
 
         this._renderEntityState();
 
-        this._treeRect = new PIXI.Rectangle(
-            this._entity.position.x - this._entityWidth / 2,
-            this._entity.position.y - this._entityHeight,
-            this._entityWidth,
-            this._entityHeight
-        )
+        this._treeTextureCenter = {
+            x: this._entity.position.x,
+            y: this._entity.position.y - this._entityHeight / 2
+        }
 
-        // this._renderTreeRectDebug();
+        // this._renderTreeCenterDebug();
     }
 
     _renderEntityState() {
@@ -69,12 +67,11 @@ class TreeView extends EntityView {
         this._spriteWinter.renderable = currenSeason == SEASON_TYPES.WINTER;
     }
 
-    _renderTreeRectDebug() {
+    _renderTreeCenterDebug() {
         let graphics = new PIXI.Graphics();
-        graphics.rect(this._treeRect.x, this._treeRect.y, this._treeRect.width, this._treeRect.height);
-        graphics.stroke({
-            color: 'red',
-            alpha: 0.5
+        graphics.rect(this._treeTextureCenter.x, this._treeTextureCenter.y, 5, 5);
+        graphics.fill({
+            color: 'red'
         });
         this._parentContainer.addChild(graphics);
     }
@@ -86,7 +83,7 @@ class TreeView extends EntityView {
     }
 
     _onViewPointChange(viewPoint, viewRect) {
-        this._bodyContainer.alpha = this._treeRect.contains(viewPoint.x, viewPoint.y) ? 0.5 : 1;
+        this._bodyContainer.alpha = distance_point(viewPoint, this._treeTextureCenter) < 150 ? 0.5 : 1;
     }
 
 }
