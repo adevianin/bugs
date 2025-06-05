@@ -1,3 +1,4 @@
+{% load hashed_static %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -6,6 +7,13 @@
         {% block meta %}{% endblock %}
         {% block styles %}{% endblock %}
         <title>{% block title %}{% endblock %}</title>
+        
+        <link rel="icon" type="image/png" sizes="16x16" href="{% hashed_static 'favicon-16x16.png' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% hashed_static 'favicon-32x32.png' %}">
+        <link rel="shortcut icon" href="{% hashed_static 'favicon.ico' %}">
+        <link rel="apple-touch-icon" href="{% hashed_static 'apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{% hashed_static 'android-chrome-192x192.png' %}">
+        <link rel="icon" type="image/png" sizes="512x512" href="{% hashed_static 'android-chrome-512x512.png' %}">
     </head>
     <body>
         {% block content %}{% endblock %}

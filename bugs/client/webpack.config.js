@@ -19,6 +19,7 @@ module.exports = (env = {}) => {
             initialStylesAccountApp: './accountApp/src/view/initialStyles.css',
             initialStylesResetPasswordApp: './resetPasswordApp/src/view/initialStyles.css',
             initialStylesEmailVerificationPage: './emailVerificationPage/initialStyles.css',
+            faviconContainer: './favicon/faviconContainer.js'
         },
         output: {
             filename: isProduction ? '[name].[contenthash].js' : '[name].js',
@@ -58,7 +59,7 @@ module.exports = (env = {}) => {
                     loader: "html-loader",
                 },
                 {
-                    test: /\.png$/i,
+                    test: /\.(png|ico)$/i,
                     type: 'asset/resource'
                 }
             ],
