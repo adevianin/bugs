@@ -84,9 +84,16 @@ class ItemArea(Entity):
         return self._accumulated > 10 and random.choice([True, False, False, False])
     
     def _request_birth(self):
-        self._event_bus.emit('item_birth_request', ItemBirthRequest(self._generate_spawn_point(), self._accumulated, self._item_type, random.randint(0, 360)))
+        angle = self._generate_angle(self._item_type)
+        self._event_bus.emit('item_birth_request', ItemBirthRequest(self._generate_spawn_point(), self._accumulated, self._item_type, angle))
 
     def _on_season_changed(self, season: SeasonTypes):
         self._is_active = ItemArea.check_is_fertile_season_for_item_type(season, self._item_type )
 
+    def _generate_angle(self, item_type: ItemTypes):
+        match(item_type):
+            case ItemTypes.FLOWER:
+                return 0
+            case _:
+                return random.randint(0, 360)
 
