@@ -3,13 +3,13 @@
 }
 
 .ant-stats__stat_title {
-    image-rendering: pixelated;
-    background-repeat: no-repeat;
-    background-position: center;
-    padding: 1px;
     width: 32px;
     height: 32px;
     min-width: 32px;
+    image-rendering: pixelated;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: content-box;
 }
 
 .ant-stats__stat_title--max-hp-icon {
