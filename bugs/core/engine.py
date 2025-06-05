@@ -201,7 +201,7 @@ class Engine():
                     self._logger.exception(f'game loop iteration error. step={step_number}', exc_info=e)
                     raise e
                     
-                if self._world.current_step % BACKUP_EVERY_STEP:
+                if self._world.current_step % BACKUP_EVERY_STEP == 0:
                     self._make_world_state_backup()
                 
                 iteration_end = time.time()
