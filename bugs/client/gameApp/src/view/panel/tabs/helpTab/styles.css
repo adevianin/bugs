@@ -4,5 +4,22 @@
 }
 
 .help__section--highlighted {
-    background-color: yellow;
+    background-color: #B2CD9C
 }
+
+.help__section-title, .help__section-title > * {
+    font-weight: var(--font-weight);
+    font-size: var(--font-size-huge);
+    text-align: center;
+}
+
+.help__subsection-title, .help__subsection-title > * {
+    font-weight: var(--font-weight);
+    font-size: var(--font-size-large);
+    text-align: left;
+}
+
+.help__section-content {
+
+}
+
