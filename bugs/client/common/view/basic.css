@@ -3,7 +3,8 @@
     padding: 0;
     box-sizing: border-box;
     font-size: var(--font-size);
-    font-weight: var(--font-size);
+    font-weight: var(--font-weight);
+    font-family: Tahoma, Verdana, Arial, sans-serif;
 }
 
 html, body {
