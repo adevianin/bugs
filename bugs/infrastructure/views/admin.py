@@ -72,6 +72,15 @@ def save_world(request):
 
 @user_passes_test(is_superuser)
 @require_POST
+def count_ants(request):
+    ef = EngineFacade.get_instance()
+    ants_count = ef.count_ants_command()
+    return JsonResponse({
+        'ants_count': ants_count
+    }, status=200)
+
+@user_passes_test(is_superuser)
+@require_POST
 def populate_for_performance_test(request):
     ef = EngineFacade.get_instance()
     ef.populate_for_performance_test_command(request.user.id)

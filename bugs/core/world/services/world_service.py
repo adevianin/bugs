@@ -128,6 +128,9 @@ class WorldService(BaseService):
 
         return world
     
+    def count_ants(self):
+        return len(self._world.map.get_entities(entity_types=[EntityTypes.ANT]))
+    
     def populate_world_for_performance_testing(self, owner_id: int):
         from core.world.entities.ant.queen.queen_ant import QueenAnt
         from core.world.entities.nest.nest import Nest

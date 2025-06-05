@@ -404,6 +404,9 @@ class Engine():
                     case 'generate_rating':
                         if self._is_world_inited:
                             self._rating_service.generate_rating(command['data'])
+                    case 'count_ants':
+                        ants_count = self._world_service.count_ants()
+                        self._send_command_result(command_id, ants_count)
                     case 'populate_for_performance_test':
                         player_id = command['data']
                         self._nuptial_environment_service.ensure_nuptial_env_built_for_player(player_id)

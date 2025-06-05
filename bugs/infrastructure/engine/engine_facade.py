@@ -55,6 +55,9 @@ class EngineFacade:
         world_data = self._send_command_to_engine('get_world_state', None, True, True)
         self._world_data_repository.push(WORLD_ID, world_data)
 
+    def count_ants_command(self):
+        return self._send_command_to_engine('count_ants', None, True, True)
+
     def populate_for_performance_test_command(self, player_id: int):
         self._send_command_to_engine('populate_for_performance_test', player_id, True, True)
     

@@ -8,6 +8,7 @@ class WorldStatusView {
         this._stopWorldBtnEl = this._el.querySelector('[data-stop-world]');
         this._runWorldBtnEl = this._el.querySelector('[data-run-world]');
         this._saveWorldBtnEl = this._el.querySelector('[data-save-world]');
+        this._countAntsBtnEl = this._el.querySelector('[data-count-ants]');
         this._populatePerformanceTestBtnEl = this._el.querySelector('[data-populate-for-performance-test]');
         this._expandMapBtnEl = this._el.querySelector('[data-expand-map-btn]');
         this._expandMapChunkRowsEl = this._el.querySelector('[data-chunk-rows]');
@@ -18,6 +19,7 @@ class WorldStatusView {
         this._stopWorldBtnEl.addEventListener('click', this._stopWorld.bind(this));
         this._runWorldBtnEl.addEventListener('click', this._runWorld.bind(this));
         this._saveWorldBtnEl.addEventListener('click', this._saveWorld.bind(this));
+        this._countAntsBtnEl.addEventListener('click', this._countAnts.bind(this));
         this._populatePerformanceTestBtnEl.addEventListener('click', this._onPopulateForPerformanceTest.bind(this));
         this._expandMapBtnEl.addEventListener('click', this._expandMap.bind(this));
 
@@ -64,6 +66,14 @@ class WorldStatusView {
     _saveWorld() {
         this._requester.post('api/admin/world/save').then(res => {
             alert('saved')
+        }).catch(() => {
+            alert('something went wrong');
+        });
+    }
+
+    _countAnts() {
+        this._requester.post('api/admin/world/count_ants').then(res => {
+            alert(res.data.ants_count);
         }).catch(() => {
             alert('something went wrong');
         });
