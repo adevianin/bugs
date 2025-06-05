@@ -1,6 +1,7 @@
 import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import helpTabTmpl from './helpTabTmpl.html';
+import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class HelpTabView extends BaseGameHTMLView {
 
@@ -20,6 +21,25 @@ class HelpTabView extends BaseGameHTMLView {
 
     _render() {
         this._el.innerHTML = helpTabTmpl;
+
+        this._el.querySelector('[data-section-title-world]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_WORLD);
+        this._el.querySelector('[data-section-title-start]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_START);
+        this._el.querySelector('[data-section-title-breeding]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_BREEDING);
+        this._el.querySelector('[data-section-title-colonies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_COLONIES);
+        this._el.querySelector('[data-subsection-title-colonies-ants]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_ANTS);
+        this._el.querySelector('[data-subsection-title-colonies-operations]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_OPERATIONS);
+        this._el.querySelector('[data-subsection-title-colonies-nests]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_NESTS);
+        this._el.querySelector('[data-subsection-title-colonies-enemies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_ENEMIES);
+        this._el.querySelector('[data-section-title-specie]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_SPECIE);
+        this._el.querySelector('[data-section-content-world]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_WORLD);
+        this._el.querySelector('[data-section-content-start]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_START);
+        this._el.querySelector('[data-section-content-breeding]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_BREEDING);
+        this._el.querySelector('[data-section-content-colonies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES);
+        this._el.querySelector('[data-subsection-content-colonies-ants]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ANTS);
+        this._el.querySelector('[data-subsection-content-colonies-operations]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS);
+        this._el.querySelector('[data-subsection-content-colonies-nests]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS);
+        this._el.querySelector('[data-subsection-content-colonies-enemies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES);
+        this._el.querySelector('[data-section-content-specie]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE);
     }
 
 }
