@@ -79,7 +79,7 @@ class NestView extends EntityView {
         this._hudContainer.addChild(this._nestArea);
 
         let nestHalfWidth = this._nestWidth / 2;
-        let nestHalfHeight = this._nestHeight * 0.75;
+        let nestHalfHeight = this._nestHeight / 2;
 
         this._bodyContainer.pivot.set(nestHalfWidth, nestHalfHeight);
 
