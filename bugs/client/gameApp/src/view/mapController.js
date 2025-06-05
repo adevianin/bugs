@@ -25,6 +25,7 @@ class MapController extends BaseGraphicView {
         this._pixiApp = pixiApp;
         this._throttledOnViewPointChange = throttle(this._onViewPointChange.bind(this), 200);
         this._scale = 1;
+        this._isPositionPickerActivated = false;
 
         this._renderHandler();
         this._worldBackgroundView.updateScale(this._scale);
@@ -38,6 +39,9 @@ class MapController extends BaseGraphicView {
         this._handler.on('pointermove', this._onPointerMove.bind(this));
         this.$eventBus.on('showPointRequest', this._onShowPointRequest.bind(this));
 
+        this.$eventBus.on('positionPickerActivated', this._onPositionPickerActivated.bind(this));
+        this.$eventBus.on('positionPickerDeactivated', this._onPositionPickerDeactivated.bind(this));
+
         window.addEventListener('resize', debounce(this._onWindowResize.bind(this), 200));
     }
 
@@ -50,11 +54,25 @@ class MapController extends BaseGraphicView {
     }
 
     _setRegularCursor() {
-        this._handler.cursor = 'grab';
+        this._handler.cursor = this._isPositionPickerActivated ? 'crosshair' : 'grab';
     }
 
     _setScrollingCursor() {
         this._handler.cursor = 'grabbing';
+    }
+
+    _setPositionPickerCursor() {
+        this._handler.cursor = 'crosshair';
+    }
+
+    _onPositionPickerActivated() {
+        this._isPositionPickerActivated = true;
+        this._setPositionPickerCursor();
+    }
+
+    _onPositionPickerDeactivated() {
+        this._isPositionPickerActivated = false;
+        this._setRegularCursor();
     }
 
     _onPointerDown(e) {

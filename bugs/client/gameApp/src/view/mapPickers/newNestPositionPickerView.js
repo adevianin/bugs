@@ -10,11 +10,13 @@ class NewNestPositionPickerView extends BasePickerView {
         this._stopListenBgClick = this.$eventBus.on('bgclick', this._onBgClick.bind(this));
 
         this._updateArea();
+        this.$eventBus.emit('positionPickerActivated');
     }
 
     deactivate() {
         super.deactivate();
         this._stopListenBgClick();
+        this.$eventBus.emit('positionPickerDeactivated');
     }
 
     async _prepareAreaData() {
