@@ -9,7 +9,7 @@ from .formation_types import FormationTypes
 class BaseFormation(ABC):
 
     FORMATION_ARRIVAL_THRESHOLD = 10
-    MIN_FORMATION_DIST = 250
+    MIN_FORMATION_DIST = 100
 
     @staticmethod
     def check_is_formation_needed(units: List[Ant], destination_point: Point):
