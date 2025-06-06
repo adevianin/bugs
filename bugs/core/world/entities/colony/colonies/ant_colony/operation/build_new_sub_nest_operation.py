@@ -31,6 +31,7 @@ class BuildNewSubNestOperation(Operation):
         super().__init__(event_bus, events, formation_factory, fight_factory, id, OperationTypes.BUILD_NEW_SUB_NEST, hired_ants, flags, formation, fight, worker_vacancies_count, warrior_vacancies_count)
         self._nest_name = nest_name
         self._building_site = building_site
+        self._builder_position = self._building_site.shift(0, 1)
         self._building_nest = building_nest
         self._name = f'новий під мурашник "{self._nest_name}"'
         # self._open_vacancies(AntTypes.WORKER, self._worker_vacancies_count)
@@ -78,8 +79,8 @@ class BuildNewSubNestOperation(Operation):
     def _march_to_building_site_step(self):
         self._stage = 'march_to_building_site'
         units = self._all_ants_for_march
-        if self._check_is_formation_needed(units, self._building_site):
-            formation = self._formation_factory.build_convoy_formation('march_to_building_site', units, self._building_site)
+        if self._check_is_formation_needed(units, self._builder_position):
+            formation = self._formation_factory.build_convoy_formation('march_to_building_site', units, self._builder_position)
             self._register_formation(formation)
         else:
             self._approach_building_site_step()
@@ -88,7 +89,7 @@ class BuildNewSubNestOperation(Operation):
         self._stage = 'approach_building_site'
         for worker in self._workers:
             self._write_ant_flag(worker, self.Flags.ANT_FLAG_APPROACHED_BUILDING_SITE, False)
-            worker.walk_to(self._building_site, 'approached_building_site')
+            worker.walk_to(self._builder_position, 'approached_building_site')
         for warrior in self._warriors:
             warrior.keep_clear_territory(self._building_site, 100)
 

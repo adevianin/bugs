@@ -136,3 +136,6 @@ class Point(namedtuple('Point', ['x', 'y'])):
         
         return Point(new_x, new_y)
     
+    def shift(self, dx = 0, dy = 0):
+        return Point(self.x + dx, self.y + dy)
+    

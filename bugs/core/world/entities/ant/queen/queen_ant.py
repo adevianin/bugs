@@ -65,6 +65,7 @@ class QueenAnt(Ant):
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
+        self._body.angle = 0
 
     def produce_egg(self, name: str, is_fertilized: bool) -> Egg:
         return self._body.produce_egg(name, is_fertilized)

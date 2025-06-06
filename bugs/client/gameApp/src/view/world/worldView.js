@@ -96,12 +96,12 @@ class WorldView extends BaseGraphicView {
                     return entityContainer1.y - entityContainer2.y;
                 }
 
-                if (entityContainer1.label == EntityTypes.ANT && entityContainer2.label == EntityTypes.NEST) {
-                    return -1;
-                }
-                if (entityContainer1.label == EntityTypes.NEST && entityContainer2.label == EntityTypes.ANT) {
-                    return 1;
-                }
+                // if (entityContainer1.label == EntityTypes.ANT && entityContainer2.label == EntityTypes.NEST) {
+                //     return -1;
+                // }
+                // if (entityContainer1.label == EntityTypes.NEST && entityContainer2.label == EntityTypes.ANT) {
+                //     return 1;
+                // }
                 return 0;
             }
         });
