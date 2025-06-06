@@ -393,16 +393,173 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_NESTS]: 'Nests',
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_ENEMIES]: 'Enemies',
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_SPECIE]: 'Specie',
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_WORLD]: `Сезони, шкідники, їжа Antara це самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий амий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий самий початок`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_START]: `Початок із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноженняПочаток із вкладки розмноження`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_BREEDING]: `гени, геном, середовище, віддавання генів середовищу, дальні самці, яйця запліднені, не запліднені Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. Треба самець і самка. `,
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `В колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурахВ колоніях багато мурах`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ANTS]: `В колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperativeВ колоніях багато мурах Самки, самкці, робочі, воїни. стати. guardian, cooperative`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS]: `Мурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справиМурахи поєднуються і роблять спільні корисні справи`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS]: `яйця личинки основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда основні гнізда, саб гнізда, їжа в гнізді, область гнізда `,
-    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES]: `у колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помирятьсяу колонії є вороги. шоб стать ворогом треба напасти на іншу колонію. якшо довго не нападать то з часом вони помиряться`,
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE]: `Вид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють видВид складнається із того шо є в середовищі, які гени представляють вид`,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_WORLD]: `
+        <p>On this planet, just like on Earth, there are four seasons: spring, summer, autumn, and winter. Each of them affects the life of ants in its own way:</p>
+        <ul>
+            <li>
+                <b>Spring</b> — the season of awakening. Nature comes to life, but the air is still chilly. Only cold-resistant ants are able to come out of hibernation. The others are still waiting for warmth in their nests.
+            </li>
+            <li>
+                <b>Summer</b> — the longest and most favorable season. It's warm, and food is plentiful. Summer is the mating season: the time for founding new colonies and the birth of the first females of a new species.
+            </li>
+            <li>
+                <b>Autumn</b> — a time of declining resources. Flowers wither, nectar becomes scarce, although aphids on bushes still produce sweet honeydew for a while — one of the main resources for ants.
+            </li>
+            <li>
+                <b>Winter</b> — the harshest season. The cold paralyzes life. Most creatures, including ants, go into hibernation. Only certain very resilient species are able to survive during this time.
+            </li>
+        </ul>
+        <p>There are not only ants living in this world. For example, ladybugs are natural enemies of ants. They hunt aphids, with whom ants live in symbiosis. Fewer aphids means less honeydew. So ladybugs are an indirect threat to the colony's food supply.</p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_START]: `
+        <p>
+            <b>Main goal of the game</b> — to create your own unique ant specie, best adapted to life in a changing world. All evolution begins with a single ant, the carrier of a rare mutation. Her name is <b>Antara</b>. She is the first step of a new branch of life.
+        </p>
+        <p>
+            To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab. There you can:
+        </p>
+        <ul>
+            <li>give birth to your first Antara female;</li>
+            <li>choose a male for her fertilization;</li>
+            <li>select a location for the nest;</li>
+            <li>name the new colony.</li>
+        </ul>
+        <p>
+            <b>Nest location</b> is an important strategic choice. Ideally, choose a spot near a food source:
+        </p>
+        <ul>
+            <li><b>a large flower</b> with nectar,</li>
+            <li>or <b>a bush with aphids</b> that produce sweet honeydew.</li>
+        </ul>
+        <p>Food sources have a numerical indicator — the higher the value, the more food is available there.</p>
+        <p>
+            It's also useful if there's a <b>tree</b> nearby — it's a source of materials for strengthening the anthill. But remember: ladybugs often hibernate under tree bark, so such proximity can be dangerous.
+        </p>
+        <p>
+            When choosing a location, make sure the food source falls within the nest area — it is outlined with a yellow border. Only then will worker ants be able to find and use these resources.
+        </p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_BREEDING]: `
+        <p>
+            Ants have a complex but fascinating genetic system. Each individual has a genome composed of chromosomes, and those chromosomes consist of individual genes. It is the genes that determine the characteristics of an ant.
+        </p>
+        <p>
+            When a female is fertilized, she receives a set of chromosomes from the male. This set is stored and used for laying all future eggs. The male dies after fertilization — his mission is complete.
+        </p>
+        <p>
+            There are two types of eggs:
+        </p>
+        <ul>
+            <li>
+                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
+            </li>
+            <li>
+                <b>Fertilized eggs</b> — have two sets of chromosomes: one from the mother, one from the father. These eggs can develop into workers, warriors, or females.
+            </li>
+        </ul>
+        <p>
+            The female already has two sets of chromosomes (inherited from her parents). During egg-laying, the genes in her chromosomes are shuffled — this process is called meiosis. As a result, each egg receives two sets of chromosomes: one maternal and one paternal.
+        </p>
+        <p>
+            After being laid, the egg is placed in the egg chamber. There you can:
+        </p>
+        <ul>
+            <li>give a name to the future ant,</li>
+            <li>choose a care mode that will influence the ant's caste,</li>
+            <li>observe its development.</li>
+        </ul>
+        <p>
+            When the egg is ready, it must be moved to the larva chamber in time. There it will start to be fed until a new ant hatches. If you delay — the egg will spoil. If the nest runs out of food — all larvae will die.
+        </p>
+        <p>
+            Males that grow up in the colony are not suitable for fertilizing their "own" females — their genomes are too similar. That's why females search for males from distant colonies during the nuptial flight.
+        </p>
+        <p>
+            These "distant" males are generated based on your species' actions. If you often engage in battles — there's a higher chance of encountering strong, combative males. If you build and reinforce nests — males may appear with genes that allow the creation of additional colony nests. If your ants frequently suffer health damage from cold — the chance increases of finding a male with better cold resistance in his genes.
+        </p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `
+        <p>
+            Ants are social creatures. They live in large communities — colonies, where each individual has its own role. The heart of the colony is the queen. She lays eggs and maintains stability. If she dies — it is a tragedy. Without her, the colony quickly declines. The queen is the longest-living of all castes.
+        </p>
 
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ANTS]: `
+        <p>Each ant in the colony performs its own role:</p>
+        <ul>
+            <li><b>Queen</b> — lays eggs and monitors the condition of the nest.</li>
+            <li><b>Workers</b> — search for and bring food, take care of eggs and larvae.</li>
+            <li><b>Warriors</b> — guard the nest and fight enemies.</li>
+            <li><b>Young females</b> — prepare for the future nuptial flight and founding of new colonies.</li>
+            <li><b>Males</b> — wait for the moment to pass on their genes to distant females of the species.</li>
+        </ul>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS]: `
+        <p>
+            Ants don't speak with words, but they understand each other perfectly through <b>pheromones</b> — chemical signals that control the behavior of the colony. One scent — and the whole group acts.
+        </p>
+        <p>
+            For example: a large beetle appears near the nest. One of the ants finds it and releases a signal pheromone. Others, sensing it, rush in to drag the beetle to the nest together.
+        </p>
+        <p>
+            <b>Smart use of pheromones is the key to the colony's survival.</b>
+        </p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS]: `
+        <p>
+            Usually, a colony has a single nest, but some highly advanced ant species can have multiple nests per colony. This allows them to collect resources from distant sources that would otherwise be unreachable.
+        </p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES]: `
+        <p>
+            Colonies can enter into conflicts with each other. If one colony attacks another — they become <b>enemies</b>. The confrontation can be intense and prolonged, but not eternal. Over time, if the fighting stops, the colonies forget the hostility — and become neutral again.
+        </p>
+    `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE]: `
+        <p>
+            In the "Specie" tab, you can modify the genetic composition of your ant specie. Here, genes are divided into fixed and candidate ones.
+        </p>
+        <ul>
+            <li><b>Fixed genes</b> — these are genes already present in the majority of individuals of the specie. They are a stable part of the species.</li>
+            <li><b>Candidate genes</b> — genes that have appeared in some individuals. You can make them fixed by using the button below the gene.</li>
+        </ul>
+        <p>
+            To transfer new genes into your specie, send males on a nuptial flight. They will find a distant female of your specie and fertilize her. As a result, the male's genes will appear in the candidate list. Choose males with the best genes, send them on flights — and gradually fix those genes in your specie.
+        </p>
+        <p>Each ant has a set of chromosomes responsible for different aspects of its structure and behavior:</p>
+        <ul>
+            <li>
+                <b>Body Chromosome</b> — controls basic characteristics:
+                <ul class="help__stats-list">
+                    <li><div class="help__icon help__icon--max-hp-icon"></div><div>health</div></li>
+                    <li><div class="help__icon help__icon--hp-regen-rate-icon"></div><div>health regeneration rate</div></li>
+                    <li><div class="help__icon help__icon--speed-icon"></div><div>movement speed</div></li>
+                    <li><div class="help__icon help__icon--sight-distance-icon"></div><div>vision range</div></li>
+                    <li><div class="help__icon help__icon--strength-icon"></div><div>strength</div></li>
+                    <li><div class="help__icon help__icon--defense-icon"></div><div>combat endurance</div></li>
+                    <li><div class="help__icon help__icon--appetite-icon"></div><div>appetite</div></li>
+                    <li><div class="help__icon help__icon--min-temp-icon"></div><div>cold resistance</div></li>
+                    <li><div class="help__icon help__icon--life-span-icon"></div><div>lifespan</div></li>
+                </ul>
+            </li>
+            <li>
+                <b>Caste Chromosome</b> — determines how the caste of the ant develops. The values of this chromosome's genes are multiplied by the corresponding genes from the body chromosome. For example: the strength gene in the body chromosome is 15, the strength gene in the caste chromosome is 2, then the phenotype strength will be 15 * 2 = 30.
+            </li>
+            <li>
+                <b>Adaptation Chromosome</b> — allows survival in harsh conditions, such as lack of food, cold, or other challenges.
+            </li>
+            <li>
+                <b>Ability Chromosome</b> — is responsible for special abilities, such as building additional colony nests.
+            </li>
+        </ul>
+        <p>
+            Males always have a single set of chromosomes — and that is enough for them. Other castes (workers, warriors, females, queens), born from fertilized eggs, have two sets of chromosomes.
+            Genes of the same type from different sets of chromosomes compete with each other. The one that is more <b>dominant</b> will be expressed. The dominance code order (from strongest to weakest): <b>A &gt; B &gt; C &gt; D &gt; E</b>.
+        </p>
+        <p>
+            Overall, the genetic principles here correspond to the genetics of ants from planet Earth.
+        </p>
+    `,
 }
 
 export {

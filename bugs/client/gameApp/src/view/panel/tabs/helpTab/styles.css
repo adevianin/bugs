@@ -1,5 +1,5 @@
 .help__section {
-    padding: 20px;
+    padding: var(--margin-large);
     transition: background-color 1s ease;
 }
 
@@ -19,3 +19,69 @@
     text-align: left;
 }
 
+.help__section ul {
+    margin-top: var(--margin-large);
+    margin-bottom: var(--margin-large);
+    margin-left: var(--margin-huge);
+}
+
+.help__section p {
+    margin-top: var(--margin-large);
+    margin-bottom: var(--margin-large);
+}
+
+.help__section b {
+    font-weight: var(--font-weight-strong);
+}
+
+.help__stats-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--margin-large);
+}
+
+.help__icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    image-rendering: pixelated;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: content-box;
+}
+
+.help__icon--max-hp-icon {
+    background-image: url('@view/panel/icons/statsMaxHpIcon.png');
+}
+
+.help__icon--strength-icon {
+    background-image: url('@view/panel/icons/statsStrengthIcon.png');
+}
+
+.help__icon--defense-icon {
+    background-image: url('@view/panel/icons/statsDefenseIcon.png');
+}
+
+.help__icon--hp-regen-rate-icon {
+    background-image: url('@view/panel/icons/statsHpRegenRateIcon.png');
+}
+
+.help__icon--speed-icon {
+    background-image: url('@view/panel/icons/statsSpeedIcon.png');
+}
+
+.help__icon--sight-distance-icon {
+    background-image: url('@view/panel/icons/statsSightDistanceIcon.png');
+}
+
+.help__icon--min-temp-icon {
+    background-image: url('@view/panel/icons/statsMinTempIcon.png');
+}
+
+.help__icon--life-span-icon {
+    background-image: url('@view/panel/icons/statsLifeSpanIcon.png');
+}
+
+.help__icon--appetite-icon {
+    background-image: url('@view/panel/icons/statsAppetiteIcon.png');
+}
