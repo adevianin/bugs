@@ -46,6 +46,7 @@
     padding: 3px;
     min-height: var(--control-height);
     text-transform: capitalize;
+    border: solid 1px gray;
 }
 
 .g-button--main {
@@ -62,6 +63,7 @@
     padding: 4px;
     display: flex;
     align-items: center;
+    border: solid 1px gray;
 }
 
 .g-button-svg--small {
