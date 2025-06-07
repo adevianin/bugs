@@ -189,7 +189,7 @@ class LiveEntityView extends EntityView {
 
         let angleDistance = newAngle - startAngle;
         let rotationStartAt = null;
-        let wholeRotationTime = 150;
+        let wholeRotationTime = 300;
 
         if (angleDistance > 180) {
             angleDistance -= 360;
