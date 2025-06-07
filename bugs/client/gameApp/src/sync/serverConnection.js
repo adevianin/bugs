@@ -1,10 +1,12 @@
 import { EventEmitter } from "@common/utils/eventEmitter";
+import { CONSTS } from "@domain/consts";
 
 class ServerConnection {
 
     constructor() {
         this.events = new EventEmitter();
         this._socket = null;
+        this._lastMsgTime = null;
     }
 
     connect(socketURL) {
@@ -29,11 +31,14 @@ class ServerConnection {
     }
 
     isConnected() {
-        return this._socket.readyState == WebSocket.OPEN;
+        const MAX_TIME_BETWEEN_MSGS = CONSTS.STEP_TIME * 1000 * 2;
+        return this._socket.readyState == WebSocket.OPEN && 
+            performance.now() - this._lastMsgTime < MAX_TIME_BETWEEN_MSGS;
     }
 
     _emitMessage(event) {
         this.events.emit('message', JSON.parse(event.data));
+        this._lastMsgTime = performance.now();
     }
 }
 
