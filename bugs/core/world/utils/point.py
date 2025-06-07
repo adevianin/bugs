@@ -33,6 +33,13 @@ class Point(namedtuple('Point', ['x', 'y'])):
             current_angle += delta_angle
 
         return points
+    
+    @classmethod
+    def calc_point_by_direction_angle(self, point: 'Point', distance: int, direction_angle: int) -> List['Point']:
+        angle = math.radians(direction_angle)
+        x = round(point.x + distance * math.cos(angle))
+        y = round(point.y + distance * math.sin(angle))
+        return Point(x,y)
 
     @staticmethod
     def do_step_on_line(start_point: 'Point', dest_point: 'Point', step_size: int) -> Tuple['Point', bool]:
