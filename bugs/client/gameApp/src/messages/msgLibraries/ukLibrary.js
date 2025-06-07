@@ -21,7 +21,7 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME]: 'Розмноження',
     [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NUPT_SEASON_START_AFTER]: 'Сезон розмноження почнеться через ',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NO_QUEENS]: 'Немає самиць в шлюбному льоті.',
-    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Народити первинну самку',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Народити самку Antara',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'Немає самців із віддалених країв в шлюбному льоті.',
 
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.',
@@ -419,7 +419,7 @@ const UK_LIBRARY = {
             Щоб започаткувати колонію, дочекайся теплого сезону. Коли температура дозволяє, відкрий вкладку "Розмноження". Там ти зможеш:
         </p>
         <ul>
-            <li>народити свою першу самку Antara;</li>
+            <li>народити свою первинну самку Antara;</li>
             <li>вибрати для неї самця для запліднення;</li>
             <li>обрати місце для гнізда;</li>
             <li>дати назву новій колонії.</li>

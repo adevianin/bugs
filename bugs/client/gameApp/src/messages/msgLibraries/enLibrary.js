@@ -21,7 +21,7 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME]: 'Breeding',
     [GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NUPT_SEASON_START_AFTER]: 'The breeding season will begin in ',
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_NO_QUEENS]: 'There are no females in the nuptial flight.',
-    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Birth the primal female',
+    [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Birth the Antara Female',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'There are no males from distant lands in the nuptial flight.',
 
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'You can\'t build a satellite nest in a colony without a queen.',
@@ -419,7 +419,7 @@ const EN_LIBRARY = {
             To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab. There you can:
         </p>
         <ul>
-            <li>give birth to your first Antara female;</li>
+            <li>give birth to your primal Antara female;</li>
             <li>choose a male for her fertilization;</li>
             <li>select a location for the nest;</li>
             <li>name the new colony.</li>
