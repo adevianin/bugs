@@ -32,6 +32,11 @@
     background-color: var(--contrasting-color-light);
 }
 
+.gene__caste-dev-table tbody td {
+    padding: 0;
+    text-align: center;
+}
+
 .gene__icon-container {
     height: 32px;
     width: 32px;

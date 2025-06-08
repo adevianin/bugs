@@ -74,7 +74,7 @@ class DevelopmentCasteGene(BaseGene):
         max_hp = min(self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent), 3)
         hp_regen_rate = min(self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent), 3)
         speed = min(self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent), 3)
-        life_span = min(self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent), 3)
+        life_span = min(self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent), 99)
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def upgrade(self) -> 'DevelopmentCasteGene':
