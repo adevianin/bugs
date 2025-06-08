@@ -10,6 +10,8 @@ import diedColonyNotificationTmpl from './diedColonyNotificationTmpl.html';
 import { convertStepsToYear } from "@utils/convertStepsToYear";
 import { PositionView } from '@view/panel/base/position/positionView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import { convertStepsToSeason } from '@utils/convertStepsToSeason';
+import { SEASON_TYPES } from '@domain/enum/season_types';
 
 class NotificationView extends BaseGameHTMLView {
 
@@ -61,7 +63,8 @@ class NotificationView extends BaseGameHTMLView {
             let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_ANT_DEATH_PLACE);
             this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
         }
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
+        
+        this._renderDate(this._el.querySelector('[data-year]'), this._notification.step);
     }
 
     _renderDiedNestNotification() {
@@ -71,7 +74,7 @@ class NotificationView extends BaseGameHTMLView {
         this._el.querySelector('[data-nest-name]').innerHTML = this._notification.nestName;
         let deathPositionText = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_DEATH_PLACE);
         this._renderPosition(this._notification.deathRecord.deathPosition, this._el.querySelector('[data-death-position]'), deathPositionText);
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
+        this._renderDate(this._el.querySelector('[data-year]'), this._notification.step);
     }
 
     _renderNestAlarmRaisedNotification() {
@@ -79,7 +82,7 @@ class NotificationView extends BaseGameHTMLView {
         this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_NEST);
         this._el.querySelector('[data-raised-alarm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_RAISED_ALARM);
         this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
+        this._renderDate(this._el.querySelector('[data-year]'), this._notification.step);
     }
 
     _renderNestAlarmCanceledNotification() {
@@ -87,7 +90,7 @@ class NotificationView extends BaseGameHTMLView {
         this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_NEST);
         this._el.querySelector('[data-canceled-alarm-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_NEST_CANCELED_ALARM);
         this._renderPosition(this._notification.nestPosition, this._el.querySelector('[data-nest-name]'), this._notification.nestName);
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step) ;
+        this._renderDate(this._el.querySelector('[data-year]'), this._notification.step);
     }
 
     _renderDiedColonyNotification() {
@@ -95,7 +98,7 @@ class NotificationView extends BaseGameHTMLView {
         this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_COLONY);
         this._el.querySelector('[data-destroyed-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_COLONY_DEATH_DESTROYED);
         this._el.querySelector('[data-colony-name]').innerHTML = this._notification.colonyName;
-        this._el.querySelector('[data-year]').innerHTML = convertStepsToYear(this._notification.step);
+        this._renderDate(this._el.querySelector('[data-year]'), this._notification.step);
     }
 
     _generateAntDeathDescribeText() {
@@ -139,6 +142,25 @@ class NotificationView extends BaseGameHTMLView {
     _renderPosition(position, el, linkText) {
         let view = new PositionView(el, position, linkText);
         this._positionViews.push(view);
+    }
+
+    _renderDate(el, steps) {
+        let yearText = convertStepsToYear(steps);
+        let seasonText = this._convertSeasonToText(convertStepsToSeason(steps));
+        el.innerHTML = `${seasonText} ${yearText}`;
+    }
+
+    _convertSeasonToText(season) {
+        switch (season) {
+            case SEASON_TYPES.SPRING:
+                return this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_SPRING);
+            case SEASON_TYPES.SUMMER:
+                return this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_SUMMER);
+            case SEASON_TYPES.AUTUMN:
+                return this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_AUTUMN);
+            case SEASON_TYPES.WINTER:
+                return this.$mm.get(GAME_MESSAGE_IDS.SEASON_LABEL_WINTER);
+        }
     }
 
 }

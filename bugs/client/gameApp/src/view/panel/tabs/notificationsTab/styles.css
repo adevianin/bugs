@@ -1,5 +1,6 @@
 .notifications-tab__year-col {
-    width: 50px;
+    width: 75px;
+    text-transform: capitalize;
 }
 
 .notifications-tab__table {
