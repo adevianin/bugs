@@ -5,6 +5,7 @@ from core.world.entities.ant.base.genetic.genes.base.genes_types import GenesTyp
 from core.world.entities.ant.base.genetic.genes.base.base_gene import BaseGene
 from .required_genes_list import REQUIRED_GENES
 from typing import List
+import random
 
 class SpecieChromosome():
 
@@ -49,6 +50,8 @@ class SpecieChromosome():
     
     def accept_chromosome(self, chromosome: Chromosome):
         for gene in chromosome.genes:
+            if random.random() < 0.2:
+                continue
             specie_gene = SpecieGene.build_new(gene)
             self._specie_genes.append(specie_gene)
     

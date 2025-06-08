@@ -69,12 +69,12 @@ class DevelopmentCasteGene(BaseGene):
     def mutate(self, percent: int, super_mutate_chance: int, super_mutate_percent: int) -> BaseGene:
         percent = percent / 3
         super_mutate_percent = super_mutate_percent / 3
-        strength = self._deviate_value(self.strength, percent, super_mutate_chance, super_mutate_percent)
-        defense = self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent)
-        max_hp = self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent)
-        hp_regen_rate = self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent)
-        speed = self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent)
-        life_span = self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent)
+        strength = min(self._deviate_value(self.strength, percent, super_mutate_chance, super_mutate_percent), 3)
+        defense = min(self._deviate_value(self.defense, percent, super_mutate_chance, super_mutate_percent), 3)
+        max_hp = min(self._deviate_value(self.max_hp, percent, super_mutate_chance, super_mutate_percent), 3)
+        hp_regen_rate = min(self._deviate_value(self.hp_regen_rate, percent, super_mutate_chance, super_mutate_percent), 3)
+        speed = min(self._deviate_value(self.speed, percent, super_mutate_chance, super_mutate_percent), 3)
+        life_span = min(self._deviate_value(self.life_span, percent, super_mutate_chance, super_mutate_percent), 3)
         return self.build(DominationCodes.random(), strength, defense, max_hp, hp_regen_rate, speed, life_span)
     
     def upgrade(self) -> 'DevelopmentCasteGene':
