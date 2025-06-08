@@ -73,6 +73,9 @@ class EngineFacade:
             'chunk_cols': chunk_cols
         }, True, True)
 
+    def get_world_data(self):
+        return self._send_command_to_engine('get_world_state', None, True, True)
+
     def _generate_rating_command(self):
         self._send_command_to_engine('generate_rating', self._usernames_repository.get_usernames(), False, True)
 

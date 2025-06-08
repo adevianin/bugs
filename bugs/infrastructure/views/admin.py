@@ -108,3 +108,16 @@ def expand_map(request: HttpRequest):
         return JsonResponse({
             'status': 'success'
         }, status=200)
+    
+@user_passes_test(is_superuser)
+@require_GET
+def get_world_data(request: HttpRequest):
+    ef = EngineFacade.get_instance()
+
+    world_data = ef.get_world_data()
+    json_data = json.dumps(world_data, indent=4)
+
+    response = HttpResponse(json_data, content_type='application/json')
+    response['Content-Disposition'] = 'attachment; filename="world_data.json"'
+
+    return response

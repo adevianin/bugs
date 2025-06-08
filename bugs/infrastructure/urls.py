@@ -7,7 +7,7 @@ from .views.account import (check_username_uniqueness, check_email_uniqueness, a
                             account_index, google_auth_callback, verify_email, reset_password, reset_password_request, set_new_password,
                             change_username, change_email, change_password, verify_email_request)
 from .views.game import index
-from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map, count_ants, populate_for_performance_test
+from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map, get_world_data, count_ants, populate_for_performance_test
 from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
 from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
 from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
@@ -41,6 +41,7 @@ urlpatterns = [
     path('api/admin/world/count_ants', count_ants, name='count_ants'),
     path('api/admin/world/populate_for_performance_test', populate_for_performance_test, name='populate_for_performance_test'),
     path('api/admin/world/expand_map', expand_map, name='expand_map'),
+    path('api/admin/world/get_world_data', get_world_data, name='get_world_data'),
 
     path('api/world/nests/<int:nest_id>/rename', rename_nest, name='rename_nest'),
     path('api/world/nests/<int:nest_id>/lay_egg', lay_egg, name='lay_egg'),
