@@ -105,3 +105,7 @@
 .nest-manager__nest-field-data-container {
     flex: 1;
 }
+
+.nest-manage__to-larva-btn--ready {
+    background-color: #09691f;
+}

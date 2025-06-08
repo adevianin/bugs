@@ -78,6 +78,7 @@ class EggView extends BaseGameHTMLView {
 
     _renderToLarvaChamberBtnState() {
         this._toLarvaChamberBtn.disabled = !this._egg.isReady || this._isToLarvaChamberBtnBlocked;
+        this._toLarvaChamberBtn.classList.toggle('nest-manage__to-larva-btn--ready', !this._toLarvaChamberBtn.disabled);
     }
 
     _toggleToLarvaChamberBtnBlock(isBlocked) {
