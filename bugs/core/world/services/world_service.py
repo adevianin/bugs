@@ -9,7 +9,7 @@ from core.world.entities.colony.base.colony_relations_table import ColonyRelatio
 from core.world.settings import (LADYBUG_COLONY_ID, GENERATING_CHUNK_SIZE, HONEYDEW_ITEM_SOURCE_MAX_FERTILITY, HONEYDEW_ITEM_SOURCE_MIN_FERTILITY, NECTAR_ITEM_SOURCE_MAX_FERTILITY, 
                                  NECTAR_ITEM_SOURCE_MIN_FERTILITY, HONEYDEW_ITEM_SOURCE_MAX_ITEM_STRENGTH, NECTAR_ITEM_SOURCE_MAX_ITEM_STRENGTH, PERFORMANCE_TEST_COLONY_POPULATION,
                                  MIN_LEAF_ITEM_AREA_FERTILITY, MAX_LEAF_ITEM_AREA_FERTILITY, MIN_STICK_ITEM_AREA_FERTILITY, MAX_STICK_ITEM_AREA_FERTILITY, 
-                                 MIN_FLOWER_ITEM_AREA_FERTILITY, MAX_FLOWER_ITEM_AREA_FERTILITY)
+                                 MIN_FLOWER_ITEM_AREA_FERTILITY, MAX_FLOWER_ITEM_AREA_FERTILITY, SUMMER_START_YEAR_STEP)
 from core.world.entities.climate.climate_factory import ClimateFactory
 from core.world.entities.tree.tree_factory import TreeFactory
 from core.world.entities.item.item_areas.item_area_factory import ItemAreaFactory
@@ -115,7 +115,7 @@ class WorldService(BaseService):
         climate = self._climate_factory.build_climate(1, +1)
         notifications = []
         world = self._world_factory.build_world(map, colonies, colony_relations_table, nuptial_environments, player_stats_list, climate, 
-                                                0, notifications, last_used_id)
+                                                SUMMER_START_YEAR_STEP - 5, notifications, last_used_id)
         
         return world
 
