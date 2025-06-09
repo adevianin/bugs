@@ -37,6 +37,7 @@ class NestView extends EntityView {
         this._stopListenNestRenamed = this.$eventBus.on(`entityActionAnimationRequest:${nestId}:${ACTION_TYPES.NEST_RENAMED}`, this._onNestRenamedAR.bind(this));
         this._stopListenShowNestAreaRequest = this.$eventBus.on(`showNestAreaRequest:${nestId}`, this._onShowNestAreaRequest.bind(this));
         this._stopListenHideNestAreaRequest = this.$eventBus.on(`hideNestAreaRequest:${nestId}`, this._onHideNestAreaRequest.bind(this));
+        this._stopListenBgClick = this.$eventBus.on('bgclick', this._onHideNestAreaRequest.bind(this));
     }
 
     get _nestWidth() {
@@ -132,6 +133,7 @@ class NestView extends EntityView {
         this._nestHudLayer.detach(this._hudContainer);
         this._stopListenShowNestAreaRequest();
         this._stopListenHideNestAreaRequest();
+        this._stopListenBgClick();
     }
 
     _renderEntityState() {
