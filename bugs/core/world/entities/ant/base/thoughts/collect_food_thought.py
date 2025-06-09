@@ -15,7 +15,7 @@ class CollectFoodThought(Thought):
         AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION = 'am_i_near_target_food_source_position'
 
     _body: AntBody
-    IGNORE_EMPTY_FOOD_SOURCE_STEPS = 40
+    IGNORE_EMPTY_FOOD_SOURCE_STEPS = 100
 
     def __init__(self, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         super().__init__(type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
