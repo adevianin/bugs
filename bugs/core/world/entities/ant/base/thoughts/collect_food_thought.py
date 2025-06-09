@@ -15,7 +15,7 @@ class CollectFoodThought(Thought):
         AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION = 'am_i_near_target_food_source_position'
 
     _body: AntBody
-    IGNORE_EMPTY_FOOD_SOURCE_STEPS = 100
+    IGNORE_EMPTY_FOOD_SOURCE_STEPS = 70
 
     def __init__(self, nest: Nest, random_walk_thought: RandomWalkThought, go_home_thought: GoInNestThought, flags: dict = None, sayback: str = None):
         super().__init__(type=ThoughtTypes.COLLECT_FOOD, flags=flags, sayback=sayback)
@@ -86,6 +86,7 @@ class CollectFoodThought(Thought):
                     is_food_in_source = food_sources[0].take_some_item(on_got_food)
 
                     if not is_food_in_source:
+                        self._nearby_food_sources_data_manager.mark_food_source_as_empty(self._target_food_source_id)
                         self._body.memory.save_flag(self._build_empty_food_source_memory_flag(self._target_food_source_id), True, self.IGNORE_EMPTY_FOOD_SOURCE_STEPS)
                         self._clear_target_food_source()
                 else:
