@@ -148,9 +148,7 @@ class Engine():
                 except redis.exceptions.ConnectionError as e:
                     self._disconnect_all_players()
                     conn_fail_count += 1
-                    if conn_fail_count >= 5:
-                        self._logger.error('redis connection error', exc_info=e)
-                        self._stop_engine_signal.set()
+                    self._logger.error('redis connection error. watcher')
                 time.sleep(1)
 
         self._redis_watcher_thread = threading.Thread(target=ping, daemon=True)
@@ -173,7 +171,7 @@ class Engine():
                     msg_data_json = json.loads(msg['data'])
                     self._on_client_msg(msg_data_json)
             except redis.exceptions.ConnectionError as e:
-                self._logger.error('listening egning in channel connection error')
+                self._logger.error('redis connection error. engine in listener')
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
@@ -228,7 +226,7 @@ class Engine():
                 'is_world_stepping': self._is_world_stepping
             }), STEP_TIME + 3)
         except redis.exceptions.ConnectionError as e:
-            self._logger.error('engine_status setting redis conenction error')
+            self._logger.error('redis connection error. update_engine_status')
 
     def _handle_player_disconnections(self):
         while not self._player_disconnect_q.empty():
@@ -363,7 +361,7 @@ class Engine():
                 'data': data
             }))
         except redis.exceptions.ConnectionError as e:
-            self._logger.error('sending msg redis connection error')
+            self._logger.error('redis connection error. _send_msg')
 
     def _send_command_result(self, command_id: int, result):
         self._send_msg('command_result', {

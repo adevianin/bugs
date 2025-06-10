@@ -1,5 +1,5 @@
 import redis.exceptions
-from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, DEBUG
+from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD
 from typing import List, Dict
 import threading, redis, json, time
 from concurrent.futures import Future, TimeoutError
@@ -7,12 +7,12 @@ from infrastructure.event_bus import event_bus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
-import logging
+from infrastructure.utils.log_error import log_error
 
 class EngineFacade:
     _instance = None
 
-    WAIT_COMMAND_RESULT_TIMEOUT = 30 if not DEBUG else 180
+    WAIT_COMMAND_RESULT_TIMEOUT = 10
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
@@ -255,13 +255,17 @@ class EngineFacade:
     # </PLAYER_COMMANDS>
 
     def get_world_status(self):
-        status = self._redis.get('engine_status')
         is_world_inited = False
         is_world_stepping = False
-        if status:
-            status = json.loads(status)
-            is_world_inited = status['is_world_inited']
-            is_world_stepping = status['is_world_stepping']
+
+        try:
+            status = self._redis.get('engine_status')
+            if status:
+                status = json.loads(status)
+                is_world_inited = status['is_world_inited']
+                is_world_stepping = status['is_world_stepping']
+        except redis.exceptions.ConnectionError as e:
+            log_error('redis connection error. couldnt get world status')
 
         return {
             'is_world_inited': is_world_inited,
@@ -269,10 +273,13 @@ class EngineFacade:
         }
 
     def _send_msg_to_engine(self, type: str, data: Dict = None):
-        self._redis.publish(EngineFacade.CHANNEL_ENGINE_IN, json.dumps({
-            'type': type,
-            'data': data
-        }))
+        try:
+            self._redis.publish(EngineFacade.CHANNEL_ENGINE_IN, json.dumps({
+                'type': type,
+                'data': data
+            }))
+        except redis.exceptions.ConnectionError as e:
+            log_error('redis connection error. couldnt send msg to engine')
 
     def _generate_command_id(self):
         self._last_used_command_id += 1
@@ -294,6 +301,7 @@ class EngineFacade:
                 res = command_future.result(EngineFacade.WAIT_COMMAND_RESULT_TIMEOUT)
                 return res
             except TimeoutError as e:
+                log_error(f'command time out, command type={type}')
                 raise EngineResponseTimeoutError()
             finally:
                 del self._command_futures[command_id]
@@ -308,6 +316,7 @@ class EngineFacade:
                         self._listen_engine_out()
                     conn_fail_count = 0
                 except redis.exceptions.ConnectionError as e:
+                    log_error('redis connection error. watcher')
                     conn_fail_count += 1
                     event_bus.emit('engine_connection_error')
                 time.sleep(1)
@@ -316,8 +325,6 @@ class EngineFacade:
         redis_watcher_thread.start()
 
     def _listen_engine_out(self):
-        logger = logging.getLogger('request_logger')
-
         def listen():
             try:
                 pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
@@ -335,7 +342,7 @@ class EngineFacade:
                         case 'command_error':
                             self._on_command_error(data)
             except redis.exceptions.ConnectionError as e:
-                logger.error('redis connection error', exc_info=e)
+                log_error('redis connection error. listen engine_out')
 
         world_thread = threading.Thread(target=listen, daemon=True)
         world_thread.start()
