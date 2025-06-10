@@ -7,7 +7,7 @@ import { UI_CONSTS } from '@common/view/ui_consts';
 
 class NestView extends EntityView { 
 
-    static FORT_LINE_COLOR = 0x800080;
+    static FORT_LINE_COLOR = 0x77DFE8;
     static FORT_LINE_HEIGHT = 7
     static FORT_LINE_BORDER_WIDTH = 2;
     static HP_BOTTOM_MARGIN = 2;
