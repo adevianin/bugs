@@ -23,8 +23,7 @@ async function initViewLayer(domainFacade) {
     let pixiApp = new PIXI.Application();
     await pixiApp.init({
         resolution: window.devicePixelRatio,
-        autoDensity: true,
-        roundPixels: true, // fixes texture bleeding 
+        autoDensity: true
     });
 
     let mm = MessageMaster.init(gameMsgLibrariesPack);
