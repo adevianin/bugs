@@ -21,6 +21,10 @@
     padding: 1px;
 }
 
+.ants-list__ant-profile-container {
+    background-color: var(--contrasting-color-light);
+}
+
 .ants-list__ant-profile-field {
     display: flex;
     margin-top: var(--margin-small);
