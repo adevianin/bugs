@@ -58,6 +58,7 @@ class LarvaTabView extends BaseGameHTMLView {
             }
         }
         this._noLarvaPlaceholder.classList.toggle('g-hidden', !isEmpty);
+        this._larvaeListEl.classList.toggle('g-hidden', isEmpty);
     }
 
     _renderLarvaeList() {

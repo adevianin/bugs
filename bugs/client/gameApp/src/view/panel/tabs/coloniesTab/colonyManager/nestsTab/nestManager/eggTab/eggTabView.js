@@ -108,6 +108,7 @@ class EggTabView extends BaseGameHTMLView {
             }
         }
         this._noEggsPlaceholder.classList.toggle('g-hidden', !isEmpty);
+        this._eggsListEl.classList.toggle('g-hidden', isEmpty);
     }
 
     _onEggDeleted(egg) {

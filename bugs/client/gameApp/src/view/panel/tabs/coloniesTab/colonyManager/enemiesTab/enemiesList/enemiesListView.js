@@ -42,7 +42,9 @@ class EnemiesListView extends BaseGameHTMLView {
     }
 
     _renderEnemiesEmptyState() {
-        this._noEnemiesPlaceholderEl.classList.toggle('g-hidden', this._colony.enemies.length > 0);
+        let isAnyEnemy = this._colony.enemies.length > 0;
+        this._noEnemiesPlaceholderEl.classList.toggle('g-hidden', isAnyEnemy);
+        this._enemiesListEl.classList.toggle('g-hidden', !isAnyEnemy);
     }
 
     _renderAllEnemies() {
