@@ -5,8 +5,8 @@
 .notification-indicator {
     position: absolute;
     color: red;
-    font-size: 50px;
-    top: 2px;
+    font-size: 65px;
+    top: 5px;
     transform: translateY(-50%);
-    right: -8px;
+    right: -5px;
 }
