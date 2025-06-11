@@ -16,8 +16,7 @@ class NotificationIndicatorView extends BaseGameHTMLView {
 
     _render() {
         this._el.classList.add('notification-indicator-container');
-        this._indicatorEl = document.createElement('span');
-        this._indicatorEl.innerHTML = '•';
+        this._indicatorEl = document.createElement('div');
         this._indicatorEl.classList.add('notification-indicator');
 
         let hasUnread = this._checkHasUnreadNotifications();
