@@ -47,7 +47,7 @@ class MainTabView extends BaseGameHTMLView {
     }
 
     _renderStoredClalories() {
-        this._storedCaloriesEl.innerHTML = this._nest.storedCalories;
+        this._storedCaloriesEl.innerHTML = this._nest.storedCalories.toLocaleString();
     }
 
     _renderIsMainNest() {
