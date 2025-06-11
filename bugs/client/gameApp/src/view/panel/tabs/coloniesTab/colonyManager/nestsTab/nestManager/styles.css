@@ -109,3 +109,11 @@
 .nest-manage__to-larva-btn--ready {
     background-color: #09691f;
 }
+
+.nest-manage__to-larva-btn--ready:hover {
+  background-color: #0b7a26;
+}
+
+.nest-manage__to-larva-btn--ready:active {
+  background-color: #07551a;
+}
