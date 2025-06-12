@@ -337,6 +337,21 @@
                 <key>scale9FromFile</key>
                 <false/>
             </struct>
+            <key type="filename">images/nest_winter.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>spriteScale</key>
+                <double>1</double>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>20,20,40,40</rect>
+                <key>scale9Paddings</key>
+                <rect>20,20,40,40</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">images/stats_defense_icon.png</key>
             <key type="filename">images/stats_max_hp_icon.png</key>
             <key type="filename">images/stats_strength_icon.png</key>
@@ -452,6 +467,7 @@
                     <filename>images/ant_male_fly_1.png</filename>
                     <filename>images/ant_male_fly_2.png</filename>
                     <filename>images/grass_spring.png</filename>
+                    <filename>images/nest_winter.png</filename>
                 </array>
             </struct>
         </map>

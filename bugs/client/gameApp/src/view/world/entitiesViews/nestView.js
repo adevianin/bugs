@@ -4,6 +4,7 @@ import { HpLineView } from './hpLine';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { EntityHightlighterView } from './entityHighlighterView';
 import { UI_CONSTS } from '@common/view/ui_consts';
+import { SEASON_TYPES } from "@domain/enum/season_types";
 
 class NestView extends EntityView { 
 
@@ -38,6 +39,7 @@ class NestView extends EntityView {
         this._stopListenShowNestAreaRequest = this.$eventBus.on(`showNestAreaRequest:${nestId}`, this._onShowNestAreaRequest.bind(this));
         this._stopListenHideNestAreaRequest = this.$eventBus.on(`hideNestAreaRequest:${nestId}`, this._onHideNestAreaRequest.bind(this));
         this._stopListenBgClick = this.$eventBus.on('bgclick', this._onHideNestAreaRequest.bind(this));
+        this._stopListenSeasonChange = this.$domain.events.on('currentSeasonChanged', this._onSeasonChanged.bind(this));
     }
 
     get _nestWidth() {
@@ -60,8 +62,11 @@ class NestView extends EntityView {
 
         this._nestHudLayer.attach(this._hudContainer);
 
-        this._builtNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest.png'));
+        this._nestTexture = this.$textureManager.getTexture('nest.png');
+        this._nestWinterTexture = this.$textureManager.getTexture('nest_winter.png');
+        this._builtNestSprite = new PIXI.Sprite();
         this._bodyContainer.addChild(this._builtNestSprite);
+        this._renderTextureToBuiltNestSprite();
 
         this._buildingNestSprite = new PIXI.Sprite(this.$textureManager.getTexture('nest_building.png'));
         this._bodyContainer.addChild(this._buildingNestSprite);
@@ -134,6 +139,7 @@ class NestView extends EntityView {
         this._stopListenShowNestAreaRequest();
         this._stopListenHideNestAreaRequest();
         this._stopListenBgClick();
+        this._stopListenSeasonChange();
     }
 
     _renderEntityState() {
@@ -186,6 +192,11 @@ class NestView extends EntityView {
 
     _renderName(name) {
         this._nameText.text = name;
+    }
+
+    _renderTextureToBuiltNestSprite() {
+        let currenSeason = this.$domain.currentSeason;
+        this._builtNestSprite.texture = currenSeason == SEASON_TYPES.WINTER ? this._nestWinterTexture : this._nestTexture;
     }
 
     _playAnimation(animation) {
@@ -265,6 +276,10 @@ class NestView extends EntityView {
 
     _onHideNestAreaRequest() {
         this._nestArea.renderable = false;
+    }
+
+    _onSeasonChanged() {
+        this._renderTextureToBuiltNestSprite();
     }
 
 }
