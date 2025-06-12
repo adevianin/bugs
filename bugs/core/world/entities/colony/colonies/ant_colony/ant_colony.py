@@ -77,7 +77,7 @@ class AntColony(Colony):
 
     def _die(self):
         self._emit_action(ColonyDiedAction(self.id))
-        self._emit_notification(DiedColonyNotification(self.owner_id, f'colony {self.id}'))
+        self._emit_notification(DiedColonyNotification(self.owner_id, self.name))
         self._event_bus.emit('colony_died', self)
 
     def _on_colony_entity_died(self, entity: Entity):
