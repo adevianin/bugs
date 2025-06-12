@@ -226,7 +226,7 @@ class NestView extends EntityView {
     _playDiedAnimation() {
         this._renderVisualState(NestView.VISUAL_STATES.DEAD);
         this._hudContainer.renderable = false;
-        this.events.emit('playedDiedAnimation', 5000);
+        this.events.emit('playedDiedAnimation', 30000);
     }
 
     _playBuildStatusChange({ isBuilt }) {
