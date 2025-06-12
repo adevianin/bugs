@@ -22,18 +22,18 @@
 }
 
 .season-bar__season--spring {
-    background-color: green;
+    background-color: #5FAE55;
 }
 
 .season-bar__season--summer {
-    background-color: #D5451B;
+    background-color: #CD4F45;
 }
 .season-bar__season--autumn {
-    background-color: yellow;
+    background-color: #DFA232;
 }
 
 .season-bar__season--winer {
-    background-color: white;
+    background-color: #DADFE3;
 }
 
 .climate__container {
