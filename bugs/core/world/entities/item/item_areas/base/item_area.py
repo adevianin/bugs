@@ -18,7 +18,7 @@ class ItemArea(Entity):
     ACTIVE_SEASONS: Dict[ItemTypes, List[SeasonTypes]] = {
         ItemTypes.FLOWER: [SeasonTypes.SPRING, SeasonTypes.SUMMER],
         ItemTypes.LEAF: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN],
-        ItemTypes.STICK: [SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
+        ItemTypes.STICK: [SeasonTypes.SPRING, SeasonTypes.SUMMER, SeasonTypes.AUTUMN]
     }
 
     @staticmethod
