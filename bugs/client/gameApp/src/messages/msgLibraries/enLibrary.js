@@ -458,7 +458,7 @@ const EN_LIBRARY = {
             </li>
         </ul>
         <p>
-            The female already has two sets of chromosomes (inherited from her parents). During egg-laying, the genes in her chromosomes are shuffled — this process is called meiosis. As a result, each egg receives two sets of chromosomes: one maternal and one paternal.
+            The female already has two sets of chromosomes (inherited from her parents). During egg-laying, the genes in her chromosomes are shuffled — this process is called meiosis. As a result, each egg receives two sets of chromosomes: one maternal(after meiosis) and one paternal(from the male).
         </p>
         <p>
             After being laid, the egg is placed in the egg chamber. There you can:
