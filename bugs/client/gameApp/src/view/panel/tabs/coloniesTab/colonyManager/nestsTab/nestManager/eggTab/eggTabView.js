@@ -44,6 +44,8 @@ class EggTabView extends BaseGameHTMLView {
         this._renderEggsList();
         this._renderNoEggsState();
         this._renderError('');
+        this._toggleAddEggBtn(true);
+        this._addEggLoader.toggleVisibility(false);
     }
 
     _listenNest() {
