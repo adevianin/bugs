@@ -20,7 +20,7 @@ class NestBody(Body):
         self._area = area
         self._stored_calories = stored_calories
         self._larvae = larvae
-        self._eggs = eggs
+        self._eggs: List[Egg] = eggs
         self._build_progress = build_progress
         self._fortification = fortification
         self._not_building_steps_counter = 0
@@ -114,6 +114,9 @@ class NestBody(Body):
             is_changed = egg.develop()
             if is_changed:
                 self.events.emit('egg_develop', egg)
+            if egg.is_ready:
+                self.move_egg_to_larva_chamber(egg.id)
+                
     
     def take_edible_item(self, item: Item):
         self.stored_calories += item.use()
