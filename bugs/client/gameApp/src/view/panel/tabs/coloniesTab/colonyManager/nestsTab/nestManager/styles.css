@@ -117,3 +117,7 @@
 .nest-manage__to-larva-btn--ready:active {
   background-color: #07551a;
 }
+
+.nest-manager__data-container {
+    text-align: center;
+}
