@@ -469,9 +469,6 @@ const EN_LIBRARY = {
             <li>observe its development.</li>
         </ul>
         <p>
-            When the egg is ready, it must be moved to the larva chamber in time. There it will start to be fed until a new ant hatches. If you delay — the egg will spoil. If the nest runs out of food — all larvae will die.
-        </p>
-        <p>
             Males that grow up in the colony are not suitable for fertilizing their "own" females — their genomes are too similar. That's why females search for males from distant colonies during the nuptial flight.
         </p>
         <p>
