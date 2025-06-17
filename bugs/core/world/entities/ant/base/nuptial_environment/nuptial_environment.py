@@ -97,7 +97,7 @@ class NuptialEnvironment():
 
     def _on_ant_built_nest(self, ant: Ant):
         if ant.owner_id == self.owner_id:
-            self._specie.register_building_activity()
+            self._specie.register_nest_building_activity()
 
     def _emit_males_changed_action(self):
         self._event_bus.emit('action', NuptialEnvironmentMalesChangedAction(self._males, self._owner_id))

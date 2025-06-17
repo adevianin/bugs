@@ -7,7 +7,7 @@ from .activity_weights_pack import ActivityWeightsPack
 from core.world.settings import (NUPT_MALE_PROBABILITY_OF_SUPER_GENE, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_STRENGTH, NUPT_MALE_SUPER_GENE_THRESHOLD_BODY_DEFENSE, 
                                  NUPT_MALE_SUPER_GENE_THRESHOLD_SPECIALIZATION_BUILDING_SUBNEST, NUPT_MALE_SUPER_GENE_THRESHOLD_ADAPTATION_COLD, 
                                  NEW_SPECIE_MUTATION_PERCENT, NEW_SPECIE_SUPER_MUTATE_CHANCE, NEW_SPECIE_SUPER_MUTATE_PERCENT, ANTARA_MUTATITON_PERCENT, ANTARA_SUPER_MUTATION_CHANCE_PERCENT,
-                                 ANTARA_SUPER_MUTATION_PERCENT)
+                                 ANTARA_SUPER_MUTATION_PERCENT, SPECIE_COMMON_ACTIVITY_WEIGHT, SPECIE_NEST_BUILD_ACTIVITY_WEIGHT)
 from core.world.utils.probability_check import probability_check
 from core.world.entities.ant.base.genetic.genes.development_warrior_caste_gene import DevelopmentWarriorCasteGene
 from core.world.entities.ant.base.genetic.genes.specialization_building_subnest_gene import SpecializationBuildingSubnestGene
@@ -42,7 +42,7 @@ class Specie():
     
     @property
     def _activity_value(self):
-        return 1
+        return SPECIE_COMMON_ACTIVITY_WEIGHT
     
     def accept_male_genome(self, genome: Genome):
         maternal_chromosome_set = genome.maternal_chromosomes_set
@@ -106,6 +106,9 @@ class Specie():
     
     def register_building_activity(self):
         self._activity_weights.building_weight += self._activity_value
+
+    def register_nest_building_activity(self):
+        self._activity_weights.building_weight += SPECIE_NEST_BUILD_ACTIVITY_WEIGHT
 
     def _build_super_gene_by_specie_activity(self) -> BaseGene:
         genes = []
