@@ -118,6 +118,13 @@ class EntityView extends BaseGraphicView {
         this._entityContainer.y = y;
     }
 
+    _readEntityPosition() {
+        return {
+            x: this._entityContainer.x,
+            y: this._entityContainer.y
+        }
+    }
+
     _renderEntityAngle(angle) {
         this._entityContainer.angle = angle;
     }
@@ -199,6 +206,8 @@ class EntityView extends BaseGraphicView {
             this._renderEntityPosition(pointTo);
             return
         }
+
+        pointFrom = this._readEntityPosition();
 
         let animationStep = this.$domain.currentStep;
         let dist = distance_point(pointFrom, pointTo);
