@@ -438,6 +438,9 @@ const EN_LIBRARY = {
         <p>
             When choosing a location, make sure the food source falls within the nest area — it is outlined with a yellow border. Only then will worker ants be able to find and use these resources.
         </p>
+        <p> 
+            Once the nest is built, it is time to lay eggs. This can be done in the nest management menu, which opens when you click on the nest. 3-4 worker ants will be enough to start.
+        <p/>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_BREEDING]: `
         <p>
