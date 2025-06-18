@@ -10,6 +10,10 @@ class MessageHandlerService {
         this._colonyService = colonyService;
         this._userService = userService;
         this._nuptialEnvironmentService = nuptialEnvironmentService;
+
+        this._isStepMsgLoopInited = false;
+        this._stepMessageQueue = [];
+
         this._serverConnection.events.on('message', this._onMessage.bind(this));
         this._serverConnection.events.on('connectionClosedFromServer', this._onConnectionClosedFromServer.bind(this));
     }
@@ -28,7 +32,7 @@ class MessageHandlerService {
                 this._handleInitStepMsg(msg);
                 break;
             case 'step':
-                this._handleStepMsg(msg);
+                this._onStepMsg(msg);
                 break;
             case 'email_verified':
                 this._handleEmailVerifiedMsg(msg);
@@ -36,6 +40,30 @@ class MessageHandlerService {
             default: 
                 throw `unknown type of message "${ msg.type }"`
         }
+    }
+
+    _onStepMsg(msg) {
+        if (!this._isStepMsgLoopInited) {
+            this._startStepMessageProcessingLoop();
+        }
+        this._stepMessageQueue.push(msg);
+    }
+
+    _startStepMessageProcessingLoop() {
+        if (this._isStepMsgLoopInited) {
+            return;
+        }
+        this._isStepMsgLoopInited = true;
+        setInterval(() => {
+            if (this._stepMessageQueue.length > 3) {
+                console.warn('step msg q is to long = ', this._stepMessageQueue.length);
+            }
+            
+            if (this._stepMessageQueue.length === 0) return;
+            const msg = this._stepMessageQueue.shift();
+            this._handleStepMsg(msg);
+
+        }, CONSTS.STEP_TIME * 1000);
     }
 
     _handleInitStepMsg(msg) {
