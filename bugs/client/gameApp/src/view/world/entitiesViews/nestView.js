@@ -119,9 +119,9 @@ class NestView extends EntityView {
             this._builtNestSprite.eventMode = 'static';
             this._builtNestSprite.cursor = 'pointer';
             this._builtNestSprite.on('pointerdown', this._onClick.bind(this));
-            this._nameText.eventMode = 'static';
-            this._nameText.cursor = 'pointer';
-            this._nameText.on('pointerdown', this._onClick.bind(this));
+            this._hudContainer.eventMode = 'static';
+            this._hudContainer.cursor = 'pointer';
+            this._hudContainer.on('pointerdown', this._onClick.bind(this));
         }
 
         this._renderEntityState();
