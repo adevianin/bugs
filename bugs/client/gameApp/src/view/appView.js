@@ -64,12 +64,15 @@ class AppView extends BaseGameHTMLView {
         this._render();
         this._showStartPosition();
         this.events.emit('ready');
+        setTimeout(() => {
+            this._showAppropriateHelp();
+        }, 500)
     }
 
     _showStartPosition() {
         let nest = this.$domain.findMyFirstNest();
         if (nest) {
-            this.$eventBus.emit('nestManageRequest', nest.id);
+            this.$eventBus.emit('nestManageRequest', nest.id, false);
             this.$eventBus.emit('showPointRequest', nest.position, true);
         } else {
             let worldSize = this.$domain.getWorldSize();
@@ -77,6 +80,20 @@ class AppView extends BaseGameHTMLView {
                 x: randomInt(0, worldSize[0]),
                 y: randomInt(0, worldSize[1])
             }, true);
+        }
+    }
+
+    _showAppropriateHelp() {
+        let antsCount = this.$domain.myState.ants.length;
+        let nestsCount = this.$domain.myState.nests.length;
+        let notificationsCount = this.$domain.myState.notificationsContainer.notifications.length;
+
+        if (antsCount == 0 && nestsCount == 0 && notificationsCount == 0) {
+            this.$eventBus.emit('help', 'world');
+        } else if (antsCount == 1 && nestsCount == 0 && notificationsCount == 0) {
+            this.$eventBus.emit('help', 'start');
+        } else if (nestsCount == 1) {
+            this.$eventBus.emit('help', 'breeding');
         }
     }
 

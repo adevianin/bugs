@@ -88,9 +88,9 @@ class PanelView extends BaseGameHTMLView {
         this._closePanelBtn = this._el.querySelector('[data-close-panel-btn]');
         this._closePanelBtn.innerHTML = openSvgTmpl;
 
-        this._height = this._determinePanelStartHeight();
-
         this._controlBtnsContainer = this._el.querySelector('[data-control-btns-container]');
+
+        this._tabScrollEl = this._el.querySelector('[data-tab-container]')
 
         this._userTab = new UserTab(this._el.querySelector('[data-user-tab]'));
         this._coloniesTab = new ColoniesTabView(this._el.querySelector('[data-colonies-tab]'));
@@ -98,7 +98,7 @@ class PanelView extends BaseGameHTMLView {
         this._specieBuildertTab = new SpecieBuilderTabView(this._el.querySelector('[data-specie-builder-tab]'));
         this._notificationsTab = new NotificationsTabView(this._el.querySelector('[data-notifications-tab]'));
         this._ratingTab = new RatingTabView(this._el.querySelector('[data-rating-tab]'));
-        this._helpTab = new HelpTabView(this._el.querySelector('[data-help-tab]'));
+        this._helpTab = new HelpTabView(this._el.querySelector('[data-help-tab]'), this._tabScrollEl);
 
         this._tabSwitcher = new TabSwitcher(this._el.querySelector('[data-tab-switcher]'), 'panel', [
             { name: 'breeding', label: '', tab: this._nuptialFlightTab, activatorClass: 'panel__breeding-tab-activator' },
@@ -112,6 +112,8 @@ class PanelView extends BaseGameHTMLView {
 
         let notificationTabActivatorEl = this._tabSwitcher.getActivatorForTab('notifications');
         this._notificationIndicatorView = new NotificationIndicatorView(notificationTabActivatorEl);
+
+        this._close();
     }
 
     _renderHandlerBtnsState() {
@@ -119,9 +121,11 @@ class PanelView extends BaseGameHTMLView {
         this._closePanelBtn.classList.toggle('g-hidden', this._isPanelClosed);
     }
 
-    _onNestManageRequest(nestId) {
+    _onNestManageRequest(nestId, activateTab=true) {
         let nest = this.$domain.myState.getNestById(nestId);
-        this._tabSwitcher.activateTab('colonies');
+        if (activateTab) {
+            this._tabSwitcher.activateTab('colonies');
+        }
         this._coloniesTab.showNestManagerFor(nest);
     }
 
@@ -174,6 +178,7 @@ class PanelView extends BaseGameHTMLView {
     }
 
     _onPanelTabSwitched() {
+        this._tabScrollEl.scrollTop = 0;
         if (this._isPanelClosed) {
             this._open();
         }

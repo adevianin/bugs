@@ -5,8 +5,9 @@ import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 
 class HelpTabView extends BaseGameHTMLView {
 
-    constructor(el) {
+    constructor(el, tabScrollElement) {
         super(el);
+        this._tabScrollElement = tabScrollElement;
 
         this._render();
     }
@@ -14,7 +15,10 @@ class HelpTabView extends BaseGameHTMLView {
     showSection(sectionId) {
         let highlightClassName = 'help__section--highlighted';
         let section = this._el.querySelector(`[data-section="${sectionId}"]`);
-        section.scrollIntoView();
+        this._tabScrollElement.scrollTo({
+            top: section.offsetTop,
+            behavior: 'smooth'
+        });
         section.classList.add(highlightClassName);
         setTimeout(() => section.classList.remove(highlightClassName), 1000);
     }
