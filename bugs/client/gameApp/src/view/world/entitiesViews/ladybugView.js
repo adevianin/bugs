@@ -16,7 +16,7 @@ class LadybugView extends LiveEntityView {
     _buildWalkSprite() {
         let ts = this.$textureManager.getAnimatedTextures(`ladybug`);
         let sprite = new PIXI.AnimatedSprite([ts[0], ts[1], ts[0], ts[2]]);
-        sprite.animationSpeed = 0.2;
+        sprite.animationSpeed = 0.16;
         return sprite;
     }
 
