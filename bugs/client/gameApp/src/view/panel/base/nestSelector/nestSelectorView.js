@@ -52,6 +52,18 @@ class NestSelectorView extends BaseGameHTMLView {
         }
     }
 
+    selectFirst(emitChange = false) {
+        for (let option of this._el.options) {
+            if (!option.disabled) {
+                this._el.value = option.value;
+                if (emitChange) {
+                    this._onChange();
+                }
+                return;
+            }
+        }
+    }
+
     _render() {
         this._el.classList.add('g-select');
         this._el.classList.add('nest-selector');

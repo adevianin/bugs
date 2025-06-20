@@ -17,6 +17,8 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
         this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestSelector.events.on('changed', this._onNestChanged.bind(this));
+
+        this._nestSelector.selectFirst(true);
     }
 
     remove() {
@@ -28,7 +30,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
     _render() {
         this._el.innerHTML = bringBugOperationCreatorTmpl;
 
-        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
+        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id, false);
         this._nestErrContainer = this._el.querySelector('[data-nest-err]');
 
         this._bugCorpseErrContainer = this._el.querySelector('[data-bug-corpse-err]');

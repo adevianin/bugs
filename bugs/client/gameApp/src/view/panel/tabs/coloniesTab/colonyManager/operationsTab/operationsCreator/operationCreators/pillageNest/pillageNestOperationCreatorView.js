@@ -24,6 +24,8 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._chooseNestToPillageBtn.addEventListener('click', this._onChooseNestToPillageBtnClick.bind(this));
         this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestForLootSelector.events.on('changed', this._onNestForLootChanged.bind(this));
+
+        this._nestForLootSelector.selectFirst(true);
     }
 
     remove() {
@@ -44,7 +46,7 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
         this._nestToPillageErrorContainer = this._el.querySelector('[data-nest-to-pillage-err]');
 
         this._nestForLootErrContainer = this._el.querySelector('[data-nest-for-loot-err]');
-        this._nestForLootSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
+        this._nestForLootSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id, false);
 
         let warriorsCountInput = this._el.querySelector('[data-warriors-count]');
         let warriorsCountErrContainer = this._el.querySelector('[data-warriors-count-err]');

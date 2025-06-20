@@ -19,6 +19,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._startBtn.addEventListener('click', doubleClickProtection(this._onStartBtnClick.bind(this)));
         this._nestSelector.events.on('changed', this._onNestChanged.bind(this));
 
+        this._nestSelector.selectFirst(true);
     }
 
     remove() {
@@ -32,7 +33,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
         this._el.innerHTML = buildFortificationOperationCreatorTmpl;
 
         this._nestErrContainer = this._el.querySelector('[data-nest-err]');
-        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id);
+        this._nestSelector = new NestSelectorView(this._el.querySelector('[data-nest-selector]'), this._performingColony.id, false);
 
         let workersCountInput = this._el.querySelector('[data-workers-count]');
         let workersCountErrContainer = this._el.querySelector('[data-workers-count-err]');
