@@ -447,22 +447,22 @@ const EN_LIBRARY = {
             Ants have a complex but fascinating genetic system. Each individual has a genome composed of chromosomes, and those chromosomes consist of individual genes. It is the genes that determine the characteristics of an ant.
         </p>
         <p>
-            When a female is fertilized, she receives a set of chromosomes from the male. This set is stored and used for laying all future eggs. The male dies after fertilization — his mission is complete.
+            When a female is fertilized, she receives a set of chromosomes from the male. This set is stored and used for laying future eggs. The male dies after fertilization — his mission is complete.
+        </p>
+        <p>
+            When laying an egg, the female passes a set of chromosomes to it. Since the female is diploid(has two sets of chromosomes inherited from her parents), only one set ends up in the egg — it is formed during the process of meiosis. Meiosis is a type of cell division during which a diploid cell becomes haploid, meaning it contains only one set of chromosomes. In this way, the egg receives a random set of the female's chromosomes. Additionally, the egg may also receive a set of chromosomes from the male that fertilized the female. The presence or absence of this set determines what type the egg will be.
         </p>
         <p>
             There are two types of eggs:
         </p>
         <ul>
             <li>
-                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
-            </li>
-            <li>
                 <b>Fertilized eggs</b> — have two sets of chromosomes: one from the mother, one from the father. These eggs can develop into workers, warriors, or females.
             </li>
+            <li>
+                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
+            </li>
         </ul>
-        <p>
-            The female already has two sets of chromosomes (inherited from her parents). During egg-laying, the genes in her chromosomes are shuffled — this process is called meiosis. As a result, each egg receives two sets of chromosomes: one maternal(after meiosis) and one paternal(from the male).
-        </p>
         <p>
             After being laid, the egg is placed in the egg chamber. There you can:
         </p>
