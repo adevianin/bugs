@@ -13,7 +13,7 @@ class MessageMaster {
 
     static _determineLang() {
         let language = navigator.language || 'en';
-        if (language.includes('uk')) return 'uk';
+        if (language.includes('uk') || language.includes('ru')) return 'uk';
         if (language.includes('en')) return 'en';
         return 'en';
     }
