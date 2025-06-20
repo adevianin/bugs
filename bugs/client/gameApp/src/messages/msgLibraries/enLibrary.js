@@ -487,7 +487,7 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ANTS]: `
         <p>Each ant in the colony performs its own role:</p>
         <ul>
-            <li><b>Queen</b> — lays eggs and monitors the condition of the nest.</li>
+            <li><b>Queen</b> — lays eggs and ensures the nest's stability.</li>
             <li><b>Workers</b> — search for and bring food, take care of eggs and larvae.</li>
             <li><b>Warriors</b> — guard the nest and fight enemies.</li>
             <li><b>Young females</b> — prepare for the future nuptial flight and founding of new colonies.</li>
