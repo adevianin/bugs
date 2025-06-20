@@ -76,7 +76,7 @@ class NuptialService(BaseService):
             self._kill_queens_in_nuptial_flight()
             self._stop_nuptial_season_for_envs()
         
-        if self._world.current_season in NUPTIAL_FLIGHT_SEASONS:
+        if self._world.current_season == NUPTIAL_FLIGHT_SEASONS[0]:
             self._start_nuptial_season_for_envs()
 
     def _stop_nuptial_season_for_envs(self):
