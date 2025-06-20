@@ -322,7 +322,7 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.ENEMIES_TAB_TABLE_COL_COLONY_NAME]: 'name of enemy colony',
     [GAME_MESSAGE_IDS.ENEMIES_TAB_TABLE_COL_ACTIONS]: 'actions',
 
-    [GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE]: 'Specie builder',
+    [GAME_MESSAGE_IDS.SPECIE_BUILDER_TAB_TITLE]: 'Species builder',
     [GAME_MESSAGE_IDS.SPECIE_BUILDER_CHROMOSOME_EDITOR_LABEL_BODY]: 'body',
     [GAME_MESSAGE_IDS.SPECIE_BUILDER_CHROMOSOME_EDITOR_LABEL_DEVELOPMENT]: 'caste',
     [GAME_MESSAGE_IDS.SPECIE_BUILDER_CHROMOSOME_EDITOR_LABEL_ADAPTATION]: 'adaptation',
@@ -392,7 +392,7 @@ const EN_LIBRARY = {
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_OPERATIONS]: 'Pheromones',
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_NESTS]: 'Nests',
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_ENEMIES]: 'Enemies',
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_SPECIE]: 'Specie',
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_SPECIE]: 'Species',
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_WORLD]: `
         <p>On this planet, just like on Earth, there are four seasons: spring, summer, autumn, and winter. Each of them affects the life of ants in its own way:</p>
         <ul>
@@ -413,7 +413,7 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_START]: `
         <p>
-            <b>Main goal of the game</b> — to create your own unique ant specie, best adapted to life in a changing world. All evolution begins with a single ant, the carrier of a rare mutation. Her name is <b>Antara</b>. She is the first step of a new branch of life.
+            <b>Main goal of the game</b> — to create your own unique ant species, best adapted to life in a changing world. All evolution begins with a single ant, the carrier of a rare mutation. Her name is <b>Antara</b>. She is the first step of a new branch of life.
         </p>
         <p>
             To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab. There you can:
@@ -517,14 +517,14 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE]: `
         <p>
-            In the "Specie" tab, you can modify the genetic composition of your ant specie. Here, genes are divided into fixed and candidate ones.
+            In the "Species" tab, you can modify the genetic composition of your ant species. Here, genes are divided into fixed and candidate ones.
         </p>
         <ul>
-            <li><b>Fixed genes</b> — these are genes already present in the majority of individuals of the specie. They are a stable part of the species.</li>
+            <li><b>Fixed genes</b> — these are genes already present in the majority of individuals of the species. They are a stable part of the species.</li>
             <li><b>Candidate genes</b> — genes that have appeared in some individuals. You can make them fixed by using the button below the gene.</li>
         </ul>
         <p>
-            To transfer new genes into your specie, send males on a nuptial flight. They will find a distant female of your specie and fertilize her. As a result, the male's genes will appear in the candidate list. Choose males with the best genes, send them on flights — and gradually fix those genes in your specie.
+            To transfer new genes into your species, send males on a nuptial flight. They will find a distant female of your species and fertilize her. As a result, the male's genes will appear in the candidate list. Choose males with the best genes, send them on flights — and gradually fix those genes in your species.
         </p>
         <p>Each ant has a set of chromosomes responsible for different aspects of its structure and behavior:</p>
         <ul>
