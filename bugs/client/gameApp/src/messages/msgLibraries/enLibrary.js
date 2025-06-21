@@ -472,6 +472,9 @@ const EN_LIBRARY = {
             <li>observe its development.</li>
         </ul>
         <p>
+            Once the egg has developed, it is transferred to a larval chamber, where it is fed until an ant hatches.
+        </p>
+        <p>
             Males that grow up in the colony are not suitable for fertilizing their "own" females — their genomes are too similar. That's why females search for males from distant colonies during the nuptial flight.
         </p>
         <p>
