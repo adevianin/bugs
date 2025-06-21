@@ -14,7 +14,8 @@ def _build_world_status():
     world_status = ef.get_world_status()
     return {
         'isInited': world_status['is_world_inited'],
-        'isRunning': world_status['is_world_stepping']
+        'isRunning': world_status['is_world_stepping'],
+        'playersOnline': world_status['players_online']
     }
 
 @user_passes_test(is_superuser)

@@ -223,7 +223,8 @@ class Engine():
         try:
             self._redis.set('engine_status', json.dumps({
                 'is_world_inited': self._is_world_inited,
-                'is_world_stepping': self._is_world_stepping
+                'is_world_stepping': self._is_world_stepping,
+                'players_online': len(self._connected_player_ids)
             }), STEP_TIME + 3)
         except redis.exceptions.ConnectionError as e:
             self._logger.error('redis connection error. update_engine_status')

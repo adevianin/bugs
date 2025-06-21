@@ -14,6 +14,7 @@ class WorldStatusView {
         this._expandMapChunkRowsEl = this._el.querySelector('[data-chunk-rows]');
         this._expandMapChunkColsEl = this._el.querySelector('[data-chunk-cols]');
         this._worldControlsEl = this._el.querySelector('[data-world-controls]');
+        this._playersOnlineEl = this._el.querySelector('[data-players-online]');
 
         this._initWorldBtnEl.addEventListener('click', this._initWorld.bind(this));
         this._stopWorldBtnEl.addEventListener('click', this._stopWorld.bind(this));
@@ -106,6 +107,7 @@ class WorldStatusView {
     _renderWorldStatus(status) {
         this._isWorldRunningStatusEl.innerText = status.isRunning;
         this._isWorldInitedStatusEl.innerText = status.isInited;
+        this._playersOnlineEl.innerText = status.playersOnline;
         
         this._worldControlsEl.disabled = !status.isInited;
         this._initWorldBtnEl.disabled = status.isInited;

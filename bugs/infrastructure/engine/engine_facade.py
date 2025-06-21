@@ -257,6 +257,7 @@ class EngineFacade:
     def get_world_status(self):
         is_world_inited = False
         is_world_stepping = False
+        players_online = -1
 
         try:
             status = self._redis.get('engine_status')
@@ -264,12 +265,14 @@ class EngineFacade:
                 status = json.loads(status)
                 is_world_inited = status['is_world_inited']
                 is_world_stepping = status['is_world_stepping']
+                players_online = status['players_online']
         except redis.exceptions.ConnectionError as e:
             log_error('redis connection error. couldnt get world status')
 
         return {
             'is_world_inited': is_world_inited,
-            'is_world_stepping': is_world_stepping
+            'is_world_stepping': is_world_stepping,
+            'players_online': players_online
         }
 
     def _send_msg_to_engine(self, type: str, data: Dict = None):
