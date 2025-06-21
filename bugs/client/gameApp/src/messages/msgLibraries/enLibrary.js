@@ -496,6 +496,9 @@ const EN_LIBRARY = {
             <li><b>Young females</b> — prepare for the future nuptial flight and founding of new colonies.</li>
             <li><b>Males</b> — wait for the moment to pass on their genes to distant females of the species.</li>
         </ul>
+        <p>
+            There is a list of ants in the colony. In it, you can open each ant individually and see its characteristics, genes, what it does, and take certain actions, such as sending the ant on a mating flight.
+        </p>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS]: `
         <p>
