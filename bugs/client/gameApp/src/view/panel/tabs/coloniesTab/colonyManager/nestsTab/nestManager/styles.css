@@ -34,7 +34,7 @@
 }
 
 .nest-manager__eggs-list-state-col {
-    width: 70px;
+    width: 90px;
 }
 
 .nest-manager__eggs-list-caste-col {
@@ -83,7 +83,8 @@
 }
 
 .nest-manager__larvae-list-caste-col {
-    width: 65px;
+    width: 85px;
+    text-align: center;
 }
 
 .nest-manager__larva_actions_container {
