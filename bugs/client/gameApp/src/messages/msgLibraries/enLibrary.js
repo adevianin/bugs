@@ -499,7 +499,7 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS]: `
         <p>
-            Ants don't speak with words, but they understand each other perfectly through <b>pheromones</b> — chemical signals that control the behavior of the colony. One scent — and the whole group acts.
+            Ants don't speak with words, but they understand each other perfectly through pheromones — chemical signals that control the behavior of the colony. One scent — and the whole group acts.
         </p>
         <p>
             For example: a large beetle appears near the nest. One of the ants finds it and releases a signal pheromone. Others, sensing it, rush in to drag the beetle to the nest together.
