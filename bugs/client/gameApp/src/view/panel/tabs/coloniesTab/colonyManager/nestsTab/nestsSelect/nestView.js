@@ -18,7 +18,7 @@ class NestView extends BaseGameHTMLView {
     }
 
     _render() {
-        this._el.value = this._nest.id;
+        this._el.classList.add('nests-tab__nest-selector-nest');
         this._renderName();
     }
 

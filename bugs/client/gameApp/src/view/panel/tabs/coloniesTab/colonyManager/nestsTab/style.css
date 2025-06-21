@@ -16,6 +16,26 @@
     gap: var(--margin-small);
 }
 
-.nests-tab__nest-select {
-    width: 200px;
+.nests-tab__nest-selector {
+    display: flex;
+    min-width: 0;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--margin);
+    flex-grow: 1;
+}
+
+.nests-tab__nest-selector-arrow-btn {
+    flex: 0 0 auto;
+}
+
+.nests-tab__nest-selector-selected-nest-conainer {
+    min-width: 0;
+}
+
+.nests-tab__nest-selector-nest {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-weight: var(--font-weight-strong);
 }

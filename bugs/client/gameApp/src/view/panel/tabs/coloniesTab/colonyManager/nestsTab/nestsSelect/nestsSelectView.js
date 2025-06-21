@@ -1,5 +1,8 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import { NestView } from './nestView';
+import nestsSelectTmpl from './nestsSelectTmpl.html';
+import arrowToRightSvgTmpl from '@view/panel/svg/arrowToRight.html';
+import arrowToLeftSvgTmpl from '@view/panel/svg/arrowToLeft.html';
 
 class NestsSelectView extends BaseGameHTMLView {
 
@@ -7,70 +10,102 @@ class NestsSelectView extends BaseGameHTMLView {
         super(el);
 
         this._nests = [];
-        this._nestViews = {};
+        this._selectedNestView = null;
+        this._selectedNestIndex = null;
 
+        this._render();
+
+        this._prevBtn.addEventListener('click', this._onPrevNestBtnClick.bind(this));
+        this._nextBtn.addEventListener('click', this._onNextNestBtnClick.bind(this));
         this.$domain.myState.on('nestBorn', this._onNestBorn.bind(this));
         this.$domain.myState.on('nestDied', this._onNestDied.bind(this));
-
-        this._el.addEventListener('change', this._onChange.bind(this));
     }
 
     manageColony(colony, nestToSelect) {
         this._colony = colony;
         this._nests = this.$domain.getMyNestsFromMyColony(colony.id);
-
-        this._clearNestViews();
-        if (this._nests.length > 0) {
-            this._renderNests();
-            this._selectNest(nestToSelect || this._nests[0]);
+        let selectingNest = nestToSelect || this._nests[0];
+        if (selectingNest) {
+            this._selectNest(selectingNest);
+        } else {
+            this._clearSelectedNest();
+            this._renderChooseBtnsState();
         }
-        
     }
 
     get selectedNest() {
-        return this._nests.find(n => n.id == this._selectedNestId);
+        let selectedNestId = this._selectedNestId;
+        return this._nests.find(n => n.id == selectedNestId);
+    }
+
+    _render() {
+        this._el.innerHTML = nestsSelectTmpl;
+
+        this._selectedNestContainer = this._el.querySelector('[data-selected-nest-container]');
+        this._prevBtn = this._el.querySelector('[data-prev-nest]');
+        this._prevBtn.innerHTML = arrowToLeftSvgTmpl;
+        this._nextBtn = this._el.querySelector('[data-next-nest]');
+        this._nextBtn.innerHTML = arrowToRightSvgTmpl;
     }
 
     get _selectedNestId() {
-        if (!this._el.value) {
-            return null;
+        if (this._hasSelectedNest) {
+            return this._nests[this._selectedNestIndex].id;
         }
 
-        return parseInt(this._el.value);
+        return null;
+    }
+
+    get _hasSelectedNest() {
+        return this._selectedNestIndex != null && this._selectedNestIndex >= 0;
     }
 
     _selectNest(nest) {
-        this._el.value = nest.id;
+        this._clearSelectedNest();
+        this._selectedNestIndex = this._nests.indexOf(nest);
+
+        let el = document.createElement('div');
+        this._selectedNestView = new NestView(el, nest);
+        this._selectedNestContainer.append(el);
+
+        this._renderChooseBtnsState();
+        
         this._emitChange();
     }
 
-    _renderNests() {
-        for (let nest of this._nests) {
-            this._renderNest(nest);
+    _clearSelectedNest() {
+        this._selectedNestIndex = null;
+        if (this._selectedNestView) {
+            this._selectedNestView.remove();
+            this._selectedNestView = null;
         }
     }
 
-    _renderNest(nest) {
-        let el = document.createElement('option');
-        let nestView = new NestView(el, nest);
-        this._nestViews[nest.id] = nestView;
-        this._el.append(el);
+    _selectPrevNest() {
+        let nest = this._nests[this._selectedNestIndex - 1];
+        this._selectNest(nest);
     }
 
-    _clearNestViews() {
-        for (let nestId in this._nestViews) {
-            this._nestViews[nestId].remove();
-        }
-        this._nestViews = {};
+    _selectNextNest() {
+        let nest = this._nests[this._selectedNestIndex + 1];
+        this._selectNest(nest);
+    }
+
+    _checkHasPrevNest() {
+        return this._selectedNestIndex > 0;
+    }
+
+    _checkHasNextNest() {
+        return !!this._nests[this._selectedNestIndex + 1];
+    }
+
+    _renderChooseBtnsState() {
+        this._prevBtn.disabled = !this._checkHasPrevNest();
+        this._nextBtn.disabled = !this._checkHasNextNest();
     }
 
     _emitChange() {
         this.events.emit('selectedNestChanged');
-    }
-
-    _deleteNestView(nest) {
-        this._nestViews[nest.id].remove();
-        delete this._nestViews[nest.id];
     }
 
     _deleteNestEntity(nest) {
@@ -84,28 +119,43 @@ class NestsSelectView extends BaseGameHTMLView {
         return this._colony && nest.fromColony == this._colony.id;
     }
 
-    _onChange() {
-        this._emitChange();
+    _onPrevNestBtnClick() {
+        if (this._checkHasPrevNest()) {
+            this._selectPrevNest();
+        }
+    }
+
+    _onNextNestBtnClick() {
+        if (this._checkHasNextNest()) {
+            this._selectNextNest();
+        }
     }
 
     _onNestBorn(nest) {
         if (this._checkIsMyNest(nest)) {
             this._nests.push(nest);
-            this._renderNest(nest);
-            if (this._selectedNestId == nest.id) {
-                this._emitChange();
+            this._renderChooseBtnsState();
+            if (!this._hasSelectedNest) {
+                this._selectNest(nest);
             }
         }
     }
 
     _onNestDied(nest) {
-        if (this._checkIsMyNest(nest)) { 
+        if (this._checkIsMyNest(nest)) {
             let isSelectedNestDied = this._selectedNestId == nest.id;
-            this._deleteNestView(nest);
-            this._deleteNestEntity(nest);
             if (isSelectedNestDied) {
-                this._emitChange();
+                if (this._checkHasPrevNest()) {
+                    this._selectPrevNest();
+                } else if (this._checkHasNextNest()) {
+                    this._selectNextNest();
+                }
             }
+
+            let selectedNest = this.selectedNest;
+            this._deleteNestEntity(nest);
+            this._selectedNestIndex = this._nests.indexOf(selectedNest);
+            this._renderChooseBtnsState();
         }
     }
 
