@@ -3,7 +3,7 @@ import { CONSTS } from "@domain/consts";
 
 class MessageHandlerService {
 
-    static MAX_STEP_MSGS_Q = 2;
+    static MAX_STEP_MSGS_Q = 5;
 
     constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
@@ -61,13 +61,41 @@ class MessageHandlerService {
             return;
         }
         this._isStepMsgLoopInited = true;
-        setInterval(() => {
-            if (this._stepMessageQueue.length === 0) return;
-            
+        let delay = CONSTS.STEP_TIME * 1000;
+
+        let processNext = () => {
+            this._handleNextStepMsg();
+
+            let delayMultiplier = 1;
+
+            switch (this._stepMessageQueue.length) {
+                case 0:
+                    delayMultiplier = 1;
+                    break;
+                case 1:
+                    delayMultiplier = 0.97;
+                    break;
+                case 2:
+                    delayMultiplier = 0.93;
+                    break;
+                case 3:
+                    delayMultiplier = 0.8;
+                    break;
+                default:
+                    delayMultiplier = 0.6;
+            }
+
+            setTimeout(processNext, delay * delayMultiplier);
+        };
+
+        processNext();
+    }
+
+    _handleNextStepMsg() {
+        if (this._stepMessageQueue.length > 0) {
             let msg = this._stepMessageQueue.shift();
             this._handleStepMsg(msg);
-
-        }, CONSTS.STEP_TIME * 1000);
+        }
     }
 
     _handleInitStepMsg(msg) {
