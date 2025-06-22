@@ -110,6 +110,14 @@
     font-size: var(--font-size);
 }
 
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+    outline: none;
+    border-color: var(--contrasting-color-hard);
+    box-shadow: 0 0 0 2px var(--contrasting-color-hard);
+}
+
 /* hack for ios safari */
 @supports (background: -webkit-named-image(i)) {
     .g-select {
