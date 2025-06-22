@@ -1,5 +1,5 @@
 .name-editor {
-    height: 50px;
+    height: 53px;
 }
 
 .name-editor__preview-container {
@@ -30,6 +30,7 @@
 .name-editor__button {
     margin-left: var(--margin-small);
     flex: 0 0 auto;
+    margin-top: 2px;
 }
 
 .name-editor__loader {
