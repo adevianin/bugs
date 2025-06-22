@@ -118,6 +118,16 @@ button:focus-visible {
     box-shadow: 0 0 0 1px var(--contrasting-color-hard);
 }
 
+input, select, button {
+    color: var(--font-color);
+}
+input:disabled,
+select:disabled,
+button:disabled {
+    color: var(--font-color-disabled);
+    opacity: 0.6;
+}
+
 /* hack for ios safari */
 @supports (background: -webkit-named-image(i)) {
     .g-select {

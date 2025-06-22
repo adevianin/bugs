@@ -8,6 +8,8 @@
     --btn-bg-active: #cc7935;
     --err-color: #D5451B;
     --loader-color: #4B352A;
+    --font-color: #000000;
+    --font-color-disabled: #999999;
     --font-size-small: 12px;
     --font-size: 14px;
     --font-size-large: 18px;
