@@ -18,6 +18,8 @@ class AppView extends BaseGameHTMLView {
     constructor(el) {
         super(el);
 
+        this._isRefreshRequested = false;
+
         this.$domain.events.on('worldInited', this._onWorldInited.bind(this));
         this.$domain.events.on('stepPack', this._onStepPack.bind(this));
         this.$eventBus.on('viewPointChanged', this._onViewPointChanged.bind(this));
@@ -102,7 +104,12 @@ class AppView extends BaseGameHTMLView {
     }
 
     async _onStepPack(stepPack) {
-        if (this._checkIsAppVisible() && this._worldView.checkIsRefreshAnimationsNeeded()) {
+        if (!this._checkIsAppVisible()) {
+            return;
+        }
+
+        if (this._isRefreshRequested || this._worldView.checkIsRefreshAnimationsNeeded()) {
+            this._isRefreshRequested = false;
             await this._worldView.refresh();
             return;
         }
@@ -145,7 +152,9 @@ class AppView extends BaseGameHTMLView {
     async _onDocumentVisibilityChanged() {
         if (this._checkIsAppVisible()) {
             let isConnected = await this.$domain.checkIsConnected();
-            if (!isConnected) {
+            if (isConnected) {
+                this._isRefreshRequested = true;
+            } else {
                 location.reload();
             }
         }
