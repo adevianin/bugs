@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.http.request import HttpRequest
-from bugs.settings import MAIN_SOCKET_URL
+from bugs.settings import MAIN_SOCKET_URL, DEBUG
 from infrastructure.engine.engine_facade import EngineFacade
 
 @ensure_csrf_cookie
@@ -12,8 +12,7 @@ def index(request: HttpRequest):
     if not ef.is_game_working:
         return render(request, 'client/maintenance.html')
     
-    is_secure = request.is_secure()
-    ws_protocol = 'wss' if is_secure else 'ws'
+    ws_protocol = 'ws' if DEBUG else 'wss'
     host = request.get_host()
     full_socket_url = f'{ws_protocol}://{host}{MAIN_SOCKET_URL}'
 
