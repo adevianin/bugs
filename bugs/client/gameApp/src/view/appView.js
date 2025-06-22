@@ -24,6 +24,10 @@ class AppView extends BaseGameHTMLView {
         document.addEventListener('visibilitychange', this._onDocumentVisibilityChanged.bind(this));
     }
 
+    _checkIsAppVisible() {
+        return document.visibilityState === 'visible';
+    }
+
     _render() {
         this._el.innerHTML = appTmpl;
         this._el.classList.add('app');
@@ -98,7 +102,7 @@ class AppView extends BaseGameHTMLView {
     }
 
     async _onStepPack(stepPack) {
-        if (this._worldView.checkIsRefreshAnimationsNeeded()) {
+        if (this._checkIsAppVisible() && this._worldView.checkIsRefreshAnimationsNeeded()) {
             await this._worldView.refresh();
             return;
         }
@@ -139,7 +143,7 @@ class AppView extends BaseGameHTMLView {
     }
 
     async _onDocumentVisibilityChanged() {
-        if (document.visibilityState === 'visible') {
+        if (this._checkIsAppVisible()) {
             let isConnected = await this.$domain.checkIsConnected();
             if (!isConnected) {
                 location.reload();
