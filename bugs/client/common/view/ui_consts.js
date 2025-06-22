@@ -1,5 +1,5 @@
 const UI_CONSTS = {
-    DOUBLE_CLICK_PROTECT_MS: 2000,
+    DOUBLE_CLICK_PROTECT_MS: 2500,
     WORLD_VIEW_FONT_NAME: ['Tahoma', 'Verdana', 'Arial', 'sans-serif'],
     WORLD_VIEW_FONT_SIZE: 14,
     WORLD_VIEW_FONT_COLOR: 0x000000,
