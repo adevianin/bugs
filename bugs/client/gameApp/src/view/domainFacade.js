@@ -170,7 +170,10 @@ class DomainFacade {
     }
 
     _onConnectionClosedFromServer() {
-        location.reload();
+        setTimeout(() => {
+            location.reload();
+        }, 10000);
+        
     }
 
     getEntities() {

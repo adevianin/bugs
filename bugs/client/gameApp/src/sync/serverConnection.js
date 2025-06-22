@@ -18,9 +18,7 @@ class ServerConnection {
             }
             this._socket.onclose = (event) => {
                 if (event.code == 4001) {
-                    setTimeout(() => {
-                        this.events.emit('connectionClosedFromServer');
-                    }, 10000);
+                    this.events.emit('connectionClosedFromServer');
                 }
             };
         });
