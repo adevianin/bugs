@@ -26,6 +26,10 @@ class ServerConnection {
         });
     }
 
+    disconnect() {
+        this._socket.close();
+    }
+
     send(msg) {
         this._socket.send(JSON.stringify(msg));
     }

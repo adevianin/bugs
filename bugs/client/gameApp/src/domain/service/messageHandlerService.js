@@ -3,6 +3,8 @@ import { CONSTS } from "@domain/consts";
 
 class MessageHandlerService {
 
+    static MAX_STEP_MSGS_Q = 2;
+
     constructor(mainEventBus, serverConnection, worldService, colonyService, userService, nuptialEnvironmentService) {
         this._mainEventBus = mainEventBus;
         this._serverConnection = serverConnection;
@@ -47,6 +49,11 @@ class MessageHandlerService {
             this._startStepMessageProcessingLoop();
         }
         this._stepMessageQueue.push(msg);
+
+        if (this._stepMessageQueue.length > MessageHandlerService.MAX_STEP_MSGS_Q) {
+            console.warn('step msgs queue is too long = ', this._stepMessageQueue.length, '. messages arent handling, closing server connection');
+            this._serverConnection.disconnect();
+        }
     }
 
     _startStepMessageProcessingLoop() {
@@ -55,12 +62,9 @@ class MessageHandlerService {
         }
         this._isStepMsgLoopInited = true;
         setInterval(() => {
-            if (this._stepMessageQueue.length > 3) {
-                console.warn('step msg q is to long = ', this._stepMessageQueue.length);
-            }
-            
             if (this._stepMessageQueue.length === 0) return;
-            const msg = this._stepMessageQueue.shift();
+            
+            let msg = this._stepMessageQueue.shift();
             this._handleStepMsg(msg);
 
         }, CONSTS.STEP_TIME * 1000);
