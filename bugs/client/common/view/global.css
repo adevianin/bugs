@@ -111,7 +111,7 @@
 }
 
 /* hack for ios safari */
-@supports (-webkit-touch-callout: none) and (not (translate: none)) {
+@supports (background: -webkit-named-image(i)) {
     .g-select {
         -webkit-appearance: none;
         appearance: none;
