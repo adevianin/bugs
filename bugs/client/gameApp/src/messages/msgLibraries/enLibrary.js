@@ -431,12 +431,12 @@ const EN_LIBRARY = {
             <li><b>a large flower</b> with nectar,</li>
             <li>or <b>a bush with aphids</b> that produce sweet honeydew.</li>
         </ul>
+        <p>
+            Make sure that the food source falls within the nest area — it is outlined with a yellow line. Only then will the worker ants be able to find and use these resources. Liquid resources (nectar, honeydew) are carried by ants in a special pouch inside the abdomen — when it is full, the abdomen visibly swells. Solid items are carried in the ants' mandibles.
+        </p>
         <p>Food sources have a numerical indicator — the higher the value, the more food is available there.</p>
         <p>
             It's also useful if there's a <b>tree</b> nearby — it's a source of materials for strengthening the anthill. But remember: ladybugs often hibernate under tree bark, so such proximity can be dangerous.
-        </p>
-        <p>
-            When choosing a location, make sure the food source falls within the nest area — it is outlined with a yellow border. Only then will worker ants be able to find and use these resources.
         </p>
         <p> 
             Once the nest is built, it is time to lay eggs. This can be done in the nest management menu, which opens when you click on the nest. 3-4 worker ants will be enough to start.
