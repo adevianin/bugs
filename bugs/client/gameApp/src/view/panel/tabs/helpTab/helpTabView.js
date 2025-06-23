@@ -47,6 +47,7 @@ class HelpTabView extends BaseGameHTMLView {
         this._el.querySelector('[data-subsection-content-colonies-nests]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS);
         this._el.querySelector('[data-subsection-content-colonies-enemies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES);
         this._el.querySelector('[data-section-content-specie]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE);
+        this._el.querySelector('[data-section-contacts]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_CONTACTS);
         
         this._renderTabIconToContainer(this._el.querySelector('[data-breeding-tab-icon-container]'), breedingIconUrl);
         this._renderTabIconToContainer(this._el.querySelector('[data-colonies-tab-icon-container]'), coloniesIconUrl);

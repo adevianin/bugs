@@ -565,6 +565,7 @@ const UK_LIBRARY = {
             Загалом, принципи генетики тут відповідають генетиці мурах із планети Земля.
         </p>
     `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_CONTACTS]: 'Зв’язок і відгуки: evolutionofants@gmail.com'
 
 }
 

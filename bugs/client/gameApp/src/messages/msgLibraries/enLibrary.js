@@ -565,6 +565,7 @@ const EN_LIBRARY = {
             Overall, the genetic principles here correspond to the genetics of ants from planet Earth.
         </p>
     `,
+    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_CONTACTS]: 'Contact & feedback: evolutionofants@gmail.com'
 }
 
 export {

@@ -91,3 +91,8 @@
     border-radius: 50%;
     height: 3em;
 }
+
+.help__contacts-container {
+    text-align: center;
+    color: gray;
+}
