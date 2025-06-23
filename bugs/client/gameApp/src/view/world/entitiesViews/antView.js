@@ -5,6 +5,8 @@ import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { calculateRotationAngle } from '@utils/calculateRotationAngle';
 import { EntityHightlighterView } from './entityHighlighterView';
 import { UI_CONSTS } from '@common/view/ui_consts';
+import { AntTypes } from '@domain/enum/antTypes';
+import { ItemTypes } from '@domain/enum/itemTypes';
 
 class AntView extends LiveEntityView {
 
@@ -46,7 +48,24 @@ class AntView extends LiveEntityView {
         this._stopListenFlewNuptialAR();
     }
 
+    get _hasIsBodyFullState() {
+        return this.entity.antType == AntTypes.WORKER;
+    }
+
     _render() {
+        if (this._hasIsBodyFullState) {
+            this._standTextureFull = this.$textureManager.getTexture(`ant_${this.entity.antType}_full_1.png`);
+            let walkTexturesFull = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_full`);
+            this._walkTexturesFull = [walkTexturesFull[0], walkTexturesFull[1], walkTexturesFull[0], walkTexturesFull[2]];
+            this._standTextureEmpty = this.$textureManager.getTexture(`ant_${this.entity.antType}_empty_1.png`);
+            let walkTexturesEmpty = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_empty`);
+            this._walkTexturesEmpty = [walkTexturesEmpty[0], walkTexturesEmpty[1], walkTexturesEmpty[0], walkTexturesEmpty[2]];
+        } else {
+            this._standTexture = this.$textureManager.getTexture(`ant_${this.entity.antType}_1.png`);
+            let walkTextures = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`);
+            this._walkTextures = [walkTextures[0], walkTextures[1], walkTextures[0], walkTextures[2]];
+        }
+
         super._render();
 
         this._bodyContainer.eventMode = 'dynamic';
@@ -68,18 +87,19 @@ class AntView extends LiveEntityView {
     async _renderPickedItemState() {
         if (this._entity.pickedItemId) {
             let item = await this.$domain.getEntityDataById(this._entity.pickedItemId);
-            this._renderPickedItemView(item);
+            this._renderPickedItem(item);
         }
     }
 
     _buildStandSprite() {
-        let sprite = new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_1.png`));
+        let texture = this._hasIsBodyFullState ? this._standTextureEmpty : this._standTexture;
+        let sprite = new PIXI.Sprite(texture);
         return sprite;
     }
 
     _buildWalkSprite() {
-        let ts = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`);
-        let sprite = new PIXI.AnimatedSprite([ts[0], ts[1], ts[0], ts[2]]);
+        let textures = this._hasIsBodyFullState ? this._walkTexturesEmpty : this._walkTextures;
+        let sprite = new PIXI.AnimatedSprite(textures);
         sprite.animationSpeed = this.entity.stats.distancePerStep * 0.005;
         return sprite;
     }
@@ -98,7 +118,10 @@ class AntView extends LiveEntityView {
         return sprite;
     }
 
-    _removePickedItemView() {
+    _removePickedItem() {
+        if (this._hasIsBodyFullState) {
+            this._renderIsBodyFullState(false);
+        }
         if (this._pickedItemSprite) {
             this._pickedItemContainer.removeChild(this._pickedItemSprite);
             this._pickedItemSprite.destroy();
@@ -106,14 +129,23 @@ class AntView extends LiveEntityView {
         }
     }
 
-    _renderPickedItemView(item) {
-        this._removePickedItemView();
-        let textureName = `item_${ item.itemType }_${ item.itemVariety }v.png`;
-        this._pickedItemSprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
-        this._pickedItemSprite.anchor.set(0.5, 0.5);
-        this._pickedItemSprite.position.x = (this._entityWidth/2);
-        this._pickedItemSprite.position.y = 2;
-        this._pickedItemContainer.addChild(this._pickedItemSprite);
+    _renderPickedItem(item) {
+        this._removePickedItem();
+        if (this._hasIsBodyFullState && (item.itemType == ItemTypes.NECTAR || item.itemType == ItemTypes.HONEYDEW)) {
+            this._renderIsBodyFullState(true);
+        } else {
+            let textureName = `item_${ item.itemType }_${ item.itemVariety }v.png`;
+            this._pickedItemSprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
+            this._pickedItemSprite.anchor.set(0.5, 0.5);
+            this._pickedItemSprite.position.x = (this._entityWidth/2);
+            this._pickedItemSprite.position.y = 2;
+            this._pickedItemContainer.addChild(this._pickedItemSprite);
+        }
+    }
+
+    _renderIsBodyFullState(isFull) {
+        this._walkSprite.textures = isFull ? this._walkTexturesFull : this._walkTexturesEmpty;
+        this._standSprite.texture = isFull ? this._standTextureFull : this._standTextureEmpty;
     }
 
     _renderDebugSightDistance() {
@@ -318,7 +350,7 @@ class AntView extends LiveEntityView {
 
     async _playPickedUpItemAnimation({ itemId }) {
         let item = await this.$domain.getEntityDataById(itemId)
-        this._renderPickedItemView(item);
+        this._renderPickedItem(item);
     }
 
     _playDroppedItemAnimation({ droppingItemId }) {
@@ -331,7 +363,7 @@ class AntView extends LiveEntityView {
                 dropPosition
             });
         }
-        this._removePickedItemView();
+        this._removePickedItem();
     }
 
     _onFlewNuptialAnimationRequest(params) {

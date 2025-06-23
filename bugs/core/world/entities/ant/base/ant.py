@@ -224,6 +224,8 @@ class Ant(LiveEntity):
         self._emit_action(AntDroppedPickedItemAction.build(self.id))
 
     def _on_body_died(self, death_record: BaseDeathRecord):
+        if self.has_picked_item():
+            self.drop_picked_item() 
         super()._on_body_died(death_record)
         self._emit_notification(DiedAntNotification(self.owner_id, self._name, death_record))
 

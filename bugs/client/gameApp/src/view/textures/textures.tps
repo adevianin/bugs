@@ -189,10 +189,13 @@
             <key type="filename">images/ant_warrior_2.png</key>
             <key type="filename">images/ant_warrior_3.png</key>
             <key type="filename">images/ant_warrior_dead.png</key>
-            <key type="filename">images/ant_worker_1.png</key>
-            <key type="filename">images/ant_worker_2.png</key>
-            <key type="filename">images/ant_worker_3.png</key>
             <key type="filename">images/ant_worker_dead.png</key>
+            <key type="filename">images/ant_worker_empty_1.png</key>
+            <key type="filename">images/ant_worker_empty_2.png</key>
+            <key type="filename">images/ant_worker_empty_3.png</key>
+            <key type="filename">images/ant_worker_full_1.png</key>
+            <key type="filename">images/ant_worker_full_2.png</key>
+            <key type="filename">images/ant_worker_full_3.png</key>
             <key type="filename">images/enemy_icon.png</key>
             <key type="filename">images/item_ant_food_1v.png</key>
             <key type="filename">images/item_flower_1v.png</key>
@@ -398,9 +401,6 @@
                     <filename>images/ant_warrior_2.png</filename>
                     <filename>images/ant_warrior_3.png</filename>
                     <filename>images/ant_warrior_dead.png</filename>
-                    <filename>images/ant_worker_1.png</filename>
-                    <filename>images/ant_worker_2.png</filename>
-                    <filename>images/ant_worker_3.png</filename>
                     <filename>images/ant_worker_dead.png</filename>
                     <filename>images/ant_queen_1.png</filename>
                     <filename>images/ant_queen_2.png</filename>
@@ -468,6 +468,12 @@
                     <filename>images/ant_male_fly_2.png</filename>
                     <filename>images/grass_spring.png</filename>
                     <filename>images/nest_winter.png</filename>
+                    <filename>images/ant_worker_empty_1.png</filename>
+                    <filename>images/ant_worker_empty_2.png</filename>
+                    <filename>images/ant_worker_empty_3.png</filename>
+                    <filename>images/ant_worker_full_1.png</filename>
+                    <filename>images/ant_worker_full_2.png</filename>
+                    <filename>images/ant_worker_full_3.png</filename>
                 </array>
             </struct>
         </map>
