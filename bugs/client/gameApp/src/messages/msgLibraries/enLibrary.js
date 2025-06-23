@@ -396,7 +396,7 @@ const EN_LIBRARY = {
         <p>On this planet, just like on Earth, there are four seasons: spring, summer, autumn, and winter. Each of them affects the life of ants in its own way:</p>
         <ul>
             <li>
-                <b>Spring</b> — the season of awakening. Nature comes to life, but the air is still chilly. Only cold-resistant ants are able to come out of hibernation. The others are still waiting for warmth in their nests.
+                <b>Spring</b> — the season of awakening. Nature comes to life, but the air is still chilly. Only cold-resistant ants are able to come out of hibernation. The others are still waiting for warmth in their nests. In spring, there is almost no food — only the supplies gathered last summer remain. It is a difficult period for the colony.
             </li>
             <li>
                 <b>Summer</b> — the longest and most favorable season. It's warm, and food is plentiful. Summer is the mating season: the time for founding new colonies and the birth of the first females of a new species.
