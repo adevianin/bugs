@@ -483,9 +483,8 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `
         <p>
-            Ants are social creatures. They live in large communities — colonies, where each individual has its own role. The heart of the colony is the queen. She lays eggs and maintains stability. If she dies — it is a tragedy. Without her, the colony quickly declines. The queen is the longest-living of all castes. Ant colonies are managed in the "Colonies" tab <span data-colonies-tab-icon-container></span>.
+            Ants are social creatures. They live in large communities — colonies, where each individual has its own role. The heart of the colony is the queen. She lays eggs and maintains stability. If she dies — it is a tragedy. Without her, the colony quickly declines. Therefore, the queen is the longest-lived of all castes. Ant colonies are managed in the "Colonies" tab <span data-colonies-tab-icon-container></span>.
         </p>
-
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ANTS]: `
         <p>Each ant in the colony performs its own role:</p>
