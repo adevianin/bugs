@@ -99,7 +99,7 @@ class AppView extends BaseGameHTMLView {
         } else if (antsCount == 1 && nestsCount == 0 && notificationsCount == 0) {
             this.$eventBus.emit('help', 'start');
         } else if (nestsCount == 1) {
-            this.$eventBus.emit('help', 'breeding');
+            this.$eventBus.emit('help', 'colonies');
         }
     }
 

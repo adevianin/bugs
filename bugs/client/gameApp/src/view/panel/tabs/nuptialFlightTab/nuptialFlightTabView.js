@@ -23,7 +23,7 @@ class NuptialFlightTabView extends BaseGameHTMLView {
         this._el.querySelector('[data-nuptial-flight-tab-label-season-start-after]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NUPT_SEASON_START_AFTER);
 
         let tabName = this.$mm.get(GAME_MESSAGE_IDS.NUPTIAL_FLIGHT_TAB_LABEL_NAME);
-        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName, 'breeding');
+        this._tabHeadView = new PanelTabHeadView(this._el.querySelector('[data-tab-head]'), tabName, 'start');
         this._timeToNuptialSeasonEl = this._el.querySelector('[data-time-to-nuptial-season]');
         this._nuptialFlightModeEl = this._el.querySelector('[data-nuptial-flight-mode]');
         this._waitingNuptialFlightModeEl = this._el.querySelector('[data-waiting-nuptial-flight-mode]');

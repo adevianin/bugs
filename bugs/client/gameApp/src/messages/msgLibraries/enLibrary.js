@@ -386,7 +386,6 @@ const EN_LIBRARY = {
 
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_WORLD]: 'World',
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_START]: 'Where to start?',
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_BREEDING]: 'Breeding',
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_TITLE_COLONIES]: 'Colonies',
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_ANTS]: 'Ants',
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_TITLE_COLONIES_OPERATIONS]: 'Pheromones',
@@ -413,17 +412,26 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_START]: `
         <p>
-            <b>Main goal of the game</b> — to create your own unique ant species, best adapted to life in a changing world. All evolution begins with a single ant, the carrier of a rare mutation. Her name is <b>Antara</b>. She is the first step of a new branch of life.
-        </p>
-        <p>
-            To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab <span data-breeding-tab-icon-container></span>. There you can:
+            A new species emerges from a single act of fertilization — to survive and evolve, it must establish its first colony. To do this, wait for warm summer weather and open the "Breeding" tab <span data-breeding-tab-icon-container></span>. There you can:
         </p>
         <ul>
-            <li>give birth to your primal Antara female;</li>
+            <li>give birth to your primal female Antara;</li>
             <li>choose a male for her fertilization;</li>
             <li>select a location for the nest;</li>
             <li>name the new colony.</li>
         </ul>
+        <p>
+            <b>Antara</b> is an ant with a rare mutation that disrupts the stability of the species. Her appearance is an accidental but fateful break in the genetic chain. It is from her that a new evolutionary line begins: she is the progenitor of a future species capable of adapting, fighting, and surviving in a changing world.
+        </p>
+        <p>
+            <b>The choice of male</b> for fertilization is crucial, as the male's genetic material determines the heredity of the entire future colony. After mating, the male dies, but his chromosomes remain permanently within the female's body, forming the genetic foundation for thousands and millions of her offspring.
+        </p>
+        <p>
+            To prevent inbreeding, female ants do not mate with males from their own colony. Their genetic material is too similar, which can lead to weak offspring. Therefore, during the nuptial flight, females seek out males from other, genetically distant colonies.
+        </p>
+        <p>
+            The behavior of all colonies — both local and distant — influences which males appear during the nuptial flight. If the species often engages in combat, warrior-type males become more likely. If it focuses on nest building, males with construction-related genes appear. If the species regularly suffers from cold, cold-resistant males are more likely to show up.
+        </p>
         <p>
             <b>Nest location</b> is an important strategic choice. Ideally, choose a spot near a food source:
         </p>
@@ -432,54 +440,14 @@ const EN_LIBRARY = {
             <li>or <b>a bush with aphids</b> that produce sweet honeydew.</li>
         </ul>
         <p>
-            Make sure that the food source falls within the nest area — it is outlined with a yellow line. Only then will the worker ants be able to find and use these resources. Liquid resources (nectar, honeydew) are carried by ants in a special pouch inside the abdomen — when it is full, the abdomen visibly swells. Solid items are carried in the ants' mandibles.
+            Food sources have a numerical indicator — the higher the value, the more food is available there. Make sure that the food source falls within the nest area — it is outlined with a yellow line. Only then will the worker ants be able to find and use these resources.
         </p>
-        <p>Food sources have a numerical indicator — the higher the value, the more food is available there.</p>
         <p>
             It's also useful if there's a <b>tree</b> nearby — it's a source of materials for strengthening the anthill. But remember: ladybugs often hibernate under tree bark, so such proximity can be dangerous.
         </p>
         <p> 
             Once the nest is built, it is time to lay eggs. This can be done in the nest management menu, which opens when you click on the nest. 3-4 worker ants will be enough to start.
         <p/>
-    `,
-    [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_BREEDING]: `
-        <p>
-            Ants have a complex but fascinating genetic system. Each individual has a genome composed of chromosomes, and those chromosomes consist of individual genes. It is the genes that determine the characteristics of an ant.
-        </p>
-        <p>
-            When a female is fertilized, she receives a set of chromosomes from the male. This set is stored and used for laying future eggs. The male dies after fertilization — his mission is complete.
-        </p>
-        <p>
-            When laying an egg, the female passes a set of chromosomes to it. Since the female is diploid(has two sets of chromosomes inherited from her parents), only one set ends up in the egg — it is formed during the process of meiosis. Meiosis is a type of cell division during which a diploid cell becomes haploid, meaning it contains only one set of chromosomes. In this way, the egg receives a random set of the female's chromosomes. Additionally, the egg may also receive a set of chromosomes from the male that fertilized the female. The presence or absence of this set determines what type the egg will be.
-        </p>
-        <p>
-            There are two types of eggs:
-        </p>
-        <ul>
-            <li>
-                <b>Fertilized eggs</b> — have two sets of chromosomes: one from the mother, one from the father. These eggs can develop into workers, warriors, or females.
-            </li>
-            <li>
-                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
-            </li>
-        </ul>
-        <p>
-            After being laid, the egg is placed in the egg chamber. There you can:
-        </p>
-        <ul>
-            <li>give a name to the future ant,</li>
-            <li>choose a care mode that will influence the ant's caste,</li>
-            <li>observe its development.</li>
-        </ul>
-        <p>
-            Once the egg has developed, it is transferred to a larval chamber, where it is fed until an ant hatches.
-        </p>
-        <p>
-            Males that grow up in the colony are not suitable for fertilizing their "own" females — their genomes are too similar. That's why females search for males from distant colonies during the nuptial flight.
-        </p>
-        <p>
-            These "distant" males are generated based on your species' actions. If you often engage in battles — there's a higher chance of encountering strong, combative males. If you build and reinforce nests — males may appear with genes that allow the creation of additional colony nests. If your ants frequently suffer health damage from cold — the chance increases of finding a male with better cold resistance in his genes.
-        </p>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `
         <p>
@@ -512,7 +480,33 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS]: `
         <p>
+            Ants live in nests because these are their homes and their protection. Nests shield them from enemies and harsh weather, serve as storage for their offspring and food, and act as the center for communication and organization for the entire colony. Without a nest, ants simply wouldn't survive.
             Usually, a colony has a single nest, but some highly advanced ant species can have multiple nests per colony. This allows them to collect resources from distant sources that would otherwise be unreachable.
+        </p>
+        <p>
+            In the nest, the queen lays eggs, passing on some of her genetic material to them. Since she has two sets of chromosomes (diploid), only one set enters each egg — it is formed during meiosis. If the egg also receives a set of chromosomes from a male, it becomes fertilized. The type of egg depends on whether fertilization occurs.
+        </p>
+        <p>
+            There are two types of eggs:
+        </p>
+        <ul>
+            <li>
+                <b>Fertilized eggs</b> — have two sets of chromosomes: one from the mother, one from the father. These eggs can develop into workers, warriors, or females.
+            </li>
+            <li>
+                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
+            </li>
+        </ul>
+        <p>
+            After being laid, the egg is placed in the egg chamber. There you can:
+        </p>
+        <ul>
+            <li>give a name to the future ant,</li>
+            <li>choose a care mode that will influence the ant's caste,</li>
+            <li>observe its development.</li>
+        </ul>
+        <p>
+            Once the egg has developed, it is transferred to a larval chamber, where it is fed until an ant hatches.
         </p>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES]: `
@@ -521,6 +515,9 @@ const EN_LIBRARY = {
         </p>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE]: `
+        <p>
+            Ants have a complex but fascinating genetic system. Each individual has a genome composed of chromosomes, and those chromosomes consist of individual genes. It is the genes that determine the characteristics of an ant.
+        </p>
         <p>
             In the "Species" tab <span data-specie-tab-icon-container></span>, you can modify the genetic composition of your ant species. Here, genes are divided into fixed and candidate ones.
         </p>
