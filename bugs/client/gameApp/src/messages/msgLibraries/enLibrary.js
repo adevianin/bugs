@@ -464,7 +464,7 @@ const EN_LIBRARY = {
             <li><b>Males</b> — wait for the moment to pass on their genes to distant females of the species.</li>
         </ul>
         <p>
-            There is a list of ants in the colony. In it, you can open each ant individually and see its characteristics, genes, what it does, and take certain actions, such as sending the ant on a mating flight.
+            There is a list of ants in the colony. In it, you can open each ant individually and see its characteristics, age, genes, what it is doing, or take certain actions, such as adjusting its behavior or sending it to mating season.
         </p>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_OPERATIONS]: `
