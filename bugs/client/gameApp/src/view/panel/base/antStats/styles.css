@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+.ant-stats__table tbody td {
+    text-align: center;
+}
+
 .ant-stats__stat_title {
     width: 32px;
     height: 32px;
