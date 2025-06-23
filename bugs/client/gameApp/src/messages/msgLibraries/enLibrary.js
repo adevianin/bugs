@@ -416,7 +416,7 @@ const EN_LIBRARY = {
             <b>Main goal of the game</b> — to create your own unique ant species, best adapted to life in a changing world. All evolution begins with a single ant, the carrier of a rare mutation. Her name is <b>Antara</b>. She is the first step of a new branch of life.
         </p>
         <p>
-            To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab. There you can:
+            To start a colony, wait for the warm season. When the temperature is suitable, open the "Breeding" tab <span data-breeding-tab-icon-container></span>. There you can:
         </p>
         <ul>
             <li>give birth to your primal Antara female;</li>
@@ -483,7 +483,7 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `
         <p>
-            Ants are social creatures. They live in large communities — colonies, where each individual has its own role. The heart of the colony is the queen. She lays eggs and maintains stability. If she dies — it is a tragedy. Without her, the colony quickly declines. The queen is the longest-living of all castes.
+            Ants are social creatures. They live in large communities — colonies, where each individual has its own role. The heart of the colony is the queen. She lays eggs and maintains stability. If she dies — it is a tragedy. Without her, the colony quickly declines. The queen is the longest-living of all castes. Ant colonies are managed in the "Colonies" tab <span data-colonies-tab-icon-container></span>.
         </p>
 
     `,
@@ -523,7 +523,7 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE]: `
         <p>
-            In the "Species" tab, you can modify the genetic composition of your ant species. Here, genes are divided into fixed and candidate ones.
+            In the "Species" tab <span data-specie-tab-icon-container></span>, you can modify the genetic composition of your ant species. Here, genes are divided into fixed and candidate ones.
         </p>
         <ul>
             <li><b>Fixed genes</b> — these are genes already present in the majority of individuals of the species. They are a stable part of the species.</li>

@@ -2,6 +2,9 @@ import './styles.css';
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import helpTabTmpl from './helpTabTmpl.html';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
+import breedingIconUrl from '@view/panel/icons/mainTabSwitcherIcons/breedingIcon.png';
+import coloniesIconUrl from '@view/panel/icons/mainTabSwitcherIcons/coloniesIcon.png';
+import specieIconUrl from '@view/panel/icons/mainTabSwitcherIcons/specieIcon.png';
 
 class HelpTabView extends BaseGameHTMLView {
 
@@ -44,6 +47,17 @@ class HelpTabView extends BaseGameHTMLView {
         this._el.querySelector('[data-subsection-content-colonies-nests]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS);
         this._el.querySelector('[data-subsection-content-colonies-enemies]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_ENEMIES);
         this._el.querySelector('[data-section-content-specie]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_SPECIE);
+        
+        this._renderTabIconToContainer(this._el.querySelector('[data-breeding-tab-icon-container]'), breedingIconUrl);
+        this._renderTabIconToContainer(this._el.querySelector('[data-colonies-tab-icon-container]'), coloniesIconUrl);
+        this._renderTabIconToContainer(this._el.querySelector('[data-specie-tab-icon-container]'), specieIconUrl);
+    }
+
+    _renderTabIconToContainer(container, iconUrl) {
+        let img = document.createElement('img');
+        img.classList.add('help__tab-icon-img');
+        img.src = iconUrl;
+        container.appendChild(img);
     }
 
 }

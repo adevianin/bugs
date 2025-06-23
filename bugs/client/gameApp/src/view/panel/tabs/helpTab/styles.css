@@ -85,3 +85,9 @@
 .help__icon--appetite-icon {
     background-image: url('@view/panel/icons/statsAppetiteIcon.png');
 }
+
+.help__tab-icon-img {
+    vertical-align: middle;
+    border-radius: 50%;
+    height: 3em;
+}
