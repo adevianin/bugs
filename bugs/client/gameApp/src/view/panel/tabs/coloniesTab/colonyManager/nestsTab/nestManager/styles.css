@@ -99,12 +99,14 @@
 }
 
 .nest-manager__nest-field-label {
-    flex: 0 0 130px;
+    flex: 0 0 145px;
     text-transform: capitalize;
 }
 
 .nest-manager__nest-field-data-container {
     flex: 1;
+    display: flex;
+    align-items: end;
 }
 
 .nest-manage__to-larva-btn--ready {
@@ -121,4 +123,12 @@
 
 .nest-manager__data-container {
     text-align: center;
+}
+
+.nest-manager__needed-food-count--enough {
+    color: #3B873E;
+}
+
+.nest-manager__needed-food-count--shortage {
+    color: #C0392B;
 }

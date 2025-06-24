@@ -158,8 +158,11 @@ class MyStateViewModel extends BaseViewModel {
         for (let ant of ants) {
             antsEatePerStep += ant.stats.appetite;
         }
-
-        return hungerPeriod * antsEatePerStep;
+        let requiredFoodReserve = hungerPeriod * antsEatePerStep;
+        return {
+            requiredFoodReserve,
+            antsCount: ants.length
+        }
     }
 
     _applyNestsPatch(nestsPatch) {
