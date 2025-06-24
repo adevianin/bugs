@@ -473,7 +473,7 @@ const EN_LIBRARY = {
             Ants don't speak with words, but they understand each other perfectly through pheromones — chemical signals that control the behavior of the colony. One scent — and the whole group acts.
         </p>
         <p>
-            For example: a large beetle appears near the nest. One of the ants finds it and releases a signal pheromone. Others, sensing it, rush in to drag the beetle to the nest together.
+            For example, a large nutritious beetle appears near the nest. One of the ants finds it and releases a signaling pheromone. The others, sensing it, rush over to help drag the beetle back to the nest together.
         </p>
         <p>
             <b>Smart use of pheromones is the key to the colony's survival.</b>
