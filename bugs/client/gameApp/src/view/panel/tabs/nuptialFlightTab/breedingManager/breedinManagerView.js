@@ -119,6 +119,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         
         if (result.success) {
             this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
+            this.$eventBus.emit('panelFoldRequest');
             this._resetFields();
         } else {
             if (result.errCode == ErrorCodes.CONFLICT) {
