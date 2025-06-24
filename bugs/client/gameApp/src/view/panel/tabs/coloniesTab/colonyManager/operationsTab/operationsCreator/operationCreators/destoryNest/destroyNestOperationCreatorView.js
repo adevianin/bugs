@@ -138,7 +138,9 @@ class DestroyNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestBtnClick() {
+        this.$eventBus.emit('panelFoldRequest');
         this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, async (nestId) => {
+            this.$eventBus.emit('panelUnfoldRequest');
             let nestData = await this.$domain.getEntityDataById(nestId);
             this._choosedNestView.setNestData(nestData);
             this._nestToDestroyData = nestData;

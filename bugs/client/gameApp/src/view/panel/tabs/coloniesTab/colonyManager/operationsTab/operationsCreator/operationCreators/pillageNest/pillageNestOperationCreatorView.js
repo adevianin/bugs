@@ -101,7 +101,9 @@ class PillageNestOperationCreatorView extends BaseOperationCreatorView {
     }
 
     _onChooseNestToPillageBtnClick() {
+        this.$eventBus.emit('panelFoldRequest');
         this.$eventBus.emit('raidNestPickRequest', this._performingColony.id, this._mainNest.position, async (nestId) => {
+            this.$eventBus.emit('panelUnfoldRequest');
             let nestData = await this.$domain.getEntityDataById(nestId);
             this._nestToPillageView.setNestData(nestData);
             this._nestToPillageData = nestData;
