@@ -526,7 +526,7 @@ const EN_LIBRARY = {
             <li><b>Candidate genes</b> — genes that have appeared in some individuals. You can make them fixed by using the button below the gene.</li>
         </ul>
         <p>
-            To transfer new genes into your species, send males on a nuptial flight. They will find a distant female of your species and fertilize her. As a result, the male's genes will appear in the candidate list. Choose males with the best genes, send them on flights — and gradually fix those genes in your species.
+            To transfer new genes into your species, send males on a nuptial flight. They will find a distant female of your species and fertilize her. As a result, the male's genes will appear in the candidate list. Choose males with the best genes, send them into flight — and gradually consolidate the good genes in your species.
         </p>
         <p>Each ant has a set of chromosomes responsible for different aspects of its structure and behavior:</p>
         <ul>
