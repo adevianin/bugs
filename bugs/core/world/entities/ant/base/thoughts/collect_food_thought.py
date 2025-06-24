@@ -13,6 +13,7 @@ class CollectFoodThought(Thought):
     class Flags(Thought.Flags):
         AM_I_GOT_FOOD = 'am_i_got_food'
         AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION = 'am_i_near_target_food_source_position'
+        WAITED_ON_FOOD_SOURCE_POSITION = 'waited_on_food_source_position'
 
     _body: AntBody
     IGNORE_EMPTY_FOOD_SOURCE_STEPS = 70
@@ -73,25 +74,29 @@ class CollectFoodThought(Thought):
 
             if self._check_has_target_food_source():
                 if self._read_flag(self.Flags.AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION):
-                    food_sources = self._body.look_around_for_food_sources()
-                    if len(food_sources) == 0 or food_sources[0].id != self._target_food_source_id:
-                        self._nearby_food_sources_data_manager.remove_data(self._target_food_source_id)
-                        self._clear_target_food_source()
-                        return
+                    if self._read_flag(self.Flags.WAITED_ON_FOOD_SOURCE_POSITION):
+                        food_sources = self._body.look_around_for_food_sources()
+                        if len(food_sources) == 0 or food_sources[0].id != self._target_food_source_id:
+                            self._nearby_food_sources_data_manager.remove_data(self._target_food_source_id)
+                            self._clear_target_food_source()
+                            return
 
-                    def on_got_food(edible_item: Item):
-                        self._body.pick_up_item(edible_item)
-                        self._write_flag(self.Flags.AM_I_GOT_FOOD, True)
+                        def on_got_food(edible_item: Item):
+                            self._body.pick_up_item(edible_item)
+                            self._write_flag(self.Flags.AM_I_GOT_FOOD, True)
 
-                    is_food_in_source = food_sources[0].take_some_item(on_got_food)
+                        is_food_in_source = food_sources[0].take_some_item(on_got_food)
 
-                    if not is_food_in_source:
-                        self._nearby_food_sources_data_manager.mark_food_source_as_empty(self._target_food_source_id)
-                        self._body.memory.save_flag(self._build_empty_food_source_memory_flag(self._target_food_source_id), True, self.IGNORE_EMPTY_FOOD_SOURCE_STEPS)
-                        self._clear_target_food_source()
+                        if not is_food_in_source:
+                            self._nearby_food_sources_data_manager.mark_food_source_as_empty(self._target_food_source_id)
+                            self._body.memory.save_flag(self._build_empty_food_source_memory_flag(self._target_food_source_id), True, self.IGNORE_EMPTY_FOOD_SOURCE_STEPS)
+                            self._clear_target_food_source()
+                    else:
+                        self._write_flag(self.Flags.WAITED_ON_FOOD_SOURCE_POSITION, True)
                 else:
-                    is_walk_done = self._body.step_to(self._target_food_source_position)
+                    is_walk_done = self._body.step_to(self._target_food_source_position.shift(0, 2))
                     if (is_walk_done):
+                        self._body.angle = random.randint(-40, 40)
                         self._write_flag(self.Flags.AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION, True)
         else:
             if self.go_home_thought.is_done:
@@ -155,3 +160,4 @@ class CollectFoodThought(Thought):
         self._target_food_source_position = None
         self._target_food_source_id = None
         self._write_flag(self.Flags.AM_I_NEAR_TARGET_FOOD_SOURCE_POSITION, False)
+        self._write_flag(self.Flags.WAITED_ON_FOOD_SOURCE_POSITION, False)
