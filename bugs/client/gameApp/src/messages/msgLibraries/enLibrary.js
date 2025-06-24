@@ -545,7 +545,7 @@ const EN_LIBRARY = {
                 </ul>
             </li>
             <li>
-                <b>Caste Chromosome</b> — determines how the caste of the ant develops. The values of this chromosome's genes are multiplied by the corresponding genes from the body chromosome. For example: the strength gene in the body chromosome is 15, the strength gene in the caste chromosome is 2, then the phenotype strength will be 15 * 2 = 30.
+                <b>Caste Chromosome</b> — determines what the ant will become: a worker, a warrior, or a female. It influences how the ant develops by enhancing or weakening certain traits. The values of the genes in this chromosome are multiplied by the corresponding genes from the body chromosome. For example: if the strength gene in the body chromosome is 15, and the strength gene in the caste chromosome is 2, then the resulting strength of the ant will be 15 × 2 = 30.
             </li>
             <li>
                 <b>Adaptation Chromosome</b> — allows survival in harsh conditions, such as lack of food, cold, or other challenges.
