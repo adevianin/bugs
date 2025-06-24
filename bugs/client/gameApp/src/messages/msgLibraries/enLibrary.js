@@ -447,7 +447,7 @@ const EN_LIBRARY = {
             It's also useful if there's a <b>tree</b> nearby — it's a source of materials for strengthening the anthill. But remember: ladybugs often hibernate under tree bark, so such proximity can be dangerous.
         </p>
         <p> 
-            Once the nest is built, it is time to lay eggs. This can be done in the nest management menu, which opens when you click on the nest. The more food there is, the more ants you can make.
+            Once the nest is built, it is time to lay eggs. This can be done in the nest management menu, which opens when you click on the nest. The more food near the nest, the more ants can be produced.
         <p/>
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SECTION_CONTENT_COLONIES]: `
