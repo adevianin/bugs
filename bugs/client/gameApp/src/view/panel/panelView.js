@@ -34,6 +34,8 @@ class PanelView extends BaseGameHTMLView {
 
         this._render();
 
+        this.$eventBus.on('panelFoldRequest', this._onPanelFoldRequest.bind(this));
+        this.$eventBus.on('panelUnfoldRequest', this._onPanelUnfoldRequest.bind(this));
         this.$eventBus.on('nestManageRequest', this._onNestManageRequest.bind(this));
         this.$eventBus.on('help', this._onHelpRequest.bind(this));
         this.$eventBus.on('tabSwitched:panel', this._onPanelTabSwitched.bind(this));
@@ -194,9 +196,18 @@ class PanelView extends BaseGameHTMLView {
         this._close();
     }
 
-    _open() {
+    _onPanelFoldRequest() {
+        this._preFoldPanelHeight = this._height;
+        this._close();
+    }
+
+    _onPanelUnfoldRequest() {
+        this._open(this._preFoldPanelHeight);
+    }
+
+    _open(height) {
         this._startResizingAnimation();
-        this._height = this._determinePanelStartHeight();
+        this._height = height || this._determinePanelStartHeight();
     }
 
     _close() {
