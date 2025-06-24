@@ -62,7 +62,9 @@ class MainTabView extends BaseGameHTMLView {
     }
 
     _renderNeededFoodReserve() {
-        this._neededFoodCountEl.innerHTML = this.$domain.myState.calcRequiredFoodReserveForNest(this._nest).toLocaleString();
+        if (this._nest) {
+            this._neededFoodCountEl.innerHTML = this.$domain.myState.calcRequiredFoodReserveForNest(this._nest).toLocaleString();
+        }
     }
 
     _onStoredCaloriesChanged() {
@@ -75,7 +77,7 @@ class MainTabView extends BaseGameHTMLView {
     }
 
     _isMyAnt(ant) {
-        return ant.homeNestId == this._nest.id;
+        return this._nest && ant.homeNestId == this._nest.id;
     }
 
     _onAntBorn(ant) {
