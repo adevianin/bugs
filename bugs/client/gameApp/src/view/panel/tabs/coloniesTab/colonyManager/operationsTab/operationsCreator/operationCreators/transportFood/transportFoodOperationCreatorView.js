@@ -195,7 +195,7 @@ class TransportFoodOperationCreatorView extends BaseOperationCreatorView {
             markers.push(nestToMarker);
         }
 
-        this._demonstrateMarkersRequest(markers);
+        this._demonstrateMarkersRequest(markers, true);
     }
 
 }

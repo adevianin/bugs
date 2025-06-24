@@ -120,7 +120,7 @@ class BuildFortificationOperationCreatorView extends BaseOperationCreatorView {
             markers.push(marker);
         }
 
-        this._demonstrateMarkersRequest(markers);
+        this._demonstrateMarkersRequest(markers, true);
     }
 
 }

@@ -18,6 +18,8 @@ class NewNestOperationCreatorView extends BaseOperationCreatorView {
         this._mainNest = this.$domain.getMainNestOfMyColony(this._performingColony.id);
 
         this._render();
+        
+        this.$eventBus.emit('showPointRequest', this._mainNest.position);
 
         this._checkOperationConditions();
 

@@ -15,8 +15,11 @@ class BaseOperationCreatorView extends BaseGameHTMLView {
         this._stopListenAnyOperationWaiting();
     }
 
-    _demonstrateMarkersRequest(markers) {
+    _demonstrateMarkersRequest(markers, moveCamera = false) {
         this.$eventBus.emit('showMarkersRequest', markers);
+        if (moveCamera && markers.length > 0) {
+            this.$eventBus.emit('showPointRequest', markers[0].point);
+        }
     }
 
     _waitAddingOperation(operationId, callback) {

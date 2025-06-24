@@ -40,7 +40,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
 
         this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
 
-        // this._showMarkers();
+        this._showMarkers();
 
         this._el.querySelector('[data-operation-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BRING_BUG_OP_CR_TITLE);
         this._el.querySelector('[data-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.BRING_BUG_OP_CR_NEST_LABEL);
@@ -140,7 +140,7 @@ class BringBugOperationCreatorView extends BaseOperationCreatorView {
             markers.push(marker);
         }
 
-        this._demonstrateMarkersRequest(markers);
+        this._demonstrateMarkersRequest(markers, true);
     }
 
 }
