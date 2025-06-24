@@ -2,6 +2,16 @@ import { EventEmitter } from "@common/utils/eventEmitter";
 
 class BaseViewModel extends EventEmitter {
 
+    static eventBus;
+
+    get $eventBus() {
+        return BaseViewModel.eventBus;
+    }
+
+    static useEventBus(eventBus) {
+        BaseViewModel.eventBus = eventBus;
+    }
+
     static buildFromJson(json) {
         return new this(json);
     }

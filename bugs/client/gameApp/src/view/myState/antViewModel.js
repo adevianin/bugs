@@ -47,6 +47,7 @@ class AntViewModel extends EntityViewModel {
     set homeNestId(val) {
         this._props.homeNestId = val;
         this.emit('homeNestIdChanged');
+        this.$eventBus.emit('antChangedHomeNest', this);
     }
 
     get guardianBehavior() {

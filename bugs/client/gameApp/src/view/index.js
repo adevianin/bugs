@@ -8,6 +8,7 @@ import worldSpriteSheetAtlas from './textures/build/world_spritesheet.json';
 import worldSpriteSheetUrl from './textures/build/world_spritesheet.png';
 import { BaseGameHTMLView } from './base/baseGameHTMLView';
 import { BaseView } from '@common/view/base/baseView';
+import { BaseViewModel } from './myState/baseViewModel';
 import { MessageMaster } from '@common/messages/messageMaster';
 import { gameMsgLibrariesPack } from '@messages/msgLibraries';
 import { StepProgressCheker } from './world/stepProgressChecker';
@@ -36,6 +37,7 @@ async function initViewLayer(domainFacade) {
     BaseGameHTMLView.usePixiApp(pixiApp);
     BaseGraphicView.useStepProgressChecker(stepProgressChecker);
     BaseGraphicView.useTextureManager(spritesheetManager);
+    BaseViewModel.useEventBus(eventBus);
 
     let app = new AppView(document.querySelector('[data-app]'));
     app.events.on('ready', () => {

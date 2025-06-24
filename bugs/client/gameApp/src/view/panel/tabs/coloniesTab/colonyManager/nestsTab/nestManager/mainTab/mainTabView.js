@@ -10,6 +10,10 @@ class MainTabView extends BaseGameHTMLView {
 
         this._render();
 
+        this.$domain.myState.on('antDied', this._onAntDied.bind(this));
+        this.$domain.myState.on('antBorn', this._onAntBorn.bind(this));
+        this.$domain.myState.nuptialEnvironment.on('queenFlewIn', this._onSomeoneFlewNuptialFlight.bind(this));
+        this.$eventBus.on('antChangedHomeNest', this._onAntChangedHomeNest.bind(this));
     }
 
     manageNest(nest) {
@@ -20,6 +24,7 @@ class MainTabView extends BaseGameHTMLView {
         this._renderStoredClalories();
         this._nameEditor.name = nest.name;
         this._renderIsMainNest();
+        this._renderNeededFoodReserve();
     }
 
     _listenNest() {
@@ -40,9 +45,11 @@ class MainTabView extends BaseGameHTMLView {
         this._storedCaloriesEl = this._el.querySelector('[data-stored-calories]');
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyNestName.bind(this));
         this._isMainNestEl = this._el.querySelector('[data-is-main-nest]');
+        this._neededFoodCountEl = this._el.querySelector('[data-needed-food-count]');
 
         this._el.querySelector('[data-name-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_NAME_LABEL);
         this._el.querySelector('[data-food-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_FOOD_COUNT_LABEL);
+        this._el.querySelector('[data-needed-food-count-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_NEEDED_FOOD_COUNT_LABEL);
         this._el.querySelector('[data-is-main-nest-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_MAIN_TAB_IS_NEST_MAIN_LABEL);
     }
 
@@ -54,6 +61,10 @@ class MainTabView extends BaseGameHTMLView {
         this._isMainNestEl.innerHTML = this._nest.isMain ? '+' : '-';
     }
 
+    _renderNeededFoodReserve() {
+        this._neededFoodCountEl.innerHTML = this.$domain.myState.calcRequiredFoodReserveForNest(this._nest).toLocaleString();
+    }
+
     _onStoredCaloriesChanged() {
         this._renderStoredClalories();
     }
@@ -61,6 +72,30 @@ class MainTabView extends BaseGameHTMLView {
     async _applyNestName(newName) {
         await this.$domain.renameNest(this._nest.id, newName);
         return true;
+    }
+
+    _isMyAnt(ant) {
+        return ant.homeNestId == this._nest.id;
+    }
+
+    _onAntBorn(ant) {
+        if (this._isMyAnt(ant)) {
+            this._renderNeededFoodReserve();
+        }
+    }
+
+    _onAntDied(ant) {
+        if (this._isMyAnt(ant)) {
+            this._renderNeededFoodReserve();
+        }
+    }
+
+    _onSomeoneFlewNuptialFlight(antId) {
+        this._renderNeededFoodReserve();
+    }
+
+    _onAntChangedHomeNest(ant) {
+        this._renderNeededFoodReserve();
     }
 
 }

@@ -4,6 +4,7 @@ import { AntViewModel } from "./antViewModel";
 import { NestViewModel } from "./nestViewModel";
 import { NuptialEnvironmentViewModel } from "./nuptialEnvironmentViewModel";
 import { NotificationsContainerViewModel } from "./notificationsContainerViewModel";
+import { CONSTS } from "@domain/consts";
 
 class MyStateViewModel extends BaseViewModel {
 
@@ -148,6 +149,17 @@ class MyStateViewModel extends BaseViewModel {
         this._applyAntsPatch(patch.ants);
         this.nuptialEnvironment.applyPatch(patch.nuptialEnvironment);
         this.notificationsContainer.applyPatch(patch.notificationsContainer);
+    }
+
+    calcRequiredFoodReserveForNest(nest) {
+        let ants = this._ants.filter(a => a.homeNestId == nest.id && a.fromColony == nest.fromColony);
+        let hungerPeriod = CONSTS.SUMMER_START_YEAR_STEP - CONSTS.SPRING_START_YEAR_STEP;
+        let antsEatePerStep = 0;
+        for (let ant of ants) {
+            antsEatePerStep += ant.stats.appetite;
+        }
+
+        return hungerPeriod * antsEatePerStep;
     }
 
     _applyNestsPatch(nestsPatch) {
