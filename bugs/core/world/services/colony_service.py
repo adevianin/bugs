@@ -54,7 +54,7 @@ class ColonyService(BaseService):
             self._raise_state_conflict_error()
         queen.fertilize(male)
 
-        new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, colony_name)
+        new_colony = self._colony_factory.build_new_ant_colony(user_id, self._world.map, self._world.colony_relations_table, queen.name)
         queen.from_colony_id = new_colony.id
         self._emit_action(ColonyBornAction.build(new_colony))
 
