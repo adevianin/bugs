@@ -1,9 +1,28 @@
 .colonies-tab__colony-selector-controls {
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
 }
 
 .colonies-tab__colony-select {
-    width: 200px;
+    width: 100%;
     margin-right: var(--margin-small);;
+}
+
+.colonies-tab__colony-selector-container {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+    margin-bottom: var(--margin-huge);
+}
+
+.colonies-tab__queen-icon {
+    background-image: url('@view/panel/icons/queenIcon.png');
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    image-rendering: pixelated;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: content-box;
 }

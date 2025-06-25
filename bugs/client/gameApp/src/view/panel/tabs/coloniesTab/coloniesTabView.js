@@ -5,6 +5,7 @@ import { ColonyManager } from './colonyManager';
 import { ColoniesSelectView } from './coloniesSelect/coloniesSelectView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { PanelTabHeadView } from '@view/panel/panelTabHead/panelTabHeadView';
+import '@view/panel/icons/queenIcon.png';
 
 class ColoniesTabView extends BaseGameHTMLView {
 
