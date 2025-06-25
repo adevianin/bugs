@@ -40,7 +40,7 @@ class LarvaView extends BaseGameHTMLView {
         if (!this._larva.isDied) {
             this._progressEl.innerHTML = `${Math.round(this._larva.ateFood)}/${this._larva.requiredFood}`;
         } else {
-            this._progressEl.innerHTML = 'загинув';
+            this._progressEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_LARVA_TAB_DIED_LABEL);
         }
         
     }
