@@ -52,6 +52,12 @@ class OperationsCreatorView extends BaseGameHTMLView {
         this._cancelOperationCreatingBtn = this._el.querySelector('[data-cancel-operation-creating]');
         this._cancelOperationCreatingBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_CANCEL_OPERATION_CREATING_BTN_LABEL);
         this._operationCreatorPlaceholderEl = this._el.querySelector('[data-operation-creator-placeholder]');
+        this._ctResourceEl = this._el.querySelector('[data-category-title-resource]');
+        this._ctResourceEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_OPER_CATEGORY_TITLE_RESOURCE);
+        this._ctBuildingEl = this._el.querySelector('[data-category-title-building]');
+        this._ctBuildingEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_OPER_CATEGORY_TITLE_BUILDING);
+        this._ctOffensiveEl = this._el.querySelector('[data-category-title-offensive]');
+        this._ctOffensiveEl.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.OPERATIONS_CREATOR_OPER_CATEGORY_TITLE_OFFENSIVE);
         this._toggleCreatorMode(false);
     }
 
