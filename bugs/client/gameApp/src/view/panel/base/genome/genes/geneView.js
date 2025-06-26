@@ -174,6 +174,7 @@ class GeneView extends BaseGameHTMLView {
     _renderSpecializationBuildingSubnestGene() {
         this._renderTitleGeneBase();
         this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST);
+        this._el.querySelector('[data-description]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST_DESCRIPTION);
     }
 
     _renderAdaptationAppetiteGene() {

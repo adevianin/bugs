@@ -8,11 +8,17 @@
 }
 
 .gene__title {
-    /* font-weight: var(--font-weight-strong); */
     text-transform: capitalize;
     display: flex;
     justify-content: center;
     margin-bottom: var(--margin-small);
+    font-weight: var(--font-weight-strong);
+}
+
+.gene__description {
+    font-size: var(--font-size-small);
+    color: #555;
+    font-style: italic;
 }
 
 .gene__value-section {
