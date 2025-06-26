@@ -22,7 +22,7 @@
 }
 
 .operations-list__operation--selected {
-    background-color: var(--contrasting-color-light);
+    background-color: var(--table-hightlight-bg-color);
 }
 
 
