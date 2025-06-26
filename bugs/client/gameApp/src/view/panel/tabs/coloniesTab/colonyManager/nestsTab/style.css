@@ -1,7 +1,10 @@
 .nests-tab__nest-selector-section {
     display: flex;
-    flex-direction: column;
-    margin-bottom: var(--margin-large);
+    flex-direction: row;
+    margin-bottom: var(--margin-huge);
+    margin-top: var(--margin-huge);
+    gap: var(--margin);
+    align-items: center;
 }
 
 .nests-tab__nest-selector-label {
@@ -14,6 +17,8 @@
     display: flex;
     flex-direction: row;
     gap: var(--margin-small);
+    flex-grow: 1;
+    min-width: 0;
 }
 
 .nests-tab__nest-selector {
