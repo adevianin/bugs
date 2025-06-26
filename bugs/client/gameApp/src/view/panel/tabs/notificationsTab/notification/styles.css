@@ -1,0 +1,7 @@
+.notification {
+    transition: background-color 1s ease;
+}
+
+.notification--hightlighted {
+    background-color: var(--table-hightlight-bg-color);
+}

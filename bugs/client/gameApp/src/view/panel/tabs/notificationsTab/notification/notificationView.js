@@ -12,6 +12,7 @@ import { PositionView } from '@view/panel/base/position/positionView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { convertStepsToSeason } from '@utils/convertStepsToSeason';
 import { SEASON_TYPES } from '@domain/enum/season_types';
+import './styles.css';
 
 class NotificationView extends BaseGameHTMLView {
 
@@ -21,6 +22,8 @@ class NotificationView extends BaseGameHTMLView {
         this._positionViews = [];
 
         this._render();
+
+        this._stopListenHighlightRequest = this.$eventBus.on(`hightlightNotificationRequest:${notification.id}`, this._onHighlightRequest.bind(this));
     }
 
     remove() {
@@ -28,9 +31,21 @@ class NotificationView extends BaseGameHTMLView {
         for (let positionView of this._positionViews) {
             positionView.remove();
         }
+        this._stopListenHighlightRequest();
+        clearTimeout(this._hightlightTimer);
+    }
+
+    _onHighlightRequest() {
+        let hightLightClass = 'notification--hightlighted';
+        this._el.classList.add(hightLightClass);
+        this._hightlightTimer = setTimeout(() => {
+            this._el.classList.remove(hightLightClass);
+        }, 3000);
     }
 
     _render() {
+        this._el.classList.add('notification');
+        
         switch (this._notification.type) {
             case NotificationTypes.DIED_ANT:
                 this._renderDiedAntNotification();

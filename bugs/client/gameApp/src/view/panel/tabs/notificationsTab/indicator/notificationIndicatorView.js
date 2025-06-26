@@ -29,9 +29,20 @@ class NotificationIndicatorView extends BaseGameHTMLView {
         this._indicatorEl.classList.toggle('g-hidden', !isEnabled);
     }
 
+    _showNewNotifications() {
+        let lastReadNotificationId = this._getLastReadNotificationId();
+        if (lastReadNotificationId) {
+            let newNotifications = this._notificationsContainer.getNotificationsAfter(lastReadNotificationId);
+            for (let notification of newNotifications) {
+                this.$eventBus.emit(`hightlightNotificationRequest:${notification.id}`);
+            }
+        }
+    }
+
     _onPanelTabSwitched(tabName) {
         if (tabName == 'notifications') {
             this._isReadingNotifications = true;
+            this._showNewNotifications();
             this._saveLastReadNotificationId();
             this._toggleIndicator(false);
         } else {
@@ -61,8 +72,7 @@ class NotificationIndicatorView extends BaseGameHTMLView {
             return false;
         }
 
-        let key = this._buildLastReadNotificationIdKey();
-        let lastReadNotificationId = localStorage.getItem(key);
+        let lastReadNotificationId = this._getLastReadNotificationId();
         if (!lastReadNotificationId) {
             return false;
         }
@@ -76,6 +86,11 @@ class NotificationIndicatorView extends BaseGameHTMLView {
         }
         let lastNotification = this._notificationsContainer.notifications[notificationsCount - 1];
         return lastNotification;
+    }
+
+    _getLastReadNotificationId() {
+        let key = this._buildLastReadNotificationIdKey();
+        return localStorage.getItem(key);
     }
 
     _buildLastReadNotificationIdKey() {

@@ -6,6 +6,16 @@ class NotificationsContainerViewModel extends BaseViewModel {
         return this._props.notifications;
     }
 
+    getNotificationsAfter(notificationId) {
+        let index = this.notifications.findIndex(n => n.id == notificationId);
+        if (index >= 0) {
+            return this.notifications.slice(index + 1);
+        }
+
+        return [];
+        
+    }
+
     addNewNotification(newNotification) {
         this.notifications.push(newNotification);
         this.emit('newNotification', newNotification);
