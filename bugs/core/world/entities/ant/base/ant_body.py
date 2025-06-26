@@ -134,6 +134,8 @@ class AntBody(LiveBody):
     
     def build_nest(self, nest: Nest):
         nest.build()
+        walk_point = Point.generate_random_point_within_circle(nest.position, 40, 10)
+        self.step_to_near(walk_point)
         self.events.emit('built_nest')
 
     def pick_up_item(self, item: Item):
