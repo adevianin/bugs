@@ -103,13 +103,13 @@ class ItemSourceView extends EntityView {
         this._accumulatedLine
             .clear()
             .rect(ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH, 0, lineWidth, lineHeight)
-            .fill({ color, alpha: 0.5 })
+            .fill({ color, alpha: UI_CONSTS.INFO_LINE_INSIDE_OPACITY })
             .rect(ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH, 0, maxLineWidth, lineHeight)
             .stroke({
                 color,
                 alignment: 0,
                 width: ItemSourceView.ACCUMULATED_LINE_BORDER_WIDTH,
-                alpha: 0.7
+                alpha: UI_CONSTS.INFO_LINE_OPACITY
             })
     }
 

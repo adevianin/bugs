@@ -169,14 +169,14 @@ class NestView extends EntityView {
             .rect(NestView.FORT_LINE_BORDER_WIDTH, 0, lineWidth, rectHeight)
             .fill({
                 color,
-                alpha: 0.5
+                alpha: UI_CONSTS.INFO_LINE_INSIDE_OPACITY
             })
             .rect(NestView.FORT_LINE_BORDER_WIDTH, 0, fortLineMaxWidth, rectHeight)
             .stroke({
                 color,
                 width: NestView.FORT_LINE_BORDER_WIDTH,
                 alignment: 0,
-                alpha: 0.7
+                alpha: UI_CONSTS.INFO_LINE_OPACITY
             });
     }
 

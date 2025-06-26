@@ -1,13 +1,14 @@
 import { BaseGraphicView } from "@view/base/baseGraphicView";
 import * as PIXI from 'pixi.js';
+import { UI_CONSTS } from "@common/view/ui_consts";
 
 class HpLineView extends BaseGraphicView {
 
     static HP_LINE_HEIGHT = 7;
     static BORDER_WIDTH = 2;
-    static HP_LINE_COLOR_SAFE = 0x00ff00;
-    static HP_LINE_COLOR_WARNING = 0xffff00;
-    static HP_LINE_COLOR_DANGER = 0xff0000;
+    static HP_LINE_COLOR_SAFE = 0x00C853;
+    static HP_LINE_COLOR_WARNING = 0xFF9100;
+    static HP_LINE_COLOR_DANGER = 0xFF1744;
 
     constructor(position, width, maxHp, container) {
         super();
@@ -50,13 +51,13 @@ class HpLineView extends BaseGraphicView {
         this._hpLine
             .clear()
             .rect(HpLineView.BORDER_WIDTH, 0, lineWidth, rectHeight)
-            .fill({color, alpha: 0.5 })
+            .fill({color, alpha: UI_CONSTS.INFO_LINE_INSIDE_OPACITY })
             .rect(HpLineView.BORDER_WIDTH, 0, hpLineMaxWidth, rectHeight)
             .stroke({
                 width: HpLineView.BORDER_WIDTH,
                 color: HpLineView.HP_LINE_COLOR_SAFE,
                 alignment: 0,
-                alpha: 0.7
+                alpha: UI_CONSTS.INFO_LINE_OPACITY
             })
     }
 
