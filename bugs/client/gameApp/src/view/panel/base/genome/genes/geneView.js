@@ -182,6 +182,7 @@ class GeneView extends BaseGameHTMLView {
         this._el.querySelector('[data-icon-container]').remove();
         this._el.querySelector('[data-value]').innerHTML = this._gene.multiplier;
         this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE);
+        this._el.querySelector('[data-description]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE_DESCRIPTION);
     }
 
     _renderAdaptationDevelopmentAppetiteGene() {
@@ -189,6 +190,7 @@ class GeneView extends BaseGameHTMLView {
         this._el.querySelector('[data-icon-container]').remove();
         this._el.querySelector('[data-value]').innerHTML = this._gene.multiplier;
         this._el.querySelector('[data-title]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_DEVELOPMENT_APPETITE);
+        this._el.querySelector('[data-description]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_DEVELOPMENT_APPETITE_DESCRIPTION);
     }
 
     _renderAdaptationColdGene() {
