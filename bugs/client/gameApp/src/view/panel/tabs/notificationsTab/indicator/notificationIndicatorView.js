@@ -33,9 +33,11 @@ class NotificationIndicatorView extends BaseGameHTMLView {
         let lastReadNotificationId = this._getLastReadNotificationId();
         if (lastReadNotificationId) {
             let newNotifications = this._notificationsContainer.getNotificationsAfter(lastReadNotificationId);
-            for (let notification of newNotifications) {
-                this.$eventBus.emit(`hightlightNotificationRequest:${notification.id}`);
-            }
+            setTimeout(() => {
+                for (let notification of newNotifications) {
+                    this.$eventBus.emit(`hightlightNotificationRequest:${notification.id}`);
+                }
+            }, 300);
         }
     }
 

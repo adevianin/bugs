@@ -40,7 +40,7 @@ class NotificationView extends BaseGameHTMLView {
         this._el.classList.add(hightLightClass);
         this._hightlightTimer = setTimeout(() => {
             this._el.classList.remove(hightLightClass);
-        }, 3000);
+        }, 1000);
     }
 
     _render() {
