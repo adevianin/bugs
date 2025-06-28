@@ -1850,14 +1850,14 @@
     }
   },
   "animations": {
-    "ant_male": ["ant_male_1.png","ant_male_2.png","ant_male_3.png"],
-    "ant_male_fly": ["ant_male_fly_1.png","ant_male_fly_2.png"],
-    "ant_queen": ["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png"],
-    "ant_queen_fly": ["ant_queen_fly_1.png","ant_queen_fly_2.png"],
-    "ant_warrior": ["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png"],
-    "ant_worker_empty": ["ant_worker_empty_1.png","ant_worker_empty_2.png","ant_worker_empty_3.png"],
-    "ant_worker_full": ["ant_worker_full_1.png","ant_worker_full_2.png","ant_worker_full_3.png"],
-    "ladybug": ["ladybug_1.png","ladybug_2.png","ladybug_3.png"]
+	"ant_male": ["ant_male_1.png","ant_male_2.png","ant_male_3.png"],
+	"ant_male_fly": ["ant_male_fly_1.png","ant_male_fly_2.png"],
+	"ant_queen": ["ant_queen_1.png","ant_queen_2.png","ant_queen_3.png"],
+	"ant_queen_fly": ["ant_queen_fly_1.png","ant_queen_fly_2.png"],
+	"ant_warrior": ["ant_warrior_1.png","ant_warrior_2.png","ant_warrior_3.png"],
+	"ant_worker_empty": ["ant_worker_empty_1.png","ant_worker_empty_2.png","ant_worker_empty_3.png"],
+	"ant_worker_full": ["ant_worker_full_1.png","ant_worker_full_2.png","ant_worker_full_3.png"],
+	"ladybug": ["ladybug_1.png","ladybug_2.png","ladybug_3.png"]
   },
   "meta": {
     "app": "http://free-tex-packer.com",
