@@ -93,6 +93,8 @@ class GeneView extends BaseGameHTMLView {
         this._el.querySelector('[data-hp-regen-rate-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_HP_REGEN_RATE));
         this._el.querySelector('[data-speed-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_SPEED));
         this._el.querySelector('[data-life-span-col-head]').setAttribute('title', this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DEVELOPMENT_LIFE_SPAN));
+        this._el.querySelector('[data-domination-code-label]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.GENE_LABEL_DOMINATION_CODE);
+        this._el.querySelector('[data-domination-code]').innerHTML = this._gene.dominationCode;
     }
 
     _renderBodyStrengthGene() {
