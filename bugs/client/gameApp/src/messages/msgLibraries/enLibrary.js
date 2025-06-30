@@ -493,19 +493,8 @@ const EN_LIBRARY = {
             Usually, a colony has a single nest, but some highly advanced ant species can have multiple nests per colony. This allows them to collect resources from distant sources that would otherwise be unreachable.
         </p>
         <p>
-            In the nest, the queen lays eggs, passing on some of her genetic material to them. Since she has two sets of chromosomes (diploid), only one set enters each egg — it is formed during meiosis. If the egg also receives a set of chromosomes from a male, it becomes fertilized. The type of egg depends on whether fertilization occurs.
+            In the nest, the queen lays eggs, and special ants take care of them and feed them. She can lay both fertilized eggs, which can develop into any caste except males, and unfertilized eggs, from which only males hatch. You can read more about the types of eggs in the "Species" section.
         </p>
-        <p>
-            There are two types of eggs:
-        </p>
-        <ul>
-            <li>
-                <b>Fertilized eggs</b> — have two sets of chromosomes: one from the mother, one from the father. These eggs can develop into workers, warriors, or females.
-            </li>
-            <li>
-                <b>Unfertilized eggs</b> — contain only maternal chromosomes. Only males hatch from them.
-            </li>
-        </ul>
         <p>
             After being laid, the egg is placed in the egg chamber. There you can:
         </p>
@@ -527,6 +516,24 @@ const EN_LIBRARY = {
         <p>
             Ants have a complex but fascinating genetic system. Each individual has a genome composed of chromosomes, and those chromosomes consist of individual genes. It is the genes that determine the characteristics of an ant.
         </p>
+        <p>
+            When the queen lays eggs, she passes on part of her genetic material to them. Since she has two sets of chromosomes (diploid) — one from her mother and one from her father — each egg receives only one set. 
+            This happens during <b>meiosis</b> — a process in which, for each pair of chromosomes, one of the two copies is randomly selected: either the maternal or the paternal one. In this way, each egg receives a unique combination of chromosomes.
+        </p>
+        <p>
+            If the egg also receives a set of chromosomes from a male, it becomes fertilized. The type of egg depends on whether fertilization occurred.
+        </p>
+        <p>
+            There are two types of eggs:
+        </p>
+        <ul>
+            <li>
+                <b>Fertilized eggs</b> — contain two sets of chromosomes: one from the mother (after meiosis), and one from the father. Workers, soldiers, or queens can hatch from such eggs.
+            </li>
+            <li>
+                <b>Unfertilized eggs</b> — contain only maternal chromosomes (after meiosis). Only males hatch from them.
+            </li>
+        </ul>
         <p>
             In the "Species" tab <span data-specie-tab-icon-container></span>, you can modify the genetic composition of your ant species. Here, genes are divided into fixed and candidate ones.
         </p>
