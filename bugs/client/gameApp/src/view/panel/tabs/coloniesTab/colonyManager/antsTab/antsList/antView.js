@@ -6,10 +6,10 @@ import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { AntStatsView } from '@view/panel/base/antStats/antStatsView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
-import { AntTypes } from "@domain/enum/antTypes";
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import openSvgTmpl from '@view/panel/svg/open.html';
 import closeSvgTmpl from '@view/panel/svg/close.html';
+import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
 
 class AntView extends BaseGameHTMLView {
 
@@ -120,28 +120,8 @@ class AntView extends BaseGameHTMLView {
     }
 
     _renderAntType() {
-        let typeText = null;
-        if (this._ant.isQueenOfColony) {
-            typeText = this.$mm.get(GAME_MESSAGE_IDS.ANT_TYPE_QUEEN);
-        } else {
-            switch (this._ant.antType) {
-                case AntTypes.QUEEN:
-                    typeText = this.$mm.get(GAME_MESSAGE_IDS.ANT_TYPE_FEMALE);
-                    break;
-                case AntTypes.MALE:
-                    typeText = this.$mm.get(GAME_MESSAGE_IDS.ANT_TYPE_MALE);
-                    break;
-                case AntTypes.WARRIOR:
-                    typeText = this.$mm.get(GAME_MESSAGE_IDS.ANT_TYPE_WARRIOR);
-                    break;
-                case AntTypes.WORKER:
-                    typeText = this.$mm.get(GAME_MESSAGE_IDS.ANT_TYPE_WORKER);
-                    break;
-                default:
-                    typeText = this._ant.antType;
-            }
-        }
-        this._antTypeEl.innerHTML = typeText;
+        let msgId = getAntCasteMsgId(this._ant.antType, this._ant.isQueenOfColony);
+        this._antTypeEl.innerHTML = this.$mm.get(msgId);
     }
 
     _onNuptialFlightBtnClick() {

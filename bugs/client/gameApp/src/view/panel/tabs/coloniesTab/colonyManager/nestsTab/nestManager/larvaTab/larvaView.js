@@ -1,6 +1,6 @@
 import { BaseGameHTMLView } from '@view/base/baseGameHTMLView';
 import larvaTmpl from './larvaTmpl.html';
-import { antTypesLabelIds } from '@view/labels/antTypesLabelIds';
+import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
@@ -22,7 +22,7 @@ class LarvaView extends BaseGameHTMLView {
         this._el.innerHTML = larvaTmpl;
 
         this._progressEl = this._el.querySelector('[data-progress]');
-        this._el.querySelector('[data-ant-type]').innerHTML = this.$mm.get(antTypesLabelIds[this._larva.antType]);
+        this._el.querySelector('[data-ant-type]').innerHTML = this.$mm.get(getAntCasteMsgId(this._larva.antType));
         this._el.querySelector('[data-name]').innerHTML = this._larva.name;
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome]'), this._larva.genome);
         this._deleteLarvaBtn = this._el.querySelector('[data-delete]');

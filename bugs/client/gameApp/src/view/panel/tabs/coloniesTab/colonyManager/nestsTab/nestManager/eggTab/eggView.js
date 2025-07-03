@@ -6,7 +6,7 @@ import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { EggStates } from "@domain/enum/eggStates";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
-import { antTypesLabelIds } from '@view/labels/antTypesLabelIds';
+import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
 
 class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
@@ -92,7 +92,7 @@ class EggView extends BaseGameHTMLView {
             let option = document.createElement('option');
             this._antTypeSelector.append(option);
             option.value = antType;
-            option.innerHTML = this.$mm.get(antTypesLabelIds[antType]);
+            option.innerHTML = this.$mm.get(getAntCasteMsgId(antType));
         }
     }
 

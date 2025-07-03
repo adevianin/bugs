@@ -227,7 +227,7 @@ class Ant(LiveEntity):
         if self.has_picked_item():
             self.drop_picked_item() 
         super()._on_body_died(death_record)
-        self._emit_notification(DiedAntNotification(self.owner_id, self._name, death_record))
+        self._emit_notification(DiedAntNotification(self.owner_id, self._name, self.ant_type, self.is_queen_of_colony, death_record))
 
     def _on_received_damage(self, damage_type: DamageTypes):
         super()._on_received_damage(damage_type)

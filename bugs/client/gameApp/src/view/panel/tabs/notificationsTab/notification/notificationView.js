@@ -12,6 +12,7 @@ import { PositionView } from '@view/panel/base/position/positionView';
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { convertStepsToSeason } from '@utils/convertStepsToSeason';
 import { SEASON_TYPES } from '@domain/enum/season_types';
+import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
 import './styles.css';
 
 class NotificationView extends BaseGameHTMLView {
@@ -70,7 +71,16 @@ class NotificationView extends BaseGameHTMLView {
     _renderDiedAntNotification() {
         this._el.innerHTML = diedAntNotificationTmpl;
         this._el.querySelector('[data-notification-object]').innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NOTIFICATION_OBJECT_ANT);
-        this._el.querySelector('[data-ant-name]').innerHTML = this._notification.antName;
+        let fullName = null;
+        if (this._notification.antType) {
+            let antTypeMsgId = getAntCasteMsgId(this._notification.antType, this._notification.isQueenOfColony);
+            let antTypeText = this.$mm.get(antTypeMsgId).toLowerCase();
+            fullName = `${this._notification.antName}(${antTypeText})`;
+        } else {
+            fullName = this._notification.antName;
+        }
+
+        this._el.querySelector('[data-ant-name]').innerHTML = fullName;
         this._el.querySelector('[data-death-describe]').innerHTML = this._generateAntDeathDescribeText();
         if (this._notification.deathRecord.type == DeathTypes.NUPTIAL_FLY) {
             this._el.querySelector('[data-death-position]').remove();

@@ -42,6 +42,8 @@ class NotificationClientSerializer():
 
         props.update({
             'antName': notification.ant_name,
+            'antType': notification.ant_type,
+            'isQueenOfColony': notification.is_queen_of_colony,
             'deathRecord': self._death_record_client_serializer.serialize(notification.death_record)
         })
 

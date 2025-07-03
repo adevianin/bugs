@@ -6,6 +6,7 @@ from .death_record_deserializer import DeathRecordDeserializer
 from core.world.entities.world.notification.notifications.nest_alarm_raised_notification import NestAlarmRaisedNotification
 from core.world.entities.world.notification.notifications.nest_alarm_canceled_notification import NestAlarmCanceledNotification
 from core.world.entities.world.notification.notifications.died_colony_notification import DiedColonyNotification
+from core.world.entities.ant.base.ant_types import AntTypes
 
 class NotificationDeserializer():
 
@@ -31,7 +32,10 @@ class NotificationDeserializer():
             
     def _build_died_ant_notification(self, json: dict):
         death_record = self._death_record_deserializer.deserialize(json['death_record'])
-        return DiedAntNotification(json['owner_id'], json['ant_name'], death_record, json['step'])
+        ant_type_raw = json.get('ant_type', None)
+        ant_type = AntTypes(ant_type_raw) if ant_type_raw else None
+        is_queen_of_colony = json.get('is_queen_of_colony', False)
+        return DiedAntNotification(json['owner_id'], json['ant_name'], ant_type, is_queen_of_colony, death_record, json['step'])
     
     def _build_died_nest_notification(self, json: dict):
         nest_position = Point.from_json(json['nest_position'])
