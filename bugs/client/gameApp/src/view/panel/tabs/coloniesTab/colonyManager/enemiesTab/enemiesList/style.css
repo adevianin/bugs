@@ -1,3 +1,9 @@
 .enemies-list__actions-col {
     width: 80px;
 }
+
+.enemies-list__action-btns-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
