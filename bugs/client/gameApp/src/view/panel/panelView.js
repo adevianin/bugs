@@ -26,6 +26,7 @@ class PanelView extends BaseGameHTMLView {
 
     static PANEL_START_HEIGHT = 575;
     static PANEL_START_HEIGHT_SMALL = 300;
+    static PANEL_MARGIN_TOP = 100;
 
     constructor(el) {
         super(el);
@@ -54,7 +55,7 @@ class PanelView extends BaseGameHTMLView {
 
     set _height(val) {
         let minHeight = this._handlerHeight;
-        let maxHeight = window.innerHeight;
+        let maxHeight = window.innerHeight - PanelView.PANEL_MARGIN_TOP;
         let height = val;
         if (height > maxHeight) {
             height = maxHeight;
