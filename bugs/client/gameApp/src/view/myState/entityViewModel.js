@@ -21,7 +21,8 @@ class EntityViewModel extends BaseViewModel {
 
     set fromColony(id) {
         this._props.fromColony = id;
-        this.emit('fromColonyChanged');
+        // this.emit('fromColonyChanged');
+        this.$eventBus.emit('entityGotInColony', id, this);
     }
 
     get type() {
