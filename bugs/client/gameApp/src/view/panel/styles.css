@@ -63,8 +63,10 @@
 
 .panel__tab-switcher button {
     margin: 0;
-    width: 60px;
-    height: 60px;
+    width: 14vw;
+    aspect-ratio: 1 / 1;
+    min-width: 40px;
+    max-width: 60px;
     cursor: pointer;
     border: none;
     background-position: center;
