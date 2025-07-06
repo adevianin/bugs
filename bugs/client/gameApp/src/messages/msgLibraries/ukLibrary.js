@@ -24,10 +24,10 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.QUEEN_SELECTOR_LABEL_BORN_ANTARA]: 'Народити самку Antara',
     [GAME_MESSAGE_IDS.MALE_SELECTOR_LABEL_NO_MALES]: 'Немає самців із віддалених країв в шлюбному льоті.',
 
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо сателіт в колонії без королеви.',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_SUB_NEST_WITHOUT_QUEEN]: 'Не можна будувати гніздо-сателіт в колонії без королеви.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_NEEDED]: 'Мурахам треба вказати місце для будування гнізда.',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_BUILDING_POSITION_BLOCKED]: 'Позиція для будування гнізда вже занята.',
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд сателітів.',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OPER_CANT_BUILD_MORE_SUB_NESTS]: 'Досягнуто максимальну кількість гнізд-сателітів.',
 
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_CANT_ATTACK_WITHOUT_QUEEN]: 'Без королеви мурахи не можуть атакувати інші гнізда.',
     [GAME_MESSAGE_IDS.DESTROY_NEST_OPER_NEST_NEEDED]: 'Мурахам треба вказати гніздо для атаки.',
@@ -92,7 +92,7 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.GENE_LABEL_BODY_SIGHT_DISTANCE]: 'ген дальності зору',
     [GAME_MESSAGE_IDS.GENE_LABEL_BODY_SPEED]: 'ген швидкості руху',
     [GAME_MESSAGE_IDS.GENE_LABEL_BODY_LIFE_SPAN]: 'ген тривалості життя',
-    [GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST]: 'ген будування гнізд сателітів',
+    [GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST]: 'ген будування гнізд-сателітів',
     [GAME_MESSAGE_IDS.GENE_LABEL_SPECIALIZATION_BUILDING_SUBNEST_DESCRIPTION]: 'дозволяє будувати декілька гнізд на колонію',
     [GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE]: 'ген апетиту',
     [GAME_MESSAGE_IDS.GENE_LABEL_ADAPTATION_APPETITE_DESCRIPTION]: 'визначає апетит дорослої мурахи',
@@ -235,7 +235,7 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.OPERATIONS_LIST_NO_OPERATIONS_LABEL]: 'Немає активних феромонних сигналів.',
 
     [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_TITLE]: 'Феромонні сигнали:',
-    [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_NEW_SUB_NEST_BTN_LABEL]: 'будувати гніздо сателіт',
+    [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_NEW_SUB_NEST_BTN_LABEL]: 'будувати гніздо-сателіт',
     [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_DESTROY_NEST_BTN_LABEL]: 'атакувати гніздо',
     [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_PILLAGE_NEST_BTN_LABEL]: 'пограбувати гніздо',
     [GAME_MESSAGE_IDS.OPERATIONS_CREATOR_TRANSPORT_FOOD_BTN_LABEL]: 'перенести їжу',
@@ -258,17 +258,17 @@ const UK_LIBRARY = {
     [GAME_MESSAGE_IDS.OPERATION_DEACTIVATE_BTN_LABEL]: 'приховать',
     [GAME_MESSAGE_IDS.OPERATION_HIRING_WORKERS_STATUS_LABEL]: 'робочі',
     [GAME_MESSAGE_IDS.OPERATION_HIRING_WARRIORS_STATUS_LABEL]: 'воїни',
-    [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_NEW_SUBNEST]: 'Будування гнізда сателіта',
+    [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_NEW_SUBNEST]: 'Будування гнізда-сателіта',
     [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_DESTROY_NEST]: 'Атака ворожого гнізда',
     [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_PILLAGE_NEST]: 'Грабування ворожого гнізда',
     [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_TRANSPORT_FOOD]: 'Перенесення їжі',
     [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_BUILD_FORTIFICATION]: 'Будування укріплень',
     [GAME_MESSAGE_IDS.OPERATION_TYPE_LABEL_BRING_BUG]: 'Перенесення жука в гніздо',
 
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_TITLE]: 'Будування гнізда сателіта',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_TITLE]: 'Будування гнізда-сателіта',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_POSITION_LABEL]: 'позиція гнізда:',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_CHOOSE_NEST_POSITION_BTN_LABEL]: 'вибрать',
-    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_WORKER_REQUIREMENTS_LABEL]: '*Робочі мурахи повинні мати ген будування гнізд сателітів',
+    [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_WORKER_REQUIREMENTS_LABEL]: '*Робочі мурахи повинні мати ген будування гнізд-сателітів',
     [GAME_MESSAGE_IDS.NEW_SUB_NEST_OP_CR_NEST_NAME_LABEL]: 'назва гнізда:',
 
     [GAME_MESSAGE_IDS.DESTROY_NEST_OP_CR_TITLE]: 'Зруйнувать гніздо',
@@ -489,8 +489,8 @@ const UK_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS]: `
         <p>
-            Мурахи живуть у гніздах, бо це їхній дім і захист. Гнізда уберігають їх від ворогів та негоди, слугують сховищем для потомства та їжі, а також є центром спілкування та організації всієї колонії.
-            Зазвичай колонія має одне гніздо, але деякі дуже продвинуті види мурах можуть мати кілька гнізд на колонію. Це дозволяє збирати ресурси з віддалених джерел, які інакше були б недоступні. 
+            Мурахи живуть у гніздах, бо це їхній дім і захист. Гнізда оберігають їх від ворогів та негоди, слугують сховищем для потомства й їжі, а також є центром спілкування та організації всієї колонії.  
+            Зазвичай колонія має одне гніздо, але деякі високорозвинені види мурах можуть мати кілька гнізд-сателітів. Це дозволяє їм збирати ресурси з віддалених джерел, які інакше були б недоступні.
         </p>
         <p>
             У гнізді королева відкладає яйця, а спеціальні мурахи доглядають за ними та годують. Вона може відкладати як запліднені яйця, з яких виростають усі касти мурах, крім самців, так і незапліднені, з яких народжуються лише самці. Докладніше про типи яєць читай у розділі "Вид".

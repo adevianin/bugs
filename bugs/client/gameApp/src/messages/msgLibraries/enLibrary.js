@@ -489,8 +489,8 @@ const EN_LIBRARY = {
     `,
     [GAME_MESSAGE_IDS.HELP_TAB_SUBSECTION_CONTENT_COLONIES_NESTS]: `
         <p>
-            Ants live in nests because these are their homes and their protection. Nests shield them from enemies and harsh weather, serve as storage for their offspring and food, and act as the center for communication and organization for the entire colony. Without a nest, ants simply wouldn't survive.
-            Usually, a colony has a single nest, but some highly advanced ant species can have multiple nests per colony. This allows them to collect resources from distant sources that would otherwise be unreachable.
+            Ants live in nests because they serve as both home and protection. Nests shield them from enemies and bad weather, store their brood and food, and act as centers of communication and organization for the entire colony.  
+            Typically, a colony has a single nest, but some highly developed ant species can maintain several satellite nests. This allows them to gather resources from distant sources that would otherwise be inaccessible.
         </p>
         <p>
             In the nest, the queen lays eggs, and special ants take care of them and feed them. She can lay both fertilized eggs, which can develop into any caste except males, and unfertilized eggs, from which only males hatch. You can read more about the types of eggs in the "Species" section.
