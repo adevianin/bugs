@@ -24,10 +24,12 @@
 .gene__value-section {
     display: flex;
     flex-direction: row;
+    gap: var(--margin-small);
 }
 
 .gene__value-section-label {
-    flex: 0 0 120px;
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .gene__value-section-value {
