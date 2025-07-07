@@ -101,7 +101,8 @@
     padding: 3px;
     height: var(--control-height);
     font-weight: var(--font-weight);
-    font-size: var(--font-size);
+    /* font-size: var(--font-size); */
+    font-size: 16px; /* fix for iphone, min size 16px*/
 }
 
 .g-select {
