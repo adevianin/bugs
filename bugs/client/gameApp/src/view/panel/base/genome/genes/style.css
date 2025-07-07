@@ -80,6 +80,7 @@
 
 .gene__icon-container-life-span {
     background-image: url('@view/panel/icons/statsLifeSpanIcon.png');
+    width: 5ch;
 }
 
 .gene__contnent-wraper {
