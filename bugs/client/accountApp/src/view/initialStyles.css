@@ -43,8 +43,13 @@ body {
 
 .account--buttons-container {
     display: flex;
-    justify-content: space-between;
     align-items: end;
+}
+
+.account--login-links-container {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
 }
 
 .account__google-auth{
@@ -58,7 +63,8 @@ body {
 }
 
 .account--login-loader {
-    margin-left: var(--margin);
+    margin-left: var(--margin-small);
+    margin-right: var(--margin-small);
 }
 
 .account--login-registration-link {
@@ -78,7 +84,14 @@ body {
 }
 
 .account--register-loader {
-    margin-left: var(--margin);
+    margin-left: var(--margin-small);
+    margin-right: var(--margin-small);
+}
+
+.account--register-links-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: end;
 }
 
 .account--content-wrapper {

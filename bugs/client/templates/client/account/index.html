@@ -60,8 +60,10 @@
                         <button class="g-button" data-login-btn>{% trans "sign in" context "button" %}</button>
                         <div class="account--login-loader" data-login-request-loader></div>
                     </div>
-                    <a href="{% url 'reset_password' %}">{% trans "Forgot password?" %}</a>
-                    <a class="account--login-registration-link" href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
+                    <div class="account--login-links-container">
+                        <a href="{% url 'reset_password' %}">{% trans "Forgot password?" %}</a>
+                        <a class="account--login-registration-link" href="#" data-switch-to-register-btn>{% trans "sign up" context "link" %}</a>
+                    </div>
                 </div>
             </div>
             <div class="account-tab g-hidden" data-registration-tab>
@@ -91,7 +93,9 @@
                         <button class="g-button account--register-btn" data-registration-btn>{% trans "sign up" context "button" %}</button>
                         <div class="account--register-loader" data-registration-request-loader></div>
                     </div>
-                    <a class="account--login-link" href="#" data-switch-to-login-btn>{% trans "sign in" context "link" %}</a>
+                    <div class="account--register-links-container">
+                        <a class="account--login-link" href="#" data-switch-to-login-btn>{% trans "sign in" context "link" %}</a>
+                    </div>
                 </div>
             </div>
         </div>
