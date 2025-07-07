@@ -80,6 +80,7 @@ class NameEditorView extends BaseGameHTMLView {
     _changeMode(mode) {
         this._previewContainerEl.classList.toggle('g-hidden', mode != NameEditorView.MODES.PREVIEW);
         this._editContainerEl.classList.toggle('g-hidden', mode != NameEditorView.MODES.EDIT);
+        this.events.emit('modeChanged', mode);
     }
 
     _renderName() {

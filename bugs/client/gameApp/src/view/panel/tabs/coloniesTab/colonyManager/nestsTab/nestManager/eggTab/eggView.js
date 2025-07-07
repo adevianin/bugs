@@ -7,6 +7,7 @@ import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { EggStates } from "@domain/enum/eggStates";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
+import { isMobileCheck } from '@utils/isMobileCheck';
 
 class EggView extends BaseGameHTMLView {
     constructor(el, egg, nest) {
@@ -51,8 +52,14 @@ class EggView extends BaseGameHTMLView {
         this._antTypeSelector.value = this._egg.antType;
 
         this._nameEditor = new NameEditorView(this._el.querySelector('[data-name-editor]'), this._applyEggName.bind(this), this._egg.name);
+        if (isMobileCheck()) {
+            this._nameEditor.events.on('modeChanged', this._onNameEditorModeChanged.bind(this));
+        }
 
         this._toLarvaLoaderView = new DotsLoaderView(this._el.querySelector('[data-to-larva-loader]'));
+
+        this._casteSelectorTdEl = this._el.querySelector('[data-caste-selector-td]');
+        this._nameEditorTdEl = this._el.querySelector('[data-name-editor-td]');
     }
 
     async _applyEggName(newName) {
@@ -141,6 +148,19 @@ class EggView extends BaseGameHTMLView {
             this._stopListenLarvaAdding();
             this._stopListenLarvaAdding = null;
         }
+    }
+
+    _toggleNameEditMode(isNameEditing) {
+        this._casteSelectorTdEl.classList.toggle('g-hidden', isNameEditing);
+        if (isNameEditing) {
+            this._nameEditorTdEl.setAttribute('colspan', 2);
+        } else {
+            this._nameEditorTdEl.removeAttribute('colspan');
+        }
+    }
+
+    _onNameEditorModeChanged(mode) {
+        this._toggleNameEditMode(mode == NameEditorView.MODES.EDIT);
     }
 
 }
