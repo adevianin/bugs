@@ -24,8 +24,8 @@ class WorldBackgroundView extends BaseGraphicView {
     }
 
     resize() {
-        this._bgSprite.width = window.screen.width / this._scale;
-        this._bgSprite.height = window.screen.height / this._scale;
+        this._bgSprite.width = window.innerWidth / this._scale;
+        this._bgSprite.height = window.innerHeight / this._scale;
     }
 
     _render() {

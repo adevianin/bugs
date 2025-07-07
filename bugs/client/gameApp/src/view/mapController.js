@@ -205,8 +205,8 @@ class MapController extends BaseGraphicView {
     }
 
     _buildViewRectForViewPoint(viewPoint) {
-        let viewRectWidth = (window.screen.width / this._scale) * 1.5;
-        let viewRectHeight = (window.screen.height / this._scale) * 1.5;
+        let viewRectWidth = (window.innerWidth / this._scale) * 1.5;
+        let viewRectHeight = (window.innerHeight / this._scale) * 1.5;
         // let viewRectWidth = 300 / this._scale;
         // let viewRectHeight = 300 / this._scale;
         return {
