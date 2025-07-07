@@ -24,6 +24,7 @@
     margin-bottom: var(--margin-large);
     font-size: var(--font-size-large);
     font-weight: var(--font-weight-strong);
+    white-space: nowrap;
 }
 
 .specie-builder__specie-gene-buttons-container {
