@@ -94,6 +94,7 @@ class ChromosomeEditorTab extends BaseGameHTMLView {
     _onSpecieGenesUpdated() {
         this._clearSpecieGenesList();
         this._renderSpecieGenesList();
+        this._sortActivatedGenes();
     }
 
     _onGeneActivationDone() {
