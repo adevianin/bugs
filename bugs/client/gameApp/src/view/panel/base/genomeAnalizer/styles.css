@@ -19,17 +19,14 @@
 }
 
 .genome-analizer__head {
-    position: relative;
     display: flex;
-    flex: 0 0 50px;
-    flex-direction: column;
-    justify-content: center;
 }
 
-.genome-analizer__close-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+.genome-analizer__close-btn-container {
+    flex: 0 0 var(--control-height);
+    padding-right: var(--padding);
+    padding-top: var(--padding);
+    padding-bottom: var(--padding);
 }
 
 .genome-analizer__content {
@@ -43,8 +40,12 @@
 }
 
 .genome-analizer__title {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
-    text-align: center;
     text-transform: capitalize;
+    white-space: nowrap;
 }
