@@ -28,6 +28,9 @@
     align-items: center;
     gap: var(--margin);
     flex-grow: 1;
+    background-color: var(--common-bg-color);
+    padding: var(--padding-small);
+    border-radius: 3px;
 }
 
 .nests-tab__nest-selector-arrow-btn {
