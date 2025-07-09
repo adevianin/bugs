@@ -2,6 +2,7 @@ from core.world.entities.thought.thought import Thought
 from core.world.entities.thought.thought_types import ThoughtTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.ant.base.ant_body import AntBody
+from core.world.utils.point import Point
 
 class AttackNestThought(Thought):
 
@@ -31,6 +32,8 @@ class AttackNestThought(Thought):
                 self._body.move_to_best_position(self._nest.position)
 
             self._body.damage_another_body(self._nest.body)
+            walk_point = Point.generate_random_point_within_circle(self._nest.position, 40, 10)
+            self._body.step_to_near(walk_point)
         else:
             self._body.step_to(self._nest.position)
 
