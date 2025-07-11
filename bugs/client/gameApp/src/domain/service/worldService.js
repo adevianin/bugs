@@ -41,7 +41,11 @@ class WorldService {
                 break;
             default:
                 let actor = this.world.findEntityById(action.actorId);
-                actor.playAction(action);
+                if (actor) {
+                    actor.playAction(action);
+                } else {
+                    console.warn(`actor id=${action.actorId} not found.`, action);
+                }
         }
     }
 
