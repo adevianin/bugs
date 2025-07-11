@@ -21,4 +21,6 @@
 .queen-selector__born-antara-container {
     display: flex;
     flex-direction: row;
+    padding-top: var(--padding-small);
+    gap: var(--margin-small);
 }
