@@ -37,10 +37,6 @@ class AntWorkerView extends BaseAntView {
         return sprite;
     }
 
-    _buildDeadSprite() {
-        return super._buildDeadSprite();
-    }
-
     _buildFlySprite() {
         return null;
     }
@@ -52,6 +48,7 @@ class AntWorkerView extends BaseAntView {
         this._standTextureEmpty = this.$textureManager.getTexture(`ant_${this.entity.antType}_empty_1.png`);
         let walkTexturesEmpty = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_empty`);
         this._walkTexturesEmpty = [walkTexturesEmpty[0], walkTexturesEmpty[1], walkTexturesEmpty[0], walkTexturesEmpty[2]];
+        this._deadTexture = this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`);
     }
 
     _renderEntityState() {
