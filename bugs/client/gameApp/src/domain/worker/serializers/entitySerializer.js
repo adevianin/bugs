@@ -107,6 +107,7 @@ class EntitySerializer {
         json = Object.assign(json, {
             isFertilized: ant.isFertilized,
             breedingMaleGenome: ant.breedingMaleGenome ? this.serializeGenome(ant.breedingMaleGenome) : null,
+            isWingsRemoved: ant.isWingsRemoved
         });
         return json;
     }
@@ -160,7 +161,7 @@ class EntitySerializer {
             name: nest.name,
             isMain: nest.isMain,
             area: nest.area,
-            isBuilt: nest.isBuilt,
+            buildStatus: nest.buildStatus,
             larvae: this.serializeLarvae(nest.larvae),
             eggs: this.serializeEggs(nest.eggs)
         });

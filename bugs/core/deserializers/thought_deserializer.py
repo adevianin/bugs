@@ -53,6 +53,8 @@ class ThoughtDeserializer():
                 return self._build_keep_clear_territory(thought_json, entities_collection)
             case ThoughtTypes.WAIT_STEP:
                 return self._build_wait_step(thought_json, entities_collection)
+            case ThoughtTypes.REMOVE_WINGS:
+                return self._build_remove_wings(thought_json, entities_collection)
             case _:
                 raise Exception('unknown type of thought')
             
@@ -183,4 +185,10 @@ class ThoughtDeserializer():
         sayback = thought_json['sayback']
         step_count = thought_json['step_count']
         return self._thought_factory.build_wait_step(step_count, flags, sayback)
+    
+    
+    def _build_remove_wings(self, thought_json, entities_collection: EntityCollection):
+        flags = thought_json['flags']
+        sayback = thought_json['sayback']
+        return self._thought_factory.build_remove_wings_thought(flags, sayback)
     

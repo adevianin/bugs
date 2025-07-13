@@ -10,6 +10,7 @@ from .queen_ant_mind import QueenAntMind
 from core.world.entities.ant.base.egg import Egg
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
+from core.world.entities.action.ant_wings_removed_action import AntWingsRemovedAction
 from core.world.utils.point import Point
 from core.world.entities.ant.base.nuptial_environment.nuptial_male import NuptialMale
 from core.world.entities.action.ant_got_fertilized_action import AntGotFertilizedAction
@@ -28,6 +29,7 @@ class QueenAnt(Ant):
 
         self._body.events.add_listener('flew_nuptial_flight', self._on_flew_nuptial_flight)
         self._body.events.add_listener('flew_nuptial_flight_back', self._on_flew_nuptial_flight_back)
+        self._body.events.add_listener('wings_removed', self._on_wings_removed)
 
     @property
     def is_detectable(self):
@@ -57,6 +59,10 @@ class QueenAnt(Ant):
     def breeding_male_genome(self) -> Genome:
         return Genome.build(self._body.male_chromosomes_set, None) if self._body.is_fertilized else None
     
+    @property
+    def is_wings_removed(self) -> bool:
+        return self._body.is_wings_removed
+    
     def fly_nuptial_flight(self, is_born_in_nuptial_flight: bool = False):
         self._is_born_in_nuptial_flight = is_born_in_nuptial_flight
         super().fly_nuptial_flight()
@@ -65,7 +71,6 @@ class QueenAnt(Ant):
     def fly_nuptial_flight_back(self, landing_position: Point):
         self._mind.toggle_auto_thought_generation(True)
         self._body.fly_nuptial_flight_back(landing_position)
-        self._body.angle = 0
 
     def produce_egg(self, name: str, is_fertilized: bool) -> Egg:
         return self._body.produce_egg(name, is_fertilized)
@@ -81,6 +86,9 @@ class QueenAnt(Ant):
     def _on_flew_nuptial_flight(self):
         self._emit_action(AntFlewNuptialFlightAction.build(self.id, self._is_born_in_nuptial_flight))
 
-    def _on_flew_nuptial_flight_back(self, landing_position: Point):
-        self._emit_action(AntFlewNuptialFlightBackAction.build(self.id, landing_position))
+    def _on_flew_nuptial_flight_back(self, landing_position: Point, from_position: Point):
+        self._emit_action(AntFlewNuptialFlightBackAction(self.id, landing_position, from_position))
+
+    def _on_wings_removed(self):
+        self._emit_action(AntWingsRemovedAction(self.id))
     

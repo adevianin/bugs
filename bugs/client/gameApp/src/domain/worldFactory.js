@@ -102,7 +102,7 @@ class WorldFactory {
         let fromColonyId = nestJson.from_colony_id;
         let ownerId = nestJson.owner_id;
         let storedCalories = nestJson.storedCalories;
-        let isBuilt = nestJson.isBuilt;
+        let buildStatus = nestJson.buildStatus;
         let hp = nestJson.hp;
         let maxHp = nestJson.max_hp;
         let maxFortification = nestJson.maxFortification;
@@ -110,7 +110,7 @@ class WorldFactory {
         let name = nestJson.name;
         let isMain = nestJson.isMain;
         let area = nestJson.area;
-        return new Nest(this._mainEventBus, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, isBuilt, 
+        return new Nest(this._mainEventBus, id, position, angle, fromColonyId, ownerId, storedCalories, larvae, eggs, buildStatus, 
             hp, maxHp, fortification, maxFortification, name, isMain, area);
     }
 
@@ -139,8 +139,9 @@ class WorldFactory {
                 let isFertilized = antJson.isFertilized;
                 let isInNuptialFlight = antJson.isInNuptialFlight;
                 let breedingMaleGenome = antJson.breedingMaleGenome ? Genome.buildFromJson(antJson.breedingMaleGenome) : null;
+                let isWingsRemoved = antJson.isWingsRemoved;
                 return new QueenAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, 
-                    homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome, isHungry);
+                    homeNestId, stats, behavior, genome, birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome, isHungry, isWingsRemoved);
             case AntTypes.WARRIOR:
                 return new WarriorAnt(this._mainEventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, 
                     homeNestId, stats, behavior, genome, birthStep, currentActivity, isHungry);

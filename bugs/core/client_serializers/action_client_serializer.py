@@ -22,6 +22,7 @@ from core.world.entities.action.item_bringing_state_changed_action import ItemBr
 from core.world.entities.action.colony_born_action import ColonyBornAction
 from core.world.entities.action.colony_died_action import ColonyDiedAction
 from core.world.entities.action.ant_flew_nuptial_flight_back_action import AntFlewNuptialFlightBackAction
+from core.world.entities.action.ant_wings_removed_action import AntWingsRemovedAction
 from core.world.entities.action.ant_flew_nuptial_flight_action import AntFlewNuptialFlightAction
 from core.world.entities.action.nest_egg_develop import NestEggDevelopAction
 from core.world.entities.action.climate_temperature_change_action import ClimateTemperatureChangeAction
@@ -102,6 +103,8 @@ class ActionClientSerializer():
                 return self._serialize_ant_current_activity_changed(action)
             case ActionTypes.ANT_HUNGRY_STATE_CHANGED:
                 return self._serialize_ant_hungry_state_changed(action)
+            case ActionTypes.ANT_WINGS_REMOVED:
+                return self._serialize_ant_wings_removed(action)
             case ActionTypes.NEST_STORED_CALORIES_CHANGED:
                 return self._serialize_nest_stored_calories_changed(action)
             case ActionTypes.NEST_LARVA_FED:
@@ -254,9 +257,11 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
 
         serialized_landing_position = self._util_serializer.serialize_point(action.landing_position)
+        serialized_from_position = self._util_serializer.serialize_point(action.from_position)
 
         json.update({
-            'landingPosition': serialized_landing_position
+            'landingPosition': serialized_landing_position,
+            'fromPosition': serialized_from_position,
         })
 
         return json
@@ -295,6 +300,10 @@ class ActionClientSerializer():
             'isHungry': action.is_hungry
         })
 
+        return json
+    
+    def _serialize_ant_wings_removed(self, action: AntWingsRemovedAction):
+        json = self._serialize_common(action)
         return json
     
     def _serialize_nest_stored_calories_changed(self, action: NestStoredCaloriesChangedAction):
@@ -376,7 +385,7 @@ class ActionClientSerializer():
         json = self._serialize_common(action)
 
         json.update({
-            'isBuilt': action.is_built
+            'buildStatus': action.build_status
         })
 
         return json

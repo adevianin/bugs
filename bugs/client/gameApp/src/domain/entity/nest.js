@@ -6,7 +6,7 @@ import { Egg } from './egg';
 
 class Nest extends Entity {
 
-    constructor(eventBus, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, isBuilt, hp, maxHp, fortification, maxFortification, name, isMain, area) {
+    constructor(eventBus, id, position, angle, fromColony, ownerId, storedCalories, larvae, eggs, buildStatus, hp, maxHp, fortification, maxFortification, name, isMain, area) {
         super(eventBus, id, position, angle, EntityTypes.NEST, fromColony, ownerId, hp, maxHp);
         this._storedCalories = storedCalories;
         this._larvae = larvae;
@@ -16,7 +16,7 @@ class Nest extends Entity {
         this._name = name;
         this._isMain = isMain;
         this._area = area;
-        this._isBuilt = isBuilt;
+        this._buildStatus = buildStatus;
     }
 
     get storedCalories() {
@@ -55,8 +55,8 @@ class Nest extends Entity {
         return this._area;
     }
 
-    get isBuilt() {
-        return this._isBuilt;
+    get buildStatus() {
+        return this._buildStatus;
     }
 
     changeCasteForEgg(eggId, antType) {
@@ -183,9 +183,9 @@ class Nest extends Entity {
     }
 
     _playBuildStatusChanged(action) {
-        this._isBuilt = action.isBuilt;
+        this._buildStatus = action.buildStatus;
         this._requestActionAnimation(ACTION_TYPES.NEST_BUILD_STATUS_CHANGED, {
-            isBuilt: this._isBuilt
+            buildStatus: this._buildStatus
         });
     }
 
@@ -202,6 +202,12 @@ class Nest extends Entity {
             name: action.name
         });
         this.events.emit('nameChanged');
+    }
+
+    _requestEntityDiedAnimation() {
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED, {
+            buildStatus: this.buildStatus
+        });
     }
 
 }

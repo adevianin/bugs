@@ -120,7 +120,7 @@ class Entity {
 
     _playEntityDied(action) {
         this._isDied = true;
-        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED);
+        this._requestEntityDiedAnimation();
         this._emitToEventBus('entityDied');//to delete entity from world
         this.events.removeAllListeners();
     }
@@ -131,6 +131,10 @@ class Entity {
 
     _requestActionAnimation(animationType, animationParams = {}) {
         this._eventBus.emit('entityActionAnimationRequest', this._chunkId, this.id, animationType, animationParams);
+    }
+
+    _requestEntityDiedAnimation() {
+        this._requestActionAnimation(ACTION_TYPES.ENTITY_DIED);
     }
 
 }

@@ -21,6 +21,7 @@ from core.world.entities.ant.warrior.thoughts.keep_clear_territory_thought impor
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
 from core.world.entities.base.live_entity.thoughts.wait_step_thought import WaitStepThought
 from core.world.entities.ant.base.thoughts.go_home_thought import GoHomeThought
+from core.world.entities.ant.queen.thoughts.remove_wings_thought import RemoveWingsThought
 
 class ThoughtSerializer():
 
@@ -70,6 +71,8 @@ class ThoughtSerializer():
                 return self._serialize_keep_clear_territory(thought)
             case ThoughtTypes.WAIT_STEP:
                 return self._serialize_wait_step(thought)
+            case ThoughtTypes.REMOVE_WINGS:
+                return self._serialize_remove_wings(thought)
             case _:
                 raise Exception('unknown type of thought')
 
@@ -301,4 +304,8 @@ class ThoughtSerializer():
             'step_count': thought.step_count
         })
 
+        return json
+    
+    def _serialize_remove_wings(self, thought: RemoveWingsThought):
+        json = self._serialize_thought(thought)
         return json

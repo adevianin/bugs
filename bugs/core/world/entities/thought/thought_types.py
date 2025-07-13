@@ -22,3 +22,4 @@ class ThoughtTypes(StrEnum):
     HIBERNATION = 'hibernation'
     LADYBUG_HIBERNATION = 'ladybug_hibernation'
     BUILD_FORTIFICATION = 'build_fortification'
+    REMOVE_WINGS = 'remove_wings'

@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
 import { BaseGraphicView } from "@view/base/baseGraphicView";
-import { AntView } from './entitiesViews/antView';
 import { NestView } from './entitiesViews/nestView';
 import { EntityTypes } from "@domain/enum/entityTypes";
 import { ItemView } from './entitiesViews/itemView';
@@ -14,6 +13,11 @@ import { CONSTS } from '@domain/consts';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ItemTypes } from '@domain/enum/itemTypes';
 import { EntityHightlighterView } from './entitiesViews/entityHighlighterView';
+import { AntTypes } from '@domain/enum/antTypes';
+import { AntWorkerView } from './entitiesViews/ant/antWorkerView';
+import { AntQueenView } from './entitiesViews/ant/antQueenView';
+import { AntMaleView } from './entitiesViews/ant/antMaleView';
+import { AntWarriorView } from './entitiesViews/ant/antWarriorView';
 
 class WorldView extends BaseGraphicView {
 
@@ -129,7 +133,20 @@ class WorldView extends BaseGraphicView {
         let view = null;
         switch (entity.type) {
             case EntityTypes.ANT:
-                view = new AntView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
+                switch (entity.antType) {
+                    case AntTypes.WORKER:
+                        view = new AntWorkerView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
+                        break;
+                    case AntTypes.QUEEN:
+                        view = new AntQueenView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
+                        break;
+                    case AntTypes.MALE:
+                        view = new AntMaleView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
+                        break;
+                    case AntTypes.WARRIOR:
+                        view = new AntWarriorView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);
+                        break;
+                }
                 break;
             case EntityTypes.LADYBUG:
                 view = new LadybugView(entity, this._entitiesContainer, this._entitiesLayer, this._liveEntityHudLayer);

@@ -62,7 +62,8 @@ class AntClientSerializer(LiveEntityClientSerializer):
         json.update({
             'isFertilized': ant.body.is_fertilized,
             'isInNuptialFlight': ant.body.is_in_nuptial_flight,
-            'breedingMaleGenome': self._genome_client_serializer.serialize_genome(ant.breeding_male_genome) if ant.breeding_male_genome else None
+            'breedingMaleGenome': self._genome_client_serializer.serialize_genome(ant.breeding_male_genome) if ant.breeding_male_genome else None,
+            'isWingsRemoved': ant.is_wings_removed
         })
 
         return json

@@ -18,6 +18,7 @@ class ActionTypes(StrEnum):
     ANT_HOME_NEST_CHANGED = 'ant_home_nest_changed'
     ANT_CURRENT_ACTIVITY_CHANGED = 'ant_current_activity_changed'
     ANT_HUNGRY_STATE_CHANGED = 'ant_hungry_state_changed'
+    ANT_WINGS_REMOVED = 'ant_wings_removed'
     NEST_STORED_CALORIES_CHANGED = 'nest_stored_calories_changed'
     NEST_LARVA_FED = 'nest_larva_fed'
     NEST_LARVA_ADDED = 'nest_larva_added'

@@ -1,41 +1,26 @@
 import * as PIXI from 'pixi.js';
-import { LiveEntityView } from './liveEntityView';
+import { LiveEntityView } from '../liveEntityView';
 import { VIEW_SETTINGS } from '@view/viewSettings';
 import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
-import { calculateRotationAngle } from '@utils/calculateRotationAngle';
-import { EntityHightlighterView } from './entityHighlighterView';
+import { EntityHightlighterView } from '../entityHighlighterView';
 import { UI_CONSTS } from '@common/view/ui_consts';
-import { AntTypes } from '@domain/enum/antTypes';
-import { ItemTypes } from '@domain/enum/itemTypes';
+import { calculateRotationAngle } from '@utils/calculateRotationAngle';
 
-class AntView extends LiveEntityView {
+class BaseAntView extends LiveEntityView {
 
     static ANIMATION_TYPES = class extends LiveEntityView.ANIMATION_TYPES {
-        static FLEW_NUPTIAL = 'flew_nuptial';
-        static FLEW_NUPTIAL_BACK = 'flew_nuptial_back';
         static GOT_IN_NEST = 'got_in_nest';
         static GOT_OUT_OF_NEST = 'got_out_of_nest';
-        static PICKED_UP_ITEM = 'picked_up_item';
-        static DROPPED_ITEM = 'dropped_item';
+        static FLEW_NUPTIAL = 'flew_nuptial';
     }
 
     constructor(entity, entityContainer, entitiesLayer, hudLayer) {
         super(entity, entityContainer, entitiesLayer, hudLayer);
 
-        this._render();
-
-        if (VIEW_SETTINGS.showAntSightDistanceView) {
-            this._renderDebugSightDistance();
-        }
-
         let antId = this._entity.id;
         this._stopListenAntGotInNestAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ENTITY_GOT_IN_NEST}`, this._onAntGotInNestAnimationRequest.bind(this));
         this._stopListenAntGotOutOfNestAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ENTITY_GOT_OUT_OF_NEST}`, this._onAntGotOutOfNestAnimationRequest.bind(this));
-        this._stopListenAntPickedUpItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_PICKED_UP_ITEM}`, this._onAntPickedUpItemAnimationRequest.bind(this));
-        this._stopListenAntDroppedItemAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_DROPPED_PICKED_ITEM}`, this._onAntDroppedItemAnimationRequest.bind(this));
         this._stopListenFlewNuptialAR = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT}`, this._onFlewNuptialAnimationRequest.bind(this));
-        this._stopListenFlewNuptialBackAnimationRequest = this.$eventBus.on(`entityActionAnimationRequest:${antId}:${ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK}`, this._onFlewNuptialBackAnimationRequest.bind(this));
-        
     }
 
     remove() {
@@ -43,28 +28,11 @@ class AntView extends LiveEntityView {
         this._entityHighlighter.remove();
         this._stopListenAntGotInNestAR();
         this._stopListenAntGotOutOfNestAR();
-        this._stopListenAntPickedUpItemAR();
-        this._stopListenAntDroppedItemAR();
         this._stopListenFlewNuptialAR();
     }
 
-    get _hasIsBodyFullState() {
-        return this.entity.antType == AntTypes.WORKER;
-    }
-
     _render() {
-        if (this._hasIsBodyFullState) {
-            this._standTextureFull = this.$textureManager.getTexture(`ant_${this.entity.antType}_full_1.png`);
-            let walkTexturesFull = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_full`);
-            this._walkTexturesFull = [walkTexturesFull[0], walkTexturesFull[1], walkTexturesFull[0], walkTexturesFull[2]];
-            this._standTextureEmpty = this.$textureManager.getTexture(`ant_${this.entity.antType}_empty_1.png`);
-            let walkTexturesEmpty = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}_empty`);
-            this._walkTexturesEmpty = [walkTexturesEmpty[0], walkTexturesEmpty[1], walkTexturesEmpty[0], walkTexturesEmpty[2]];
-        } else {
-            this._standTexture = this.$textureManager.getTexture(`ant_${this.entity.antType}_1.png`);
-            let walkTextures = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`);
-            this._walkTextures = [walkTextures[0], walkTextures[1], walkTextures[0], walkTextures[2]];
-        }
+        this._prepareTextures();
 
         super._render();
 
@@ -77,35 +45,35 @@ class AntView extends LiveEntityView {
         this._highlighterContainer.position.set(0, this._highlighterY);
         this._hudContainer.addChild(this._highlighterContainer);
         this._entityHighlighter = new EntityHightlighterView(this._highlighterContainer, this._entity);
-    }
 
-    _renderEntityState() {
-        super._renderEntityState();
-        this._renderPickedItemState();
-    }
-
-    async _renderPickedItemState() {
-        if (this._entity.pickedItemId) {
-            let item = await this.$domain.getEntityDataById(this._entity.pickedItemId);
-            this._renderPickedItem(item);
+        if (VIEW_SETTINGS.showAntSightDistanceView) {
+            this._renderDebugSightDistance();
         }
     }
 
+    _prepareTextures() {
+        this._standTexture = this.$textureManager.getTexture(`ant_${this.entity.antType}_1.png`);
+        let walkTextures = this.$textureManager.getAnimatedTextures(`ant_${this.entity.antType}`);
+        this._walkTextures = [walkTextures[0], walkTextures[1], walkTextures[0], walkTextures[2]];
+        this._deadTexture = this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`);
+    }
+
+    _calcWalkAnimationSpeed() {
+        return this._entity.stats.distancePerStep * 0.005;
+    }
+
     _buildStandSprite() {
-        let texture = this._hasIsBodyFullState ? this._standTextureEmpty : this._standTexture;
-        let sprite = new PIXI.Sprite(texture);
-        return sprite;
+        return new PIXI.Sprite(this._standTexture);
     }
 
     _buildWalkSprite() {
-        let textures = this._hasIsBodyFullState ? this._walkTexturesEmpty : this._walkTextures;
-        let sprite = new PIXI.AnimatedSprite(textures);
-        sprite.animationSpeed = this.entity.stats.distancePerStep * 0.005;
+        let sprite = new PIXI.AnimatedSprite(this._walkTextures);
+        sprite.animationSpeed = this._calcWalkAnimationSpeed();
         return sprite;
     }
 
     _buildDeadSprite() {
-        return new PIXI.Sprite(this.$textureManager.getTexture(`ant_${this.entity.antType}_dead.png`));
+        return new PIXI.Sprite(this._deadTexture);
     }
 
     _buildFlySprite() {
@@ -116,36 +84,6 @@ class AntView extends LiveEntityView {
         let sprite = new PIXI.AnimatedSprite(ts);
         sprite.animationSpeed = 0.5;
         return sprite;
-    }
-
-    _removePickedItem() {
-        if (this._hasIsBodyFullState) {
-            this._renderIsBodyFullState(false);
-        }
-        if (this._pickedItemSprite) {
-            this._pickedItemContainer.removeChild(this._pickedItemSprite);
-            this._pickedItemSprite.destroy();
-            this._pickedItemSprite = null;
-        }
-    }
-
-    _renderPickedItem(item) {
-        this._removePickedItem();
-        if (this._hasIsBodyFullState && (item.itemType == ItemTypes.NECTAR || item.itemType == ItemTypes.HONEYDEW)) {
-            this._renderIsBodyFullState(true);
-        } else {
-            let textureName = `item_${ item.itemType }_${ item.itemVariety }v.png`;
-            this._pickedItemSprite = new PIXI.Sprite(this.$textureManager.getTexture(textureName));
-            this._pickedItemSprite.anchor.set(0.5, 0.5);
-            this._pickedItemSprite.position.x = (this._entityWidth/2);
-            this._pickedItemSprite.position.y = 2;
-            this._pickedItemContainer.addChild(this._pickedItemSprite);
-        }
-    }
-
-    _renderIsBodyFullState(isFull) {
-        this._walkSprite.textures = isFull ? this._walkTexturesFull : this._walkTexturesEmpty;
-        this._standSprite.texture = isFull ? this._standTextureFull : this._standTextureEmpty;
     }
 
     _renderDebugSightDistance() {
@@ -258,27 +196,26 @@ class AntView extends LiveEntityView {
         }
 
         switch (animation.type) {
-            case AntView.ANIMATION_TYPES.FLEW_NUPTIAL: 
-                let flewAnimPromise = this._playFlewNuptialAnimation(animation.params);
-                return this._makePlayAnimationResponse(true, flewAnimPromise);
-            case AntView.ANIMATION_TYPES.FLEW_NUPTIAL_BACK: 
-                this._playFlewNuptialBackAnimation(animation.params);
-                return this._makePlayAnimationResponse(true);
-            case AntView.ANIMATION_TYPES.GOT_IN_NEST: 
+            case BaseAntView.ANIMATION_TYPES.GOT_IN_NEST: 
                 this._playGotInNestAnimation(animation.params);
                 return this._makePlayAnimationResponse(true);
-            case AntView.ANIMATION_TYPES.GOT_OUT_OF_NEST: 
+            case BaseAntView.ANIMATION_TYPES.GOT_OUT_OF_NEST: 
                 this._playGotOutOfNestAnimation(animation.params);
                 return this._makePlayAnimationResponse(true);
-            case AntView.ANIMATION_TYPES.PICKED_UP_ITEM: 
-                let pickUpAnimPromise = this._playPickedUpItemAnimation(animation.params);
-                return this._makePlayAnimationResponse(true, pickUpAnimPromise);
-            case AntView.ANIMATION_TYPES.DROPPED_ITEM: 
-                this._playDroppedItemAnimation(animation.params);
-                return this._makePlayAnimationResponse(true);
+            case BaseAntView.ANIMATION_TYPES.FLEW_NUPTIAL: 
+                let flewAnimPromise = this._playFlewNuptialAnimation(animation.params);
+                return this._makePlayAnimationResponse(true, flewAnimPromise);
             default:
                 return this._makePlayAnimationResponse(false);
         }
+    }
+
+    _playGotInNestAnimation({ isAntVisibleAfter }) {
+        this._toggleEntityVisibility(isAntVisibleAfter);
+    }
+
+    _playGotOutOfNestAnimation({ isAntVisibleAfter }) {
+        this._toggleEntityVisibility(isAntVisibleAfter);
     }
 
     async _playFlewNuptialAnimation({startPosition, isBornInNuptialFlight}) {
@@ -301,8 +238,8 @@ class AntView extends LiveEntityView {
         const frequency = 0.00025;
 
         let prevPosition = null;
-        this._renderVisualState(LiveEntityView.VISUAL_STATES.FLYING);
-        return this._runAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, (currentTime) => {
+        this._renderVisualState(BaseAntView.VISUAL_STATES.FLYING);
+        return this._runAnimation(BaseAntView.ANIMATION_TYPES.FLEW_NUPTIAL, (currentTime) => {
             let animTime = currentTime - flyStartTime;
             let progress = animTime / wholeAnimationTime;
 
@@ -327,7 +264,7 @@ class AntView extends LiveEntityView {
 
                 return false;
             } else {
-                this._renderVisualState(LiveEntityView.VISUAL_STATES.STANDING);
+                this._renderVisualState(BaseAntView.VISUAL_STATES.STANDING);
                 this._toggleEntityVisibility(false);
                 return true;
             }
@@ -335,59 +272,16 @@ class AntView extends LiveEntityView {
 
     }
 
-    _playFlewNuptialBackAnimation({ landingPosition }) {
-        this._renderEntityPosition(landingPosition);
-        this._toggleEntityVisibility(true);
-    }
-
-    _playGotInNestAnimation({ isAntVisibleAfter }) {
-        this._toggleEntityVisibility(isAntVisibleAfter);
-    }
-
-    _playGotOutOfNestAnimation({ isAntVisibleAfter }) {
-        this._toggleEntityVisibility(isAntVisibleAfter);
-    }
-
-    async _playPickedUpItemAnimation({ itemId }) {
-        let item = await this.$domain.getEntityDataById(itemId)
-        this._renderPickedItem(item);
-    }
-
-    _playDroppedItemAnimation({ droppingItemId }) {
-        let dropPosition = {
-            x: this._entityContainer.x,
-            y: this._entityContainer.y
-        }
-        if (this.checkIsEntityVisible()) {
-            this.$eventBus.emit(`interEntityAnimationRequest:${droppingItemId}:itemWasDropped`, {
-                dropPosition
-            });
-        }
-        this._removePickedItem();
-    }
-
-    _onFlewNuptialAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL, params, true);
-    }
-
-    _onFlewNuptialBackAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.FLEW_NUPTIAL_BACK, params);
-    }
-
     _onAntGotInNestAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.GOT_IN_NEST, params);
+        this._addAnimation(BaseAntView.ANIMATION_TYPES.GOT_IN_NEST, params);
     }
 
     _onAntGotOutOfNestAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.GOT_OUT_OF_NEST, params);
+        this._addAnimation(BaseAntView.ANIMATION_TYPES.GOT_OUT_OF_NEST, params);
     }
 
-    _onAntPickedUpItemAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.PICKED_UP_ITEM, params);
-    }
-
-    _onAntDroppedItemAnimationRequest(params) {
-        this._addAnimation(AntView.ANIMATION_TYPES.DROPPED_ITEM, params);
+    _onFlewNuptialAnimationRequest(params) {
+        this._addAnimation(BaseAntView.ANIMATION_TYPES.FLEW_NUPTIAL, params, true);
     }
 
     _onBodyClick() {
@@ -397,5 +291,5 @@ class AntView extends LiveEntityView {
 }
 
 export {
-    AntView
+    BaseAntView
 }

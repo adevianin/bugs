@@ -7,6 +7,7 @@ const ACTION_TYPES = {
     ANT_HOME_NEST_CHANGED: 'ant_home_nest_changed',
     ANT_CURRENT_ACTIVITY_CHANGED: 'ant_current_activity_changed',
     ANT_HUNGRY_STATE_CHANGED: 'ant_hungry_state_changed',
+    ANT_WINGS_REMOVED: 'ant_wings_removed',
     ENTITY_DIED: 'entity_died',
     ENTITY_BORN: 'entity_born',
     ENTITY_WALK: 'entity_walk',

@@ -28,6 +28,7 @@ from core.world.entities.action.nest_egg_added_action import NestEggAddedAction
 from core.world.entities.action.nest_egg_removed_action import NestEggRemovedAction
 from core.world.entities.action.nest_larva_added_action import NestLarvaAddedAction
 from core.world.entities.action.nest_larva_removed_action import NestLarvaRemovedAction
+from .nest_build_statuses import NestBuildStatus
 
 from typing import List
 
@@ -81,6 +82,10 @@ class Nest(Entity):
     @property
     def is_built(self):
         return self._body.is_built
+    
+    @property
+    def build_status(self) -> NestBuildStatus:
+        return self._body.build_status
     
     @property
     def fortification(self):
@@ -180,7 +185,7 @@ class Nest(Entity):
         self._emit_action(NestStoredCaloriesChangedAction.build(self.id, self._body.stored_calories))
 
     def _on_build_status_changed(self):
-        self._emit_action(NestBuildStatusChangedAction.build(self.id, self._body.is_built))
+        self._emit_action(NestBuildStatusChangedAction(self.id, self._body.build_status))
 
     def _on_larva_added(self, larva: Larva):
         self._emit_action(NestLarvaAddedAction(self.id, larva, self._owner_id))

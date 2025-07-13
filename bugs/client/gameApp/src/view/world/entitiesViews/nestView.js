@@ -5,6 +5,7 @@ import { ACTION_TYPES } from '@domain/entity/action/actionTypes';
 import { EntityHightlighterView } from './entityHighlighterView';
 import { UI_CONSTS } from '@common/view/ui_consts';
 import { SEASON_TYPES } from "@domain/enum/season_types";
+import { NestBuildStatuses } from '@domain/enum/nestBuildStatuses';
 
 class NestView extends EntityView { 
 
@@ -17,6 +18,7 @@ class NestView extends EntityView {
         static DEAD = 'dead';
         static BUILT = 'built';
         static BUILDING = 'building';
+        static PLANING = 'planing';
     };
 
     static ANIMATION_TYPES = class extends EntityView.ANIMATION_TYPES {
@@ -29,6 +31,12 @@ class NestView extends EntityView {
     constructor(entity, entityContainer, entitiesLayer, nestHudLayer) {
         super(entity, entityContainer, entitiesLayer);
         this._nestHudLayer = nestHudLayer;
+
+        this._nestVisualStateByBuildStatus = {
+            [NestBuildStatuses.BUILT]: NestView.VISUAL_STATES.BUILT,
+            [NestBuildStatuses.BUILDING]: NestView.VISUAL_STATES.BUILDING,
+            [NestBuildStatuses.PLANING]: NestView.VISUAL_STATES.PLANING
+        };
 
         this._render();
         let nestId = this._entity.id;
@@ -183,10 +191,8 @@ class NestView extends EntityView {
     _determineNestVisualState() {
         if (this._entity.isDied) {
             return NestView.VISUAL_STATES.DEAD;
-        } else if (this._entity.isBuilt) {
-            return NestView.VISUAL_STATES.BUILT;
         } else {
-            return NestView.VISUAL_STATES.BUILDING;
+            return this._nestVisualStateByBuildStatus[this._entity.buildStatus];
         }
     }
 
@@ -223,15 +229,17 @@ class NestView extends EntityView {
         }
     }
 
-    _playDiedAnimation() {
-        this._renderVisualState(NestView.VISUAL_STATES.DEAD);
+    _playDiedAnimation({ buildStatus }) {
+        if (buildStatus == NestBuildStatuses.BUILT) {
+            this._renderVisualState(NestView.VISUAL_STATES.DEAD);
+        }
         this._hudContainer.renderable = false;
         this.events.emit('playedDiedAnimation', 30000);
     }
 
-    _playBuildStatusChange({ isBuilt }) {
-        let state = isBuilt ? NestView.VISUAL_STATES.BUILT : NestView.VISUAL_STATES.BUILDING;
-        this._renderVisualState(state);
+    _playBuildStatusChange({ buildStatus }) {
+        let visualState = this._nestVisualStateByBuildStatus[buildStatus];
+        this._renderVisualState(visualState);
     }
 
     _playFortificationChange({ fortification }) {

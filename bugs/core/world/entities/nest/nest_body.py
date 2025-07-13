@@ -8,6 +8,7 @@ from core.world.entities.ant.base.egg import Egg
 from core.world.entities.ant.base.ant_types import AntTypes
 from core.world.entities.base.damage_types import DamageTypes
 from core.world.settings import LARVA_FEED_PORTION_SIZE
+from .nest_build_statuses import NestBuildStatus
 from typing import List
 
 class NestBody(Body):
@@ -52,7 +53,16 @@ class NestBody(Body):
     
     @property
     def is_built(self):
-        return self._build_progress == 100
+        return self.build_status == NestBuildStatus.BUILT
+    
+    @property
+    def build_status(self):
+        if self._build_progress == 100:
+            return NestBuildStatus.BUILT
+        elif self._build_progress < 10:
+            return NestBuildStatus.PLANING
+        else:
+            return NestBuildStatus.BUILDING
     
     @property
     def fortification(self):
@@ -66,9 +76,9 @@ class NestBody(Body):
     def handle_not_building_steps(self):
         if not self.is_built:
             self._not_building_steps_counter += 1
-            if self._not_building_steps_counter > 5:
+            if self._not_building_steps_counter > 10:
                 self.receive_damage(5, DamageTypes.DECAY)
-                self._build_progress = int(self.hp / (self.stats.max_hp / 100))
+                # self._build_progress = int(self.hp / (self.stats.max_hp / 100))
 
     def gradual_decay(self):
         self.receive_damage(20, DamageTypes.DECAY)
@@ -142,6 +152,8 @@ class NestBody(Body):
         self._not_building_steps_counter = 0
         build_step = 5
         if not self.is_built:
+            build_status_before = self.build_status
+
             if self._build_progress + build_step >= 100:
                 self._build_progress = 100
                 self.hp = self.stats.max_hp
@@ -149,7 +161,7 @@ class NestBody(Body):
                 self._build_progress += build_step
                 self.hp = int(self.stats.max_hp * (self._build_progress / 100))
             
-            if self.is_built:
+            if build_status_before != self.build_status:
                 self.events.emit('build_status_changed')
 
     def feed_larvae(self):

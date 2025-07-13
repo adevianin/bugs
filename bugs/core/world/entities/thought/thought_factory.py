@@ -25,6 +25,7 @@ from core.world.entities.ant.base.thoughts.defend_colony_thought import DefendCo
 from core.world.entities.ant.base.thoughts.defend_myself_thought import DefendMyselfThought
 from core.world.entities.ladybug.thoughts.ladybug_hibernation_thought import LadybugHibernationThought
 from core.world.entities.ant.base.thoughts.go_home_thought import GoHomeThought
+from core.world.entities.ant.queen.thoughts.remove_wings_thought import RemoveWingsThought
 
 from typing import Dict
 
@@ -92,6 +93,9 @@ class ThoughtFactory:
     
     def build_ladybug_hibernation_thought(self, random_walk_thought: RandomWalkThought, fight_near_enemies_thought: FightNearEnemiesThought, found_tree: Tree, flags: dict = None, sayback: str = None):
         return LadybugHibernationThought(random_walk_thought, fight_near_enemies_thought, found_tree, flags, sayback)
+    
+    def build_remove_wings_thought(self, flags: dict = None, sayback: str = None):
+        return RemoveWingsThought(flags, sayback)
 
     def build_go_home_new(self, home_nest: Nest, sayback: str = None):
         go_in_nest_thought = self.build_go_in_nest_thought(home_nest)

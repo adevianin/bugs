@@ -6,12 +6,13 @@ import { Genome } from "../genetic/genome";
 class QueenAnt extends BaseAnt {
 
     constructor(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, pickedItemId, locatedInNestId, homeNestId, stats, behavior, genome, 
-        birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome, isHungry) {
+        birthStep, currentActivity, isFertilized, isInNuptialFlight, breedingMaleGenome, isHungry, isWingsRemoved) {
         super(eventBus, id, name, position, angle, fromColony, ownerId, hp, maxHp, isInHibernation, AntTypes.QUEEN, pickedItemId, locatedInNestId, homeNestId, stats, 
             behavior, genome, birthStep, currentActivity, isHungry);
         this._isFertilized = isFertilized;
         this._isInNuptialFlight = isInNuptialFlight;
         this._breedingMaleGenome = breedingMaleGenome;
+        this._isWingsRemoved = isWingsRemoved;
     }
 
     get isVisible() {
@@ -28,6 +29,10 @@ class QueenAnt extends BaseAnt {
 
     get breedingMaleGenome() {
         return this._breedingMaleGenome;
+    }
+
+    get isWingsRemoved() {
+        return this._isWingsRemoved;
     }
 
     get isQueenOfColony() {
@@ -62,6 +67,9 @@ class QueenAnt extends BaseAnt {
             case ACTION_TYPES.ANT_GOT_FERTILIZED:
                 this._playGotFertilized(action);
                 return true;
+            case ACTION_TYPES.ANT_WINGS_REMOVED:
+                this._playWingsRemoved(action);
+                return true;
             default:
                 throw 'unknown type of action';
         }
@@ -80,6 +88,7 @@ class QueenAnt extends BaseAnt {
         this.isInNuptialFlight = false;
         this._emitToEventBus('queenFlewNuptialFlightBack');
         this._requestActionAnimation(ACTION_TYPES.ANT_FLEW_NUPTIAL_FLIGHT_BACK, {
+            fromPosition: action.fromPosition,
             landingPosition: action.landingPosition
         });
     }
@@ -88,6 +97,11 @@ class QueenAnt extends BaseAnt {
         this.isFertilized = true;
         this._breedingMaleGenome = Genome.buildFromJson(action.breedingMaleGenome);
         this.events.emit('gotFertilized');
+    }
+
+    _playWingsRemoved(action) {
+        this._isWingsRemoved = true;
+        this._requestActionAnimation(ACTION_TYPES.ANT_WINGS_REMOVED);
     }
 }
 

@@ -60,7 +60,7 @@ class ColonyService(BaseService):
 
         def on_nest_found(nest: Nest):
             queen.relocate_to_nest(nest)
-            queen.fly_nuptial_flight_back(nest.position.shift(0, 1))
+            queen.fly_nuptial_flight_back(nest.position)
             nest.take_calories(FOOD_IN_NEW_COLONY_MAIN_NEST)
             self._world.add_new_colony(new_colony)
 
