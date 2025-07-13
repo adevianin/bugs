@@ -169,16 +169,16 @@ class Nest(Entity):
         self._body.take_fortificating_item(item)
 
     def raise_attack_alarm(self, enemies_positions):
-        is_notification_needed = not self.is_under_attack and len(enemies_positions) > 0
+        # is_notification_needed = not self.is_under_attack and len(enemies_positions) > 0
         self._nearby_enemy_positions = enemies_positions
         self.events.emit('is_under_attack', enemies_positions)
-        if is_notification_needed:
-            self._emit_notification(NestAlarmRaisedNotification(self.owner_id, self.position, self.name))
+        # if is_notification_needed:
+        #     self._emit_notification(NestAlarmRaisedNotification(self.owner_id, self.position, self.name))
 
     def cancel_attack_alarm(self):
         if self.is_under_attack:
             self.events.emit('attack_is_over')
-            self._emit_notification(NestAlarmCanceledNotification(self.owner_id, self.position, self.name))
+            # self._emit_notification(NestAlarmCanceledNotification(self.owner_id, self.position, self.name))
         self._nearby_enemy_positions = []
 
     def _on_stored_calories_changed(self):
