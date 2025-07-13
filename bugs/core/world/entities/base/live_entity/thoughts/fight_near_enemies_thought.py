@@ -17,15 +17,15 @@ class FightNearEnemiesThought(Thought):
     
     @property
     def is_fighting(self) -> bool:
-        return self.fight_enemy_thought.has_enemy_to_fight
+        return self.fight_enemy_thought.check_has_enemy_to_fight()
 
     def do_step(self):
-        if not self.fight_enemy_thought.has_enemy_to_fight:
+        if not self.fight_enemy_thought.check_has_enemy_to_fight():
             self._search_enemies_to_fight()
 
-        if self.fight_enemy_thought.has_enemy_to_fight:
+        if self.fight_enemy_thought.check_has_enemy_to_fight():
             self.fight_enemy_thought.do_step()
-            if not self.fight_enemy_thought.has_enemy_to_fight:
+            if not self.fight_enemy_thought.check_has_enemy_to_fight():
                 self._search_enemies_to_fight()
 
     def _search_enemies_to_fight(self):
