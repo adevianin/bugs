@@ -71,6 +71,7 @@ class Engine():
         self._connection_thread: threading.Thread = None
         self._redis_watcher_thread: threading.Thread = None
         self._stop_engine_signal = threading.Event()
+        self._is_listening_engine_in_error: threading.Event = threading.Event()
 
         self._event_bus.add_listener('action', self._on_action)
 
@@ -138,16 +139,12 @@ class Engine():
 
     def _redis_watcher(self):
         def ping():
-            conn_fail_count = 0
             while not self._stop_engine_signal.is_set():
                 try:
                     self._redis.ping()
-                    if conn_fail_count > 0:
+                    if self._is_listening_engine_in_error.is_set():
                         self._listen_engine_in()
-                    conn_fail_count = 0
                 except redis.exceptions.ConnectionError as e:
-                    self._disconnect_all_players()
-                    conn_fail_count += 1
                     self._logger.error('redis connection error. watcher')
                 time.sleep(1)
 
@@ -156,6 +153,7 @@ class Engine():
 
     def _listen_engine_in(self):
         self._logger.info('listening main connection')
+        self._is_listening_engine_in_error.clear()
         def listen():
             try:
                 pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
@@ -171,7 +169,9 @@ class Engine():
                     msg_data_json = json.loads(msg['data'])
                     self._on_client_msg(msg_data_json)
             except redis.exceptions.ConnectionError as e:
-                self._logger.error('redis connection error. engine in listener')
+                self._disconnect_all_players()
+                self._logger.error('redis connection error. engine_in listener')
+                self._is_listening_engine_in_error.set()
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
