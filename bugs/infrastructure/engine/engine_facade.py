@@ -34,6 +34,8 @@ class EngineFacade:
         self._last_used_command_id = 0
         self._command_futures = {}
 
+        self._is_listening_engine_out_error: threading.Event = threading.Event()
+
         self._redis_watcher()
         self._listen_engine_out()
         self._start_rating_generation_command_sender()
@@ -311,23 +313,20 @@ class EngineFacade:
 
     def _redis_watcher(self):
         def ping():
-            conn_fail_count = 0
             while True:
                 try:
                     self._redis.ping()
-                    if conn_fail_count > 0:
+                    if self._is_listening_engine_out_error.is_set():
                         self._listen_engine_out()
-                    conn_fail_count = 0
                 except redis.exceptions.ConnectionError as e:
                     log_error('redis connection error. watcher')
-                    conn_fail_count += 1
-                    event_bus.emit('engine_connection_error')
                 time.sleep(1)
 
         redis_watcher_thread = threading.Thread(target=ping, daemon=True)
         redis_watcher_thread.start()
 
     def _listen_engine_out(self):
+        self._is_listening_engine_out_error.clear()
         def listen():
             try:
                 pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
@@ -346,6 +345,8 @@ class EngineFacade:
                             self._on_command_error(data)
             except redis.exceptions.ConnectionError as e:
                 log_error('redis connection error. listen engine_out')
+                event_bus.emit('engine_connection_error')
+                self._is_listening_engine_out_error.set()
 
         world_thread = threading.Thread(target=listen, daemon=True)
         world_thread.start()
