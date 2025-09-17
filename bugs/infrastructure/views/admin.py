@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
-from infrastructure.engine.engine_facade import EngineFacade
+from infrastructure.engine.engine_adapter import EngineAdapter
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -10,8 +10,8 @@ def is_superuser(user):
     return user.is_superuser
 
 def _build_world_status():
-    ef = EngineFacade.get_instance()
-    world_status = ef.get_world_status()
+    ea = EngineAdapter.get_instance()
+    world_status = ea.get_world_status()
     return {
         'isInited': world_status['is_world_inited'],
         'isRunning': world_status['is_world_stepping'],
@@ -38,8 +38,8 @@ def world_status_check(request):
 @user_passes_test(is_superuser)
 @require_POST
 def init_world(request):
-    ef = EngineFacade.get_instance()
-    ef.init_world_admin_command()
+    ea = EngineAdapter.get_instance()
+    ea.init_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
     }) 
@@ -47,8 +47,8 @@ def init_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def stop_world(request):
-    ef = EngineFacade.get_instance()
-    ef.stop_world_admin_command()
+    ea = EngineAdapter.get_instance()
+    ea.stop_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
     }) 
@@ -56,8 +56,8 @@ def stop_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def run_world(request):
-    ef = EngineFacade.get_instance()
-    ef.run_world_admin_command()
+    ea = EngineAdapter.get_instance()
+    ea.run_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
     }) 
@@ -65,8 +65,8 @@ def run_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def save_world(request):
-    ef = EngineFacade.get_instance()
-    ef.save_world_admin_command()
+    ea = EngineAdapter.get_instance()
+    ea.save_world_admin_command()
     return JsonResponse({
         'status': 'saved'
     }) 
@@ -74,8 +74,8 @@ def save_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def count_ants(request):
-    ef = EngineFacade.get_instance()
-    ants_count = ef.count_ants_command()
+    ea = EngineAdapter.get_instance()
+    ants_count = ea.count_ants_command()
     return JsonResponse({
         'ants_count': ants_count
     }, status=200)
@@ -83,14 +83,14 @@ def count_ants(request):
 @user_passes_test(is_superuser)
 @require_POST
 def populate_for_performance_test(request):
-    ef = EngineFacade.get_instance()
-    ef.populate_for_performance_test_command(request.user.id)
+    ea = EngineAdapter.get_instance()
+    ea.populate_for_performance_test_command(request.user.id)
     return HttpResponse(status=201) 
 
 @user_passes_test(is_superuser)
 @require_POST
 def expand_map(request: HttpRequest):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
     try:
         data = json.loads(request.body)
         chunk_rows = int(data['chunk_rows'])
@@ -98,7 +98,7 @@ def expand_map(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
 
-    error_msg = ef.expand_map_admin_command(chunk_rows, chunk_cols)
+    error_msg = ea.expand_map_admin_command(chunk_rows, chunk_cols)
 
     if error_msg:
         return JsonResponse({
@@ -113,9 +113,9 @@ def expand_map(request: HttpRequest):
 @user_passes_test(is_superuser)
 @require_GET
 def get_world_data(request: HttpRequest):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
-    world_data = ef.get_world_data()
+    world_data = ea.get_world_data()
     json_data = json.dumps(world_data, indent=4)
 
     response = HttpResponse(json_data, content_type='application/json')

@@ -9,7 +9,7 @@ from infrastructure.db.repositories.usernames_repository import UsernamesReposit
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
 from infrastructure.utils.log_error import log_error
 
-class EngineFacade:
+class EngineAdapter:
     _instance = None
 
     WAIT_COMMAND_RESULT_TIMEOUT = 10
@@ -17,14 +17,14 @@ class EngineFacade:
     CHANNEL_ENGINE_OUT = 'engine_out'
 
     @classmethod
-    def get_instance(cls) -> 'EngineFacade':
-        return EngineFacade._instance
+    def get_instance(cls) -> 'EngineAdapter':
+        return EngineAdapter._instance
 
     def __init__(self, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis):
-        if EngineFacade._instance != None:
-            raise Exception('EngineFacade is singleton')
+        if EngineAdapter._instance != None:
+            raise Exception('EngineAdapter is singleton')
         else:
-            EngineFacade._instance = self
+            EngineAdapter._instance = self
 
         self._redis = redis
 
@@ -279,7 +279,7 @@ class EngineFacade:
 
     def _send_msg_to_engine(self, type: str, data: Dict = None):
         try:
-            self._redis.publish(EngineFacade.CHANNEL_ENGINE_IN, json.dumps({
+            self._redis.publish(EngineAdapter.CHANNEL_ENGINE_IN, json.dumps({
                 'type': type,
                 'data': data
             }))
@@ -303,7 +303,7 @@ class EngineFacade:
         })
         if wait_result:
             try:
-                res = command_future.result(EngineFacade.WAIT_COMMAND_RESULT_TIMEOUT)
+                res = command_future.result(EngineAdapter.WAIT_COMMAND_RESULT_TIMEOUT)
                 return res
             except TimeoutError as e:
                 log_error(f'command time out, command type={type}')
@@ -330,7 +330,7 @@ class EngineFacade:
         def listen():
             try:
                 pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                pubsub.subscribe(EngineFacade.CHANNEL_ENGINE_OUT)
+                pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
                 for redis_msg in pubsub.listen():
                     msg = json.loads(redis_msg['data'])
                     data = msg['data']

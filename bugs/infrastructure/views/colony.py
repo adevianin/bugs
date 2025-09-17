@@ -2,21 +2,21 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from infrastructure.utils.clean_str_param import clean_str_param
-from infrastructure.engine.engine_facade import EngineFacade
+from infrastructure.engine.engine_adapter import EngineAdapter
 
 import json
 
 @require_POST
 @login_required     
 def stop_operation(request: HttpRequest, colony_id: int, operation_id: str):
-    ef = EngineFacade.get_instance()
-    ef.stop_operation_command(request.user.id, colony_id, operation_id)
+    ea = EngineAdapter.get_instance()
+    ea.stop_operation_command(request.user.id, colony_id, operation_id)
     return HttpResponse(status=204)
 
 @require_POST
 @login_required     
 def build_new_sub_nest(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -27,7 +27,7 @@ def build_new_sub_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count, nest_name)
+    operation_id = ea.build_new_sub_nest_operation_command(request.user.id, colony_id, building_site, workers_count, warriors_count, nest_name)
 
     return JsonResponse({
         'operationId': operation_id
@@ -36,7 +36,7 @@ def build_new_sub_nest(request: HttpRequest, colony_id: int):
 @require_POST
 @login_required     
 def destroy_nest(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -46,7 +46,7 @@ def destroy_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
+    operation_id = ea.destroy_nest_operation_command(request.user.id, colony_id, nest_id, workers_count, warriors_count)
 
     return JsonResponse({
         'operationId': operation_id
@@ -55,7 +55,7 @@ def destroy_nest(request: HttpRequest, colony_id: int):
 @require_POST
 @login_required     
 def pillage_nest(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -66,7 +66,7 @@ def pillage_nest(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
+    operation_id = ea.pillage_nest_operation_command(request.user.id, colony_id, nest_to_pillage_id, nest_for_loot_id, workers_count, warriors_count)
 
     return JsonResponse({
         'operationId': operation_id
@@ -75,7 +75,7 @@ def pillage_nest(request: HttpRequest, colony_id: int):
 @require_POST
 @login_required     
 def transport_food(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -86,7 +86,7 @@ def transport_food(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.transport_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
+    operation_id = ea.transport_food_operation_command(request.user.id, colony_id, from_nest_id, to_nest_id, workers_count, warriors_count)
 
     return JsonResponse({
         'operationId': operation_id
@@ -95,7 +95,7 @@ def transport_food(request: HttpRequest, colony_id: int):
 @require_POST
 @login_required     
 def build_fortification(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -104,7 +104,7 @@ def build_fortification(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
+    operation_id = ea.build_fortification_operation_command(request.user.id, colony_id, nest_id, workers_count)
 
     return JsonResponse({
         'operationId': operation_id
@@ -113,7 +113,7 @@ def build_fortification(request: HttpRequest, colony_id: int):
 @require_POST
 @login_required     
 def bring_bug(request: HttpRequest, colony_id: int):
-    ef = EngineFacade.get_instance()
+    ea = EngineAdapter.get_instance()
 
     try:
         data = json.loads(request.body)
@@ -121,7 +121,7 @@ def bring_bug(request: HttpRequest, colony_id: int):
     except Exception as e:
         return HttpResponse(status=400)
 
-    operation_id = ef.bring_bug_operation_command(request.user.id, colony_id, nest_id)
+    operation_id = ea.bring_bug_operation_command(request.user.id, colony_id, nest_id)
     
     return JsonResponse({
         'operationId': operation_id

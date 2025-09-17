@@ -8,8 +8,8 @@ class MainSocketConsumer(WebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from infrastructure.engine.engine_facade import EngineFacade
-        self._engine_facade = EngineFacade.get_instance()
+        from infrastructure.engine.engine_adapter import EngineAdapter
+        self._engine_adapter = EngineAdapter.get_instance()
         self._init_pack_sent = False
 
     def connect(self):
@@ -20,14 +20,14 @@ class MainSocketConsumer(WebsocketConsumer):
         event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
         event_bus.add_listener('engine_connection_error', self._on_engine_connection_error)
 
-        if self._user.is_authenticated and self._engine_facade.is_game_working:
+        if self._user.is_authenticated and self._engine_adapter.is_game_working:
             self.accept()
-            self._engine_facade.connect_player(self._user.id)
+            self._engine_adapter.connect_player(self._user.id)
         else:
             self.close()
         
     def disconnect(self, code):
-        self._engine_facade.disconnect_player(self._user.id)
+        self._engine_adapter.disconnect_player(self._user.id)
         event_bus.remove_listener('email_verified', self._on_email_verified)
         event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
         event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)

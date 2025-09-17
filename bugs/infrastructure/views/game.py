@@ -3,13 +3,13 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.http.request import HttpRequest
 from bugs.settings import MAIN_SOCKET_URL, DEBUG
-from infrastructure.engine.engine_facade import EngineFacade
+from infrastructure.engine.engine_adapter import EngineAdapter
 
 @ensure_csrf_cookie
 @login_required
 def index(request: HttpRequest):
-    ef = EngineFacade.get_instance()
-    if not ef.is_game_working:
+    ea = EngineAdapter.get_instance()
+    if not ea.is_game_working:
         return render(request, 'client/maintenance.html')
     
     ws_protocol = 'ws' if DEBUG else 'wss'

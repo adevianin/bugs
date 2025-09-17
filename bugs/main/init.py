@@ -1,6 +1,6 @@
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
-from infrastructure.engine.engine_facade import EngineFacade
+from infrastructure.engine.engine_adapter import EngineAdapter
 import redis
 from decouple import config
 
@@ -10,4 +10,4 @@ def init():
 
     r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD'), decode_responses=True)
 
-    EngineFacade(world_data_repository, usernames_repository, r)
+    EngineAdapter(world_data_repository, usernames_repository, r)
