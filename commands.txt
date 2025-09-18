@@ -1,5 +1,16 @@
 #creating message files
 python manage.py makemessages -l uk --no-wrap
 python manage.py makemessages -l en --no-wrap
+
 #compliling messages
 python manage.py compilemessages
+
+#build frontend
+python manage.py build_frontend
+python manage.py build_frontend --prod --inst_deps
+
+#daphne start
+daphne -b 0.0.0.0 -p 8000 bugs.asgi:application
+
+#engine start
+python engine_start.py
