@@ -13,6 +13,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests
 from bugs.settings import GOOGLE_CLIENT_ID
 from infrastructure.utils.generate_username import generate_username
+from django.db import IntegrityError
 
 class AccountService():
 
@@ -142,14 +143,18 @@ class AccountService():
         try:
             user.username = new_username
             user.full_clean()
-            user.save()
-            return user
         except ValidationError as e:
             for error in e.error_dict.get('username', []):
                 if error.code == 'unique':
                     raise UsernameTakenException()
                 else:
                     raise UsernameFormatException()
+                
+        try:
+            user.save()
+            return user
+        except IntegrityError as e:
+            raise UsernameTakenException()
     
     def change_email(self, user_id: int, new_email: str, password: str, base_url: str) -> User:
         try:
@@ -169,19 +174,25 @@ class AccountService():
                 user.is_email_verified = False
             user.email = new_email
             user.full_clean()
-            user.save()
-            if is_email_diff:
-                try:
-                    self._email_service.send_verification_email(user, base_url)
-                except DailyEmailLimitExceededException:
-                    pass
-            return user
         except ValidationError as e:
             for error in e.error_dict.get('email', []):
                 if error.code == 'unique':
                     raise EmailTakenException()
                 else:
                     raise EmailFormatException()
+                
+        try:
+            user.save()
+        except IntegrityError:
+            raise EmailTakenException()
+        
+        if is_email_diff:
+            try:
+                self._email_service.send_verification_email(user, base_url)
+            except DailyEmailLimitExceededException:
+                pass
+            
+        return user
 
     def change_password(self, user_id: int, old_pass: str, new_pass: str) -> User:
         try:
