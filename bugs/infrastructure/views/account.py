@@ -1,25 +1,17 @@
 from django.http import HttpResponse, JsonResponse, HttpRequest
-from infrastructure.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.http import require_POST, require_GET
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from bugs.settings import GOOGLE_CLIENT_ID, GOOGLE_OAUTH_REDIRECT_URI
-from google.oauth2 import id_token
-from google.auth.transport import requests
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
-from django.utils.http import urlsafe_base64_decode
-from infrastructure.token_generators.email_verification_token_generator import EmailVerificationTokenGenerator
-from infrastructure.token_generators.reset_password_token_generator import ResetPasswordTokenGenerator
-from django.contrib.auth.password_validation import validate_password
-from infrastructure.email.email_service import EmailService
 from infrastructure.utils.build_base_url import build_base_url
-from infrastructure.utils.generate_username import generate_username
-from infrastructure.event_bus import event_bus
-from infrastructure.utils.log_request_exception import log_request_exception
 from django.contrib.auth import update_session_auth_hash
+from infrastructure.services.providers import get_account_service
+from infrastructure.exceptions import (IncorrectPasswordException, IncorrectNewPasswordException, SocialAccountException, UserDoesNotExistException, 
+                                       EmailTakenException, EmailFormatException, UsernameTakenException, UsernameFormatException, Base64DecodingException, 
+                                       InvalidTokenException, InvalidAccountException)
 import json
 
 @ensure_csrf_cookie
@@ -40,33 +32,16 @@ def reset_password(request: HttpRequest):
 @csrf_exempt
 @require_POST
 def google_auth_callback(request: HttpRequest):
-        post_csrf_token = request.POST.get("g_csrf_token")
-        cookie_csrf_token = request.COOKIES.get("g_csrf_token")
-        
-        if post_csrf_token != cookie_csrf_token:
-            raise Exception('g_csrf_token is not valid')
+    post_csrf_token = request.POST.get("g_csrf_token")
+    cookie_csrf_token = request.COOKIES.get("g_csrf_token")
+    token = request.POST.get('credential')
+    
+    acc_serv = get_account_service()
+    user = acc_serv.google_auth(post_csrf_token, cookie_csrf_token, token)
 
-        token = request.POST.get('credential')
-        if not token:
-            raise Exception('token is missing')
-        
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
-        if idinfo['aud'] != GOOGLE_CLIENT_ID:
-            raise Exception('invalid client id')
+    login(request, user)
 
-        user_email = idinfo.get('email')
-
-        user, created = User.objects.get_or_create(email=user_email)
-
-        if created:
-            user.username = generate_username()
-            user.is_email_verified = True
-            user.set_unusable_password()
-            user.save()
-
-        login(request, user)
-
-        return redirect('game_index')
+    return redirect('game_index')
 
 @require_POST        
 def account_register(request: HttpRequest):
@@ -80,30 +55,16 @@ def account_register(request: HttpRequest):
             return HttpResponse(status=400)
     except Exception:
         return HttpResponse(status=400)
-
-    if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
-        return HttpResponse(status=409)
-
-    user = User(username=username, email=email)
-
-    try:
-        validate_password(password, user=user)
-        user.set_password(password)
-    except ValidationError as e:
-        return HttpResponse(status=400)
     
+    acc_serv = get_account_service()
     try:
-        user.full_clean()
-        user.save()
-    except ValidationError:
+        user = acc_serv.account_register(username, email, password, build_base_url(request))
+    except (UsernameTakenException, EmailTakenException):
+        return HttpResponse(status=409)
+    except (IncorrectNewPasswordException, InvalidAccountException):
         return HttpResponse(status=400)
     
     login(request, user)
-
-    try:
-        EmailService.send_verification_email(user, build_base_url(request))
-    except Exception as e:
-        log_request_exception(request, e)
         
     return JsonResponse({
         'user': user.get_general_data()
@@ -147,7 +108,8 @@ def check_username_uniqueness(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
 
-    is_unique = not User.objects.filter(username=username).exists()
+    acc_serv = get_account_service()
+    is_unique = acc_serv.check_username_uniqueness(username)
 
     return JsonResponse({
         'is_unique': is_unique
@@ -163,7 +125,8 @@ def check_email_uniqueness(request):
     except Exception as e:
         return HttpResponse(status=400)
 
-    is_unique = not User.objects.filter(email=email).exists()
+    acc_serv = get_account_service()
+    is_unique = acc_serv.check_email_uniqueness(email)
 
     return JsonResponse({
         'is_unique': is_unique
@@ -171,20 +134,8 @@ def check_email_uniqueness(request):
 
 @require_GET
 def verify_email(request, uidb64, token):
-    try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-
-    is_success = None
-    if user and EmailVerificationTokenGenerator.validate(user, token):
-        user.is_email_verified = True
-        user.save()
-        event_bus.emit('email_verified', user)
-        is_success = True
-    else:
-        is_success = False
+    acc_serv = get_account_service()
+    is_success = acc_serv.verify_email(uidb64, token)
 
     return render(request, 'client/account/email_verification.html', {
         "is_success": is_success
@@ -200,15 +151,8 @@ def reset_password_request(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
     
-    try:
-        user = User.objects.get(email=email)
-        if user.has_usable_password():
-            try:
-                EmailService.send_reset_password_email(user, build_base_url(request))
-            except Exception as e:
-                log_request_exception(request, e)
-    except User.DoesNotExist:
-        return HttpResponse(status=204)
+    acc_serv = get_account_service()
+    acc_serv.reset_password_request(email, build_base_url(request))
     
     return HttpResponse(status=204)
     
@@ -224,25 +168,13 @@ def set_new_password(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
     
+    acc_serv = get_account_service()
     try:
-        id = urlsafe_base64_decode(base64Id).decode()
-        user = User.objects.get(pk=id)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        acc_serv.set_new_password(new_password, base64Id, token)
+    except (Base64DecodingException, UserDoesNotExistException, SocialAccountException, IncorrectNewPasswordException):
         return HttpResponse(status=400)
-    
-    if not ResetPasswordTokenGenerator.validate(user, token):
+    except InvalidTokenException:
         return HttpResponse(status=403)
-    
-    if user.is_social_account():
-        return HttpResponse(status=400) 
-    
-    try:
-        validate_password(new_password, user=user)
-    except ValidationError as e:
-        return HttpResponse(status=400)
-    
-    user.set_password(new_password)
-    user.save()
     
     return HttpResponse(status=204)
 
@@ -257,19 +189,16 @@ def change_username(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
     
-    user = User.objects.get(id=request.user.id)
-    user.username = new_username
-    
+    acc_serv = get_account_service()
     try:
-        user.full_clean()
-        user.save()
-    except ValidationError as e:
-        for error in e.error_dict.get('username', []):
-            if error.code == 'unique':
-                return HttpResponse(status=409)
-            else:
-                return HttpResponse(status=400)
-
+        user = acc_serv.change_username(request.user.id, new_username)
+    except UserDoesNotExistException:
+        return HttpResponse(status=400)
+    except UsernameFormatException:
+        return HttpResponse(status=400)
+    except UsernameTakenException:
+        return HttpResponse(status=409)
+    
     return JsonResponse({
         'user': user.get_general_data()
     }, status=200)  
@@ -284,32 +213,19 @@ def change_email(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
     
-    user = User.objects.get(id=request.user.id)
-
-    if user.is_social_account():
-        return HttpResponse(status=400) 
-
-    if not user.check_password(password):
-        return HttpResponse(status=401)
-    
+    acc_serv = get_account_service()
     try:
-        is_email_diff = user.email != new_email
-        if is_email_diff:
-            user.is_email_verified = False
-        user.email = new_email
-        user.full_clean()
-        user.save()
-        if is_email_diff:
-            try:
-                EmailService.send_verification_email(user, build_base_url(request))
-            except Exception as e:
-                log_request_exception(request, e)
-    except ValidationError as e:
-        for error in e.error_dict.get('email', []):
-            if error.code == 'unique':
-                return HttpResponse(status=409)
-            else:
-                return HttpResponse(status=400)
+        user = acc_serv.change_email(request.user.id, new_email, password, build_base_url(request))
+    except UserDoesNotExistException:
+        return HttpResponse(status=400)
+    except SocialAccountException:
+        return HttpResponse(status=400)
+    except IncorrectPasswordException:
+        return HttpResponse(status=401)
+    except EmailFormatException:
+        return HttpResponse(status=400)
+    except EmailTakenException:
+        return HttpResponse(status=409)
 
     return JsonResponse({
         'user': user.get_general_data()
@@ -325,22 +241,17 @@ def change_password(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
     
-    user = User.objects.get(id=request.user.id)
-
-    if user.is_social_account():
-        return HttpResponse(status=400) 
-
-    if not user.check_password(old_password):
-        return HttpResponse(status=401)
-    
+    acc_serv = get_account_service()
     try:
-        validate_password(new_password, user=user)
-        user.set_password(new_password)
-        user.full_clean()
-        user.save()
-
+        user = acc_serv.change_password(request.user.id, old_password, new_password)
         update_session_auth_hash(request, user)
-    except ValidationError as e:
+    except UserDoesNotExistException:
+        return HttpResponse(status=400)
+    except IncorrectPasswordException:
+        return HttpResponse(status=401)
+    except SocialAccountException:
+        return HttpResponse(status=400)
+    except IncorrectNewPasswordException:
         return HttpResponse(status=400)
                 
     return HttpResponse(status=204)   
@@ -348,9 +259,7 @@ def change_password(request: HttpRequest):
 @require_POST
 @login_required
 def verify_email_request(request: HttpRequest):
-    user = User.objects.get(id=request.user.id)
-
-    if not user.is_email_verified:
-        EmailService.send_verification_email(user, build_base_url(request))
+    acc_serv = get_account_service()
+    acc_serv.verify_email_request(request.user.id, build_base_url(request))
 
     return HttpResponse(status=204)    

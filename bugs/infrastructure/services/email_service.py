@@ -5,39 +5,36 @@ from django.utils.http import urlsafe_base64_encode
 from django.urls import reverse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
-from bugs.settings import DEFAULT_FROM_EMAIL
+from bugs.settings import DEFAULT_FROM_EMAIL, USER_MAILS_DAY_LIMIT
 from django.utils.encoding import force_bytes
 from urllib.parse import urlencode
 from collections import defaultdict
 from infrastructure.exceptions import DailyEmailLimitExceededException
-from bugs.settings import USER_MAILS_DAY_LIMIT
 from django.utils.translation import gettext_lazy as _
 import time
 
-class EmailService():
+class EmailService:
+    def __init__(self):
+        self.email_send_count = defaultdict(lambda: {'count': 0, 'reset_time': time.time() + 86400})
 
-    email_send_count = defaultdict(lambda: {'count': 0, 'reset_time': time.time() + 86400})
-
-    @staticmethod
-    def can_send_email(user: User):
-        user_data = EmailService.email_send_count[user.id]
+    def can_send_email(self, user: User):
+        user_data = self.email_send_count[user.id]
         current_time = time.time()
 
         if current_time > user_data['reset_time']:
-            EmailService.email_send_count[user.id] = {'count': 0, 'reset_time': current_time + 86400}
+            del self.email_send_count[user.id]
+            user_data = self.email_send_count[user.id]
 
         if user_data['count'] >= USER_MAILS_DAY_LIMIT:
             return False
 
         return True
 
-    @staticmethod
-    def increment_email_count(user: User):
-        EmailService.email_send_count[user.id]['count'] += 1
+    def increment_email_count(self, user: User):
+        self.email_send_count[user.id]['count'] += 1
 
-    @staticmethod
-    def send_verification_email(user: User, base_url: str):
-        if not EmailService.can_send_email(user):
+    def send_verification_email(self, user: User, base_url: str):
+        if not self.can_send_email(user):
             raise DailyEmailLimitExceededException(f'user id = {user.id}')
         
         subject = _('Verifying your account')
@@ -60,11 +57,10 @@ class EmailService():
         email.content_subtype = 'html'
         email.send()
 
-        EmailService.increment_email_count(user)
+        self.increment_email_count(user)
 
-    @staticmethod
-    def send_reset_password_email(user: User, base_url: str):
-        if not EmailService.can_send_email(user):
+    def send_reset_password_email(self, user: User, base_url: str):
+        if not self.can_send_email(user):
             raise DailyEmailLimitExceededException(f'user id = {user.id}')
         
         subject = _('Password recovery')
@@ -88,4 +84,4 @@ class EmailService():
         email.content_subtype = 'html'
         email.send()
 
-        EmailService.increment_email_count(user)
+        self.increment_email_count(user)
