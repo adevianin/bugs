@@ -17,9 +17,9 @@ Every time interval, the entire game world takes a step. Currently, one step tak
 
 ### **Performance Tests**
 
-* **4K Ants Test:** [YouTube Video](https://www.youtube.com/watch?v=fsOqnIcIcdM)
+* **Test with ~4K Ants:** [YouTube Video](https://www.youtube.com/watch?v=fsOqnIcIcdM)
   _Note: See video description on YouTube for test conclusions._
-* **8K Ants Test:** [YouTube Video](https://www.youtube.com/watch?v=vmhddQBWWTw)
+* **Test with ~8K Ants:** [YouTube Video](https://www.youtube.com/watch?v=vmhddQBWWTw)
 
 ### **Development Showcase**
 
