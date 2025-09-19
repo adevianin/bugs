@@ -7,14 +7,11 @@ Detailed information on genetics and gameplay is available in the in-game help.
 
 ### **How It Works**
 
-In the game, living entities have a body, mind, and thoughts. The mind controls the execution of thoughts, which in turn control the body. This is a Strategy pattern, where thoughts are the strategies. The mind selects the appropriate thoughts for the circumstances. For example, when an ant feels hungry, the mind queues up the thought that it needs to eat. Or when an enemy is nearby and attacking, the mind cancels less prioritized thoughts and creates a thought about defending itself.
-Every time interval, the entire game world takes a step. Currently, one step takes one second to execute. This parameter can be easily changed to improve performance.
-
-With each step, certain game events occur. These events are collected, and from them, domain model change packages(Step Packages) are formed for each player. Each step package contains information about common events (ant movements, season changes, nest building, etc.) and player-specific ones (the progress of eggs developing in the nest, player notifications, etc.). These packages are then passed through Redis to the process where Django is running. From there, these packages are sent via WebSockets to the browser of each online player.
-
-On the client side, these packages are received by a web worker. First, the changes from the package are applied to the world model that exists on the client side. After that, a new package is formed, which contains information about animations and player-specific changes. For optimization, this package is formed based on the player's current view position. Then, the package is passed to the view layer. At this layer, animations are played using Pixi.js, and the state of the player's panel is updated.
-
 It runs directly in a web browser, and is fully playable on both desktop and mobile devices.
+
+In the game, living entities have a body, mind, and thoughts. The mind controls the execution of thoughts, which in turn control the body. This is a Strategy pattern, where thoughts are the strategies. The mind selects the appropriate thoughts for the circumstances. For example, when an ant feels hungry, the mind queues up the thought that it needs to eat. Or when an enemy is nearby and attacking, the mind cancels less prioritized thoughts and creates a thought about defending itself.
+
+Every time interval, the entire game world takes a step. Currently, one step takes one second to execute. This parameter can be easily changed to improve performance. With each step, certain game events occur. These events are collected, and from them, domain model change packages, called step packages, are formed for each player. Each step package contains information about common events (ant movements, season changes, nest building, etc.) and player-specific ones (the progress of eggs developing in the nest, player notifications, etc.). These packages are then passed through Redis to the process where Django is running. From there, these packages are sent via WebSockets to the browser of each online player. On the client side, these packages are received by a web worker. First, the changes from the package are applied to the world model that exists on the client side. After that, a new package is formed, which contains information about animations and player-specific changes. For optimization, this package is formed based on the player's current view position. Then, the package is passed to the view layer. At this layer, animations are played using Pixi.js, and the state of the player's panel is updated. The diagram below illustrates the path of data through the system.
 
 ![Diagram](diagram.png)
 
