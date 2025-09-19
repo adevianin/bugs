@@ -5,7 +5,7 @@ Detailed information on genetics and gameplay is available in the in-game help.
 * **Game Website:** [https://evolutionofants.click/](https://evolutionofants.click/)
 * **Gameplay Video:** [YouTube Video](https://www.youtube.com/watch?v=fMoLUvllM98)
 
-##**How It Works**
+### **How It Works**
 
 In the game, living entities have a body, mind, and thoughts. The mind controls the execution of thoughts, which in turn control the body. This is a Strategy pattern, where thoughts are the strategies. The mind selects the appropriate thoughts for the circumstances. For example, when an ant feels hungry, the mind queues up the thought that it needs to eat. Or when an enemy is nearby and attacking, the mind cancels less prioritized thoughts and creates a thought about defending itself.
 Every time interval, the entire game world takes a step. Currently, one step takes one second to execute. This parameter can be easily changed to improve performance.
