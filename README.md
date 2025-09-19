@@ -21,6 +21,7 @@ It runs directly in a web browser, and is fully playable on both desktop and mob
 ### **Performance Tests**
 
 * **4K Ants Test:** [YouTube Video](https://www.youtube.com/watch?v=fsOqnIcIcdM)
+  _Note: See video description on YouTube for test conclusions._
 * **8K Ants Test:** [YouTube Video](https://www.youtube.com/watch?v=vmhddQBWWTw)
 
 ### **Development Showcase**
