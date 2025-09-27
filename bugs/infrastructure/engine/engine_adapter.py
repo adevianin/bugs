@@ -38,7 +38,6 @@ class EngineAdapter:
 
         self._redis_watcher()
         self._listen_engine_out()
-        self._start_rating_generation_command_sender()
 
     @property
     def is_game_working(self):
@@ -359,6 +358,11 @@ class EngineAdapter:
     def _on_step_data_pack_msg(self, data: Dict):
         data['personal_actions'] = {int(player_id): actions for player_id, actions in data['personal_actions'].items()}
         event_bus.emit(f'step_data_pack_ready', data)
+        self._step_number_manager(data['step'])
+
+    def _step_number_manager(self, step_number: int):
+        if step_number % RATING_GENERATION_PERIOD == 0:
+            self._generate_rating_command()
     
     def _on_command_result(self, data: Dict):
         command_id = data['command_id']
@@ -375,12 +379,3 @@ class EngineAdapter:
                     future.set_exception(EngineStateConflictError(data['err_data']['step']))
                 case _:
                     future.set_exception(EngineError())
-
-    def _start_rating_generation_command_sender(self):
-        def sender():
-            while True:
-                time.sleep(RATING_GENERATION_PERIOD)
-                self._generate_rating_command()
-
-        rating_gen_thread = threading.Thread(target=sender, daemon=True)
-        rating_gen_thread.start()
