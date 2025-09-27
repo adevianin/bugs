@@ -4,6 +4,8 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STORAGE_FOLDER = BASE_DIR / 'storage'
+
 SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool)
@@ -144,6 +146,14 @@ LOGGING = {
         },
         "console": {
             "class": "logging.StreamHandler",
+            'level': 'INFO',
+            'formatter': 'detailed',
+        },
+        'game_file': {
+            'class': 'logging.FileHandler',
+            'level': 'ERROR',
+            'filename': 'game_errors.log',
+            'formatter': 'detailed',
         },
     },
     'formatters': {
@@ -160,6 +170,11 @@ LOGGING = {
         'request_logger': {
             'handlers': ['request_file'],
             'level': 'ERROR',
+            'propagate': False,
+        },
+        'game_logger': {
+            'handlers': ['console', 'game_file'],
+            'level': 'DEBUG',
             'propagate': False,
         },
     },

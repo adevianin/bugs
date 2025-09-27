@@ -8,7 +8,10 @@
             "name":"Engine Debug",
             "type":"debugpy",
             "request":"launch",
-            "program":"${workspaceFolder}/bugs/engine_start.py",
+            "program":"${workspaceFolder}/bugs/manage.py",
+            "args": [
+                "run_engine",
+            ],
             "console":"integratedTerminal"
         },
         {
@@ -27,7 +30,7 @@
     "compounds": [
         {
         "name": "Debug Django and Game Process",
-        "configurations": ["Engine Debug", "Django Debug"]
+        "configurations": ["Django Debug", "Engine Debug"]
         }
     ]
 }
