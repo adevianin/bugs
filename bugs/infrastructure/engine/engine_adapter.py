@@ -33,6 +33,7 @@ class EngineAdapter:
 
         self._last_used_command_id = 0
         self._command_futures = {}
+        self._generate_id_lock = threading.Lock()
 
         self._is_listening_engine_out_error: threading.Event = threading.Event()
 
@@ -286,8 +287,9 @@ class EngineAdapter:
             log_error('redis connection error. couldnt send msg to engine')
 
     def _generate_command_id(self):
-        self._last_used_command_id += 1
-        return self._last_used_command_id
+        with self._generate_id_lock:
+            self._last_used_command_id += 1
+            return self._last_used_command_id
 
     def _send_command_to_engine(self, type: str, data: Dict, wait_result: bool, is_from_admin: bool = False):
         command_id = self._generate_command_id()
