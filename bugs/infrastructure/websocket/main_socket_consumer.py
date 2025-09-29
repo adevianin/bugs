@@ -1,20 +1,18 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
 from infrastructure.event_bus import event_bus
-from infrastructure.engine.exceptions import EngineError, EngineStateConflictError
-import json
+from infrastructure.services.engine.exceptions import EngineError, EngineStateConflictError
+from infrastructure.services.providers import get_engine_adapter
+import json, logging
 from typing import Dict
-import logging
-
 
 class MainSocketConsumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        from infrastructure.engine.engine_adapter import EngineAdapter
-        self._ea = EngineAdapter.get_instance()
-        self._init_pack_sent = False
+        self._ea = get_engine_adapter()
         self._logger = logging.getLogger('request_logger')
+        self._init_pack_sent = False
 
         self._sync_send_step_pack = async_to_sync(self._send_step_pack)
 

@@ -11,22 +11,11 @@ from .exceptions import EngineError, EngineStateConflictError, EngineResponseTim
 from infrastructure.utils.log_error import log_error
 
 class EngineAdapter:
-    _instance = None
-
     WAIT_COMMAND_RESULT_TIMEOUT = 10
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
-    @classmethod
-    def get_instance(cls) -> 'EngineAdapter':
-        return EngineAdapter._instance
-
     def __init__(self, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis):
-        if EngineAdapter._instance != None:
-            raise Exception('EngineAdapter is singleton')
-        else:
-            EngineAdapter._instance = self
-
         self._redis = redis
 
         self._world_data_repository = world_data_repository

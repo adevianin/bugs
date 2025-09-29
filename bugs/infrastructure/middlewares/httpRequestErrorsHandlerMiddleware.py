@@ -2,7 +2,7 @@ import logging
 from django.http import HttpResponse, JsonResponse
 from infrastructure.exceptions import DailyEmailLimitExceededException
 from infrastructure.utils.log_request_exception import log_request_exception
-from infrastructure.engine.exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
+from infrastructure.services.engine.exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
 
 class HttpRequestErrorsHandlerMiddleware:
     def __init__(self, get_response):

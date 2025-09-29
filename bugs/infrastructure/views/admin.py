@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import user_passes_test
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
-from infrastructure.engine.engine_adapter import EngineAdapter
+from infrastructure.services.providers import get_engine_adapter
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -10,7 +10,7 @@ def is_superuser(user):
     return user.is_superuser
 
 def _build_world_status():
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     world_status = ea.get_world_status()
     return {
         'isInited': world_status['is_world_inited'],
@@ -38,7 +38,7 @@ def world_status_check(request):
 @user_passes_test(is_superuser)
 @require_POST
 def init_world(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ea.init_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
@@ -47,7 +47,7 @@ def init_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def stop_world(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ea.stop_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
@@ -56,7 +56,7 @@ def stop_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def run_world(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ea.run_world_admin_command()
     return JsonResponse({
         'status': _build_world_status()
@@ -65,7 +65,7 @@ def run_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def save_world(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ea.save_world_admin_command()
     return JsonResponse({
         'status': 'saved'
@@ -74,7 +74,7 @@ def save_world(request):
 @user_passes_test(is_superuser)
 @require_POST
 def count_ants(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ants_count = ea.count_ants_command()
     return JsonResponse({
         'ants_count': ants_count
@@ -83,14 +83,14 @@ def count_ants(request):
 @user_passes_test(is_superuser)
 @require_POST
 def populate_for_performance_test(request):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     ea.populate_for_performance_test_command(request.user.id)
     return HttpResponse(status=201) 
 
 @user_passes_test(is_superuser)
 @require_POST
 def expand_map(request: HttpRequest):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     try:
         data = json.loads(request.body)
         chunk_rows = int(data['chunk_rows'])
@@ -113,7 +113,7 @@ def expand_map(request: HttpRequest):
 @user_passes_test(is_superuser)
 @require_GET
 def get_world_data(request: HttpRequest):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
 
     world_data = ea.get_world_data()
     json_data = json.dumps(world_data, indent=4)

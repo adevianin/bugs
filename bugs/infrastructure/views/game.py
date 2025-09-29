@@ -3,12 +3,12 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.decorators import login_required
 from django.http.request import HttpRequest
 from bugs.settings import MAIN_SOCKET_URL, DEBUG
-from infrastructure.engine.engine_adapter import EngineAdapter
+from infrastructure.services.providers import get_engine_adapter
 
 @ensure_csrf_cookie
 @login_required
 def index(request: HttpRequest):
-    ea = EngineAdapter.get_instance()
+    ea = get_engine_adapter()
     if not ea.is_game_working:
         return render(request, 'client/maintenance.html')
     
