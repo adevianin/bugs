@@ -1,4 +1,5 @@
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { BaseService } from "@common/domain/service/base/baseService";
 import { ErrorCodes } from "@domain/enum/errorCodes";
 
@@ -65,6 +66,16 @@ class BaseGameService extends BaseService {
 
     _makeErrorResultUnknownErr() {
         return this._makeErrorResult(ErrorCodes.UNKNOWN_ERR);
+    }
+
+    _handlePlayerCommandKnownErrors(e) {
+        if (e instanceof ConflictRequestError) {
+            return this._makeErrorResultConflict();
+        }
+        if (e instanceof GenericRequestError) {
+            return this._makeErrorResultUnknownErr();
+        }
+        throw e;
     }
 
 }

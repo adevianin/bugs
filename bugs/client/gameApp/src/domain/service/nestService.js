@@ -1,8 +1,6 @@
 import { BaseGameService } from "./base/baseGameService";
 import { CONSTS } from "@domain/consts";
 import { distance } from '@utils/distance';
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class NestService extends BaseGameService {
@@ -21,11 +19,7 @@ class NestService extends BaseGameService {
             }));
             return this._makeSuccessResult({ eggId: eggId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 

@@ -5,8 +5,6 @@ import { ItemTypes } from "@domain/enum/itemTypes";
 import { distance, distance_point } from "@utils/distance";
 import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 import { CONSTS } from "@domain/consts";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class ColonyService extends BaseGameService {
 
@@ -77,11 +75,7 @@ class ColonyService extends BaseGameService {
             }));
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }   
 
@@ -96,11 +90,7 @@ class ColonyService extends BaseGameService {
 
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 
@@ -115,11 +105,7 @@ class ColonyService extends BaseGameService {
             }));
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 
@@ -134,11 +120,7 @@ class ColonyService extends BaseGameService {
             }));
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 
@@ -151,11 +133,7 @@ class ColonyService extends BaseGameService {
             }));
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 
@@ -167,11 +145,7 @@ class ColonyService extends BaseGameService {
             }));
             return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 

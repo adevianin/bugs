@@ -1,6 +1,4 @@
 import { BaseGameService } from "./base/baseGameService";
-import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
-import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 
 class NuptialEnvironmentService extends BaseGameService {
@@ -26,13 +24,7 @@ class NuptialEnvironmentService extends BaseGameService {
             }));
             return this._makeSuccessResult();
         } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            } else {
-                throw e;
-            }
+            return this._handlePlayerCommandKnownErrors(e);
         }
     }
 
