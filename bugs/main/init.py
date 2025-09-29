@@ -8,6 +8,7 @@ from infrastructure.services.providers import register_engine_adapter, register_
 from infrastructure.services.email_service import EmailService
 from infrastructure.services.account_service import AccountService
 from infrastructure.services.player_command_handler import PlayerCommandHandler
+from infrastructure.services.world_backup_saver import WorldBackupSaver
 
 
 def init():
@@ -20,7 +21,8 @@ def init():
 
     r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD'), decode_responses=True)
 
-    ea = EngineAdapter(event_bus, world_data_repository, usernames_repository, r)
+    world_backup_saver = WorldBackupSaver()
+    ea = EngineAdapter(event_bus, world_data_repository, usernames_repository, r, world_backup_saver, logger)
     email_service = EmailService()
     account_service = AccountService(event_bus, email_service)
     player_command_handler = PlayerCommandHandler(ea, logger)

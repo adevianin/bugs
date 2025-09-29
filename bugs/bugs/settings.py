@@ -127,6 +127,7 @@ LANGUAGES = [
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'client/static'
+BACKUP_FOLDER = BASE_DIR / 'backups'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -168,7 +169,7 @@ LOGGING = {
             "propagate": False,
         },
         'request_logger': {
-            'handlers': ['console', 'game_file'],
+            'handlers': ['console', 'request_file'],
             'level': 'DEBUG',
             'propagate': False,
         },
@@ -202,4 +203,6 @@ REDIS_PORT=config('REDIS_PORT')
 REDIS_PASSWORD=config('REDIS_PASSWORD')
 
 WORLD_ID = config("WORLD_ID", cast=int)
+
 RATING_GENERATION_PERIOD = 3600
+WORLD_BACKUP_PERIOD = 3610

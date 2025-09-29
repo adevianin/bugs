@@ -1,5 +1,5 @@
 import redis.exceptions
-from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD
+from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, WORLD_BACKUP_PERIOD
 from typing import List, Dict
 import threading, redis, json, time
 import asyncio
@@ -9,14 +9,18 @@ from infrastructure.db.repositories.world_data_repository import WorldDataReposi
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
 from infrastructure.utils.log_error import log_error
+from infrastructure.services.world_backup_saver import WorldBackupSaver
+import logging
 
 class EngineAdapter:
     WAIT_COMMAND_RESULT_TIMEOUT = 10
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
-    def __init__(self, event_bus: EventBus, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis):
+    def __init__(self, event_bus: EventBus, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis, 
+                 world_backup_saver: WorldBackupSaver, logger: logging.Logger):
         self._event_bus = event_bus
+        self._logger = logger
         
         self._redis = redis
 
@@ -28,6 +32,8 @@ class EngineAdapter:
         self._generate_id_lock = threading.Lock()
 
         self._is_listening_engine_out_error: threading.Event = threading.Event()
+
+        self._world_backup_saver = world_backup_saver
 
         self._redis_watcher()
         self._listen_engine_out()
@@ -71,7 +77,25 @@ class EngineAdapter:
         return async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
 
     def _generate_rating_command(self):
-        async_to_sync(self._send_command_to_engine)('generate_rating', self._usernames_repository.get_usernames(), True)
+        def send_command():
+            try:
+                async_to_sync(self._send_command_to_engine)('generate_rating', self._usernames_repository.get_usernames(), True)
+            except Exception as e:
+                self._logger.error('rating generation error', exc_info=e)
+        
+        redis_watcher_thread = threading.Thread(target=send_command, daemon=True)
+        redis_watcher_thread.start()
+
+    def _backup_world_command(self):
+        def backup():
+            try:
+                world_data = async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
+                self._world_backup_saver.save_backup(world_data)
+            except Exception as e:
+                self._logger.error('error during backup', exc_info=e)
+
+        redis_watcher_thread = threading.Thread(target=backup, daemon=True)
+        redis_watcher_thread.start()
 
     # </ADMIN_COMMANDS>
 
@@ -355,6 +379,8 @@ class EngineAdapter:
     def _step_number_manager(self, step_number: int):
         if step_number % RATING_GENERATION_PERIOD == 0:
             self._generate_rating_command()
+        if step_number % WORLD_BACKUP_PERIOD == 0:
+            self._backup_world_command()
     
     def _on_command_result(self, data: Dict):
         command_id = data['command_id']
