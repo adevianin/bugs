@@ -1,6 +1,7 @@
 from .engine.engine_adapter import EngineAdapter
 from infrastructure.services.engine.exceptions import EngineError, EngineStateConflictError
 from typing import Dict, Tuple
+from infrastructure.utils.clean_str_param import clean_str_param
 import logging
 
 class PlayerCommandHandler():
@@ -37,7 +38,7 @@ class PlayerCommandHandler():
                 operation_id = await self._ea.stop_operation_command(user_id, data['colony_id'], data['operation_id'])
                 return self._prepare_command_result(True, operation_id)
             case 'build_new_sub_nest_operation':
-                operation_id = await self._ea.build_new_sub_nest_operation_command(user_id, data['performing_colony_id'], data['building_site'], data['workers_count'], data['warriors_count'], data['nest_name'])
+                operation_id = await self._ea.build_new_sub_nest_operation_command(user_id, data['performing_colony_id'], data['building_site'], data['workers_count'], data['warriors_count'], clean_str_param(data['nest_name']))
                 return self._prepare_command_result(True, operation_id)
             case 'destroy_nest_operation':
                 operation_id = await self._ea.destroy_nest_operation_command(user_id, data['performing_colony_id'], data['nest_id'], data['workers_count'], data['warriors_count'])
@@ -56,13 +57,13 @@ class PlayerCommandHandler():
                 return self._prepare_command_result(True, operation_id)
 
             case 'add_egg':
-                egg_id = await self._ea.add_egg_command(user_id, data['nest_id'], data['name'], data['is_fertilized'])
+                egg_id = await self._ea.add_egg_command(user_id, data['nest_id'], clean_str_param(data['name']), data['is_fertilized'])
                 return self._prepare_command_result(True, egg_id)
             case 'change_egg_caste':
                 await self._ea.change_egg_caste_command(user_id, data['nest_id'], data['egg_id'], data['ant_type'])
                 return self._prepare_command_result()
             case 'change_egg_name':
-                await self._ea.change_egg_name_command(user_id, data['nest_id'], data['egg_id'], data['name'])
+                await self._ea.change_egg_name_command(user_id, data['nest_id'], data['egg_id'], clean_str_param(data['name']))
                 return self._prepare_command_result()
             case 'delete_egg':
                 await self._ea.delete_egg_command(user_id, data['nest_id'], data['egg_id'])
@@ -71,11 +72,11 @@ class PlayerCommandHandler():
                 await self._ea.delete_larva_command(user_id, data['nest_id'], data['larva_id'])
                 return self._prepare_command_result()
             case 'rename_nest':
-                await self._ea.rename_nest_command(user_id, data['nest_id'], data['name'])
+                await self._ea.rename_nest_command(user_id, data['nest_id'], clean_str_param(data['name']))
                 return self._prepare_command_result()
 
             case 'found_colony':
-                await self._ea.found_colony_command(user_id, data['queen_id'], data['nuptial_male_id'], data['nest_building_site'], data['colony_name'])
+                await self._ea.found_colony_command(user_id, data['queen_id'], data['nuptial_male_id'], data['nest_building_site'], clean_str_param(data['colony_name']))
                 return self._prepare_command_result()
             case 'born_new_antara':
                 await self._ea.born_new_antara_command(user_id)
