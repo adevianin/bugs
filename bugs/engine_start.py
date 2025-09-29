@@ -112,7 +112,19 @@ from core.application.engine import Engine
 from decouple import config
 import logging, redis
 
-def run_engine(logger: logging.Logger):
+def main():
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    file_handler = logging.FileHandler('game_errors.log')
+    file_handler.setLevel(logging.ERROR)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
     event_bus = EventEmitter()
 
     item_factory = ItemFactory(event_bus)
@@ -283,3 +295,6 @@ def run_engine(logger: logging.Logger):
     finally:
         engine.stop()
         r.close()
+
+if __name__ == '__main__':
+    main()
