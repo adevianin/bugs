@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
-from infrastructure.event_bus import event_bus
+from infrastructure.event_bus import get_event_bus
 from infrastructure.services.providers import get_engine_adapter, get_player_command_handler
 import json, logging
 from typing import Dict
@@ -12,6 +12,7 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         self._ea = get_engine_adapter()
         self._pch = get_player_command_handler()
         self._logger = logging.getLogger('request_logger')
+        self._event_bus = get_event_bus()
         self._init_pack_sent = False
 
         self._sync_send_step_pack = async_to_sync(self._send_step_pack)
@@ -19,10 +20,10 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self._user = self.scope["user"]
 
-        event_bus.add_listener('email_verified', self._on_email_verified)
-        event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
-        event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
-        event_bus.add_listener('engine_connection_error', self._on_engine_connection_error)
+        self._event_bus.add_listener('email_verified', self._on_email_verified)
+        self._event_bus.add_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
+        self._event_bus.add_listener('step_data_pack_ready', self._on_step_data_pack_ready)
+        self._event_bus.add_listener('engine_connection_error', self._on_engine_connection_error)
 
         if self._user.is_authenticated and self._ea.is_game_working:
             await self.accept()
@@ -32,10 +33,10 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         self._ea.disconnect_player(self._user.id)
-        event_bus.remove_listener('email_verified', self._on_email_verified)
-        event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
-        event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)
-        event_bus.remove_listener('engine_connection_error', self._on_engine_connection_error)
+        self._event_bus.remove_listener('email_verified', self._on_email_verified)
+        self._event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
+        self._event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)
+        self._event_bus.remove_listener('engine_connection_error', self._on_engine_connection_error)
         return await super().disconnect(code)
     
     async def receive(self, text_data = None, bytes_data = None):

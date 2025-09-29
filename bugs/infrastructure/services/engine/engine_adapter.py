@@ -4,7 +4,7 @@ from typing import List, Dict
 import threading, redis, json, time
 import asyncio
 from asgiref.sync import async_to_sync
-from infrastructure.event_bus import event_bus
+from infrastructure.event_bus import EventBus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
@@ -15,7 +15,9 @@ class EngineAdapter:
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
-    def __init__(self, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis):
+    def __init__(self, event_bus: EventBus, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis):
+        self._event_bus = event_bus
+        
         self._redis = redis
 
         self._world_data_repository = world_data_repository
@@ -334,7 +336,7 @@ class EngineAdapter:
                             self._on_command_error(data)
             except redis.exceptions.ConnectionError as e:
                 log_error('redis connection error. listen engine_out')
-                event_bus.emit('engine_connection_error')
+                self._event_bus.emit('engine_connection_error')
                 self._is_listening_engine_out_error.set()
 
         world_thread = threading.Thread(target=listen, daemon=True)
@@ -343,11 +345,11 @@ class EngineAdapter:
     def _on_init_step_data_pack_msg(self, data: Dict):
         data['players_data'] = {int(player_id): player_data for player_id, player_data in data['players_data'].items()}
         for player_id in data['players_data']:
-            event_bus.emit(f'init_step_data_pack_ready:{player_id}', data)
+            self._event_bus.emit(f'init_step_data_pack_ready:{player_id}', data)
 
     def _on_step_data_pack_msg(self, data: Dict):
         data['personal_actions'] = {int(player_id): actions for player_id, actions in data['personal_actions'].items()}
-        event_bus.emit(f'step_data_pack_ready', data)
+        self._event_bus.emit(f'step_data_pack_ready', data)
         self._step_number_manager(data['step'])
 
     def _step_number_manager(self, step_number: int):
