@@ -1,9 +1,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
 from infrastructure.event_bus import event_bus
-from infrastructure.services.engine.exceptions import EngineError, EngineStateConflictError
-from infrastructure.services.providers import get_engine_adapter
-import json, logging
+from infrastructure.services.providers import get_engine_adapter, get_player_command_handler
+import json
 from typing import Dict
 
 class MainSocketConsumer(AsyncWebsocketConsumer):
@@ -11,7 +10,7 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._ea = get_engine_adapter()
-        self._logger = logging.getLogger('request_logger')
+        self._pch = get_player_command_handler()
         self._init_pack_sent = False
 
         self._sync_send_step_pack = async_to_sync(self._send_step_pack)
@@ -45,92 +44,11 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
                 await self._on_player_command_msg(msg)
 
     async def _on_player_command_msg(self, command_msg: Dict):
-        user_id = self._user.id
-        data = command_msg['data']
-        command_id = command_msg['id']
-        command_type = command_msg['player_command_type']
+        is_success, data = await self._pch.handle_command_msg(self._user.id, command_msg['player_command_type'], command_msg['data'])
 
-        try:
-            await self._handle_player_command(user_id, command_id, command_type, data)
-        except EngineStateConflictError as e:
-            await self._send_player_command_result(command_id, False, { 'err_type': 'state_conflict_error', 'step': e.step})
-        except EngineError as e:
-            self._logger.error(f'player command engine error. command = {command_type}', exc_info=e)
-            await self._send_player_command_result(command_id, False, { 'err_type': 'engine_error' })
-        except Exception as e:
-            self._logger.error(f'player command unknown error. command = {command_type}', exc_info=e)
-            await self._send_player_command_result(command_id, False, { 'err_type': 'unknown' })
-
-    async def _handle_player_command(self, user_id: str, command_id: str, player_command_type: str, data: Dict):
-        match (player_command_type):
-            case 'fly_nuptial_flight':
-                await self._ea.fly_nuptial_flight_command(user_id, data['ant_id'])
-                await self._send_player_command_result(command_id)
-            case 'change_ant_guardian_behavior':
-                await self._ea.change_ant_guardian_behavior_command(user_id, data['ant_id'], data['behavior_value'])
-                await self._send_player_command_result(command_id)
-            case 'change_ant_cooperative_behavior':
-                await self._ea.change_ant_cooperative_behavior_command(user_id, data['ant_id'], data['is_enabled'])
-                await self._send_player_command_result(command_id)
-            case 'relocate_ant':
-                await self._ea.relocate_ant_command(user_id, data['ant_id'], data['nest_id'])
-                await self._send_player_command_result(command_id)
-
-            case 'stop_operation':
-                operation_id = await self._ea.stop_operation_command(user_id, data['colony_id'], data['operation_id'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'build_new_sub_nest_operation':
-                operation_id = await self._ea.build_new_sub_nest_operation_command(user_id, data['performing_colony_id'], data['building_site'], data['workers_count'], data['warriors_count'], data['nest_name'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'destroy_nest_operation':
-                operation_id = await self._ea.destroy_nest_operation_command(user_id, data['performing_colony_id'], data['nest_id'], data['workers_count'], data['warriors_count'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'pillage_nest_operation':
-                operation_id = await self._ea.pillage_nest_operation_command(user_id, data['performing_colony_id'], data['nest_to_pillage_id'], data['nest_for_loot_id'], data['workers_count'], data['warriors_count'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'transport_food_operation':
-                operation_id = await self._ea.transport_food_operation_command(user_id, data['performing_colony_id'], data['from_nest_id'], data['to_nest_id'], data['workers_count'], data['warriors_count'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'build_fortification_operation':
-                operation_id = await self._ea.build_fortification_operation_command(user_id, data['performing_colony_id'], data['nest_id'], data['workers_count'])
-                await self._send_player_command_result(command_id, True, operation_id)
-            case 'bring_bug_operation':
-                operation_id = await self._ea.bring_bug_operation_command(user_id, data['performing_colony_id'], data['nest_id'])
-                await self._send_player_command_result(command_id, True, operation_id)
-
-            case 'add_egg':
-                egg_id = await self._ea.add_egg_command(user_id, data['nest_id'], data['name'], data['is_fertilized'])
-                await self._send_player_command_result(command_id, True, egg_id)
-            case 'change_egg_caste':
-                await self._ea.change_egg_caste_command(user_id, data['nest_id'], data['egg_id'], data['ant_type'])
-                await self._send_player_command_result(command_id)
-            case 'change_egg_name':
-                await self._ea.change_egg_name_command(user_id, data['nest_id'], data['egg_id'], data['name'])
-                await self._send_player_command_result(command_id)
-            case 'delete_egg':
-                await self._ea.delete_egg_command(user_id, data['nest_id'], data['egg_id'])
-                await self._send_player_command_result(command_id)
-            case 'delete_larva':
-                await self._ea.delete_larva_command(user_id, data['nest_id'], data['larva_id'])
-                await self._send_player_command_result(command_id)
-            case 'rename_nest':
-                await self._ea.rename_nest_command(user_id, data['nest_id'], data['name'])
-                await self._send_player_command_result(command_id)
-
-            case 'found_colony':
-                await self._ea.found_colony_command(user_id, data['queen_id'], data['nuptial_male_id'], data['nest_building_site'], data['colony_name'])
-                await self._send_player_command_result(command_id)
-            case 'born_new_antara':
-                await self._ea.born_new_antara_command(user_id)
-                await self._send_player_command_result(command_id)
-            case 'change_specie_schema':
-                await self._ea.change_specie_schema_command(user_id, data['specie_schema'])
-                await self._send_player_command_result(command_id)
-
-    async def _send_player_command_result(self, command_id: str, is_success: bool = True, data: Dict = {}):
         await self.send(json.dumps({
             'type': 'command_result',
-            'id': command_id,
+            'id': command_msg['id'],
             'success': is_success,
             'data': data
         }))

@@ -1,6 +1,7 @@
 from .account_service import AccountService
 from .email_service import EmailService
 from .engine.engine_adapter import EngineAdapter
+from .player_command_handler import PlayerCommandHandler
 
 _instances = {}
 
@@ -21,3 +22,9 @@ def register_engine_adapter(ea: EngineAdapter):
 
 def get_engine_adapter() -> EngineAdapter:
     return _instances['engine_adapter']
+
+def register_player_command_handler(pch: PlayerCommandHandler):
+    _instances['player_command_handler'] = pch
+
+def get_player_command_handler() -> PlayerCommandHandler:
+    return _instances['player_command_handler']
