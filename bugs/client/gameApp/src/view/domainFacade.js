@@ -305,12 +305,6 @@ class DomainFacade {
         }, true);
     }
 
-    moveEggToLarvaInNest(nestId, eggId) {
-        return this._sendCommand('moveEggToLarvaInNest', {
-            nestId, eggId
-        }, true);
-    }
-
     deleteEggInNest(nestId, eggId) {
         return this._sendCommand('deleteEggInNest', {
             nestId, eggId

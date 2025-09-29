@@ -12,10 +12,10 @@ class ColonyService extends BaseGameService {
 
     static SAFETY_MARGIN = 2;
 
-    constructor(mainEventBus, world, colonyApi, worldFactory) {
+    constructor(mainEventBus, world, commandMessenger, worldFactory) {
         super(mainEventBus, world);
         this._mainEventBus = mainEventBus;
-        this._colonyApi = colonyApi;
+        this._commandMessenger = commandMessenger;
         this._world = world;
         this._worldFactory = worldFactory;
 
@@ -60,13 +60,22 @@ class ColonyService extends BaseGameService {
     }
 
     stopOperation(colonyId, operationId) {
-        this._colonyApi.stopOperation(colonyId, operationId);
+        this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('stop_operation', {
+            colony_id: colonyId,
+            operation_id: operationId
+        }));
     }
 
     async buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName) {
         try {
-            let result = await this._requestHandler(() => this._colonyApi.buildNewSubNestOperation(performingColonyId, buildingSite, workersCount, warriorsCount, nestName));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('build_new_sub_nest_operation', {
+                performing_colony_id: performingColonyId,
+                building_site: [buildingSite.x, buildingSite.y],
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                nest_name: nestName
+            }));
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -74,12 +83,18 @@ class ColonyService extends BaseGameService {
                 return this._makeErrorResultUnknownErr();
             }
         }
-}   
+    }   
 
     async destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId) {
         try {
-            let result = await this._requestHandler(() => this._colonyApi.destroyNestOperation(performingColonyId, warriorsCount, workersCount, nestId));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('destroy_nest_operation', {
+                performing_colony_id: performingColonyId,
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                nest_id: nestId
+            }));
+
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -91,8 +106,14 @@ class ColonyService extends BaseGameService {
 
     async pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount) {
         try {
-            let result = await this._requestHandler(() => this._colonyApi.pillageNestOperation(performingColonyId, pillagingNestId, nestForLootId, warriorsCount, workersCount));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('pillage_nest_operation', {
+                performing_colony_id: performingColonyId,
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                nest_to_pillage_id: pillagingNestId,
+                nest_for_loot_id: nestForLootId
+            }));
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -104,8 +125,14 @@ class ColonyService extends BaseGameService {
 
     async transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount) {
         try {
-            let result = await this._requestHandler(() => this._colonyApi.transportFoodOperation(performingColonyId, fromNestId, toNestId, workersCount, warriorsCount));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('transport_food_operation', {
+                performing_colony_id: performingColonyId,
+                workers_count: workersCount,
+                warriors_count: warriorsCount,
+                from_nest_id: fromNestId,
+                to_nest_id: toNestId
+            }));
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -117,8 +144,12 @@ class ColonyService extends BaseGameService {
 
     async buildFortificationsOpearation(performingColonyId, nestId, workersCount) {
         try {
-            let result = await this._requestHandler(() => this._colonyApi.buildFortificationsOpearation(performingColonyId, nestId, workersCount));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('build_fortification_operation', {
+                performing_colony_id: performingColonyId,
+                workers_count: workersCount,
+                nest_id: nestId
+            }));
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -130,8 +161,11 @@ class ColonyService extends BaseGameService {
 
     async bringBugOpearation(performingColonyId, nestId) {
         try{
-            let result = await this._requestHandler(() => this._colonyApi.bringBugOpearation(performingColonyId, nestId));
-            return this._makeSuccessResult({ operationId: result.operationId });
+            let operationId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('bring_bug_operation', {
+                performing_colony_id: performingColonyId,
+                nest_id: nestId
+            }));
+            return this._makeSuccessResult({ operationId: operationId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();

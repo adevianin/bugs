@@ -480,8 +480,6 @@ class Engine():
                         self._handle_change_egg_caste_command(command)
                     case 'change_egg_name':
                         self._handle_change_egg_name_command(command)
-                    case 'move_egg_to_larva_chamber':
-                        self._handle_move_egg_to_larva_chamber_command(command)
                     case 'delete_egg':
                         self._handle_delete_egg_command(command)
                     case 'delete_larva':
@@ -522,11 +520,6 @@ class Engine():
         data = command['data']
         self._colony_service.delete_egg(data['user_id'], data['nest_id'], data['egg_id'])
         self._send_command_result(command['id'], True)
-
-    def _handle_move_egg_to_larva_chamber_command(self, command: Dict):
-        data = command['data']
-        larva = self._colony_service.move_egg_to_larva_chamber(data['user_id'], data['nest_id'], data['egg_id'])
-        self._send_command_result(command['id'], larva.id)
 
     def _handle_change_egg_name_command(self, command: Dict):
         data = command['data']

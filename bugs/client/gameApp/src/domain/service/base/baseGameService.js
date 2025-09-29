@@ -23,6 +23,19 @@ class BaseGameService extends BaseService {
         }
     }
 
+    async _commandMessengerRequestHandler(commandMessengerSendFunc) {
+        try {
+            return await commandMessengerSendFunc();
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                await this._waitStepSync(e.data.step);
+                throw e;
+            } else {
+                throw e;
+            }
+        }
+    }
+
     async _waitStepSync(stepNumber) {
         console.log('waiting step', stepNumber, 'current', this._world.currentStep);
         return new Promise((res, rej) => {

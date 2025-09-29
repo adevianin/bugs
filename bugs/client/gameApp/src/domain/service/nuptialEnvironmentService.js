@@ -1,12 +1,14 @@
 import { BaseGameService } from "./base/baseGameService";
+import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { ACTION_TYPES } from "@domain/entity/action/actionTypes";
 
 class NuptialEnvironmentService extends BaseGameService {
 
-    constructor(mainEventBus, world, nuptialEnv, nuptialEnvironmentApi) {
+    constructor(mainEventBus, world, nuptialEnv, commandMessenger) {
         super(mainEventBus, world);
         this._nuptialEnv = nuptialEnv;
-        this._nuptialEnvironmentApi = nuptialEnvironmentApi;
+        this._commandMessenger = commandMessenger;
     }
 
     init(specieData, nuptialMales) {
@@ -14,25 +16,34 @@ class NuptialEnvironmentService extends BaseGameService {
         this._nuptialEnv.setNuptialMales(nuptialMales);
     }
 
-    foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
+    async foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName) {
         try {
-            this._requestHandler(() => this._nuptialEnvironmentApi.foundColony(queenId, nuptialMaleId, nestBuildingSite, colonyName));
+            await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('found_colony', {
+                queen_id: queenId,
+                nuptial_male_id: nuptialMaleId,
+                nest_building_site: [nestBuildingSite.x, nestBuildingSite.y],
+                colony_name: colonyName
+            }));
             return this._makeSuccessResult();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
             } else if (e instanceof GenericRequestError) {
                 return this._makeErrorResultUnknownErr();
+            } else {
+                throw e;
             }
         }
     }
 
     bornNewAntara() {
-        this._nuptialEnvironmentApi.bornNewAntara();
+        this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('born_new_antara'));
     }
 
     saveSpecieSchema(schema) {
-        this._nuptialEnvironmentApi.saveSpecieSchema(schema);
+        this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('change_specie_schema', {
+            specie_schema: schema
+        }));
     }
 
     playAction(action) {

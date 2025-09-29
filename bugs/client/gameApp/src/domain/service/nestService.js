@@ -7,15 +7,19 @@ import { GAME_MESSAGE_IDS } from "@messages/messageIds";
 
 class NestService extends BaseGameService {
 
-    constructor(mainEventBus, world, nestApi) {
+    constructor(mainEventBus, world, commandMessenger) {
         super(mainEventBus, world);
-        this._nestApi = nestApi;
+        this._commandMessenger = commandMessenger;
     }
 
     async layEggInNest(nestId, name, isFertilized) {
         try {
-            let result = await this._requestHandler(() => this._nestApi.layEggInNest(nestId, name, isFertilized));
-            return this._makeSuccessResult({ eggId: result.eggId });
+            let eggId = await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('add_egg', {
+                nest_id: nestId,
+                name: name,
+                is_fertilized: isFertilized
+            }));
+            return this._makeSuccessResult({ eggId: eggId });
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 return this._makeErrorResultConflict();
@@ -26,40 +30,44 @@ class NestService extends BaseGameService {
     }
 
     async changeEggCasteInNest(nestId, eggId, antType) {
-        await this._requestHandler(() => this._nestApi.changeEggCaste(nestId, eggId, antType));
+        await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('change_egg_caste', {
+            nest_id: nestId,
+            egg_id: eggId,
+            ant_type: antType
+        }));
         let nest = this._world.findEntityById(nestId);
         nest.changeCasteForEgg(eggId, antType);
     }
 
     async changeEggNameInNest(nestId, eggId, name) {
-        await this._requestHandler(() => this._nestApi.changeEggName(nestId, eggId, name));
+        await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('change_egg_name', {
+            nest_id: nestId,
+            egg_id: eggId,
+            name: name
+        }));
         let nest = this._world.findEntityById(nestId);
         nest.changeNameForEgg(eggId, name);
     }
 
-    async moveEggToLarvaInNest(nestId, eggId) {
-        try {
-            let result = await this._requestHandler(() => this._nestApi.eggToLarvaChamber(nestId, eggId));
-            return this._makeSuccessResult({ larvaId: result.larvaId });
-        } catch (e) {
-            if (e instanceof ConflictRequestError) {
-                return this._makeErrorResultConflict();
-            } else if (e instanceof GenericRequestError) {
-                return this._makeErrorResultUnknownErr();
-            }
-        }
-    }
-
     async deleteEggInNest(nestId, eggId) {
-        await this._requestHandler(() => this._nestApi.eggDelete(nestId, eggId));
+        await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('delete_egg', {
+            nest_id: nestId,
+            egg_id: eggId
+        }));
     }
 
     async deleteLarvaInNest(nestId, larvaId) {
-        await this._requestHandler(() => this._nestApi.larvaDelete(nestId, larvaId));
+        await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('delete_larva', {
+            nest_id: nestId,
+            larva_id: larvaId
+        }));
     }
 
     async renameNest(nestId, name) {
-        await this._requestHandler(() => this._nestApi.renameNest(nestId, name));
+        await this._commandMessengerRequestHandler(() => this._commandMessenger.sendPlayerCommand('rename_nest', {
+            nest_id: nestId,
+            name: name
+        }));
     }
 
     validateLayingEggInNest(nestId) {

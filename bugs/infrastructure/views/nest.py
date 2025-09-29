@@ -68,16 +68,6 @@ def change_egg_name(request: HttpRequest, nest_id: int, egg_id: int):
 
 @require_POST
 @login_required     
-def move_egg_to_larva_chamber(request: HttpRequest, nest_id: int, egg_id: int):
-    ea = EngineAdapter.get_instance()
-    larva_id = ea.move_egg_to_larva_chamber_command(request.user.id, nest_id, egg_id)
-
-    return JsonResponse({
-        'larvaId': larva_id
-    }, status=201)
-
-@require_POST
-@login_required     
 def delete_egg(request: HttpRequest, nest_id: int, egg_id: int):
     ea = EngineAdapter.get_instance()
     ea.delete_egg_command(request.user.id, nest_id, egg_id)

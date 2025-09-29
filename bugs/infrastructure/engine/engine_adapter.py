@@ -2,7 +2,8 @@ import redis.exceptions
 from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD
 from typing import List, Dict
 import threading, redis, json, time
-from concurrent.futures import Future, TimeoutError
+import asyncio
+from asgiref.sync import async_to_sync
 from infrastructure.event_bus import event_bus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
@@ -32,7 +33,7 @@ class EngineAdapter:
         self._usernames_repository = usernames_repository
 
         self._last_used_command_id = 0
-        self._command_futures = {}
+        self._command_futures: Dict[str, asyncio.Future] = {}
         self._generate_id_lock = threading.Lock()
 
         self._is_listening_engine_out_error: threading.Event = threading.Event()
@@ -48,38 +49,38 @@ class EngineAdapter:
     # <ADMIN_COMMANDS>
     def init_world_admin_command(self):
         world_data = self._world_data_repository.get(WORLD_ID)
-        self._send_command_to_engine('init_world', {
+        async_to_sync(self._send_command_to_engine)('init_world', {
             'world_data': world_data,
             'users_data': self._usernames_repository.get_usernames()
-        }, True, True)
+        }, True)
 
     def save_world_admin_command(self):
-        world_data = self._send_command_to_engine('get_world_state', None, True, True)
+        world_data = async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
         self._world_data_repository.push(WORLD_ID, world_data)
 
     def count_ants_command(self):
-        return self._send_command_to_engine('count_ants', None, True, True)
+        return async_to_sync(self._send_command_to_engine)('count_ants', None, True)
 
     def populate_for_performance_test_command(self, player_id: int):
-        self._send_command_to_engine('populate_for_performance_test', player_id, True, True)
+        async_to_sync(self._send_command_to_engine)('populate_for_performance_test', player_id, True)
     
     def run_world_admin_command(self):
-        self._send_command_to_engine('start_world_stepping', None, True, True)
+        async_to_sync(self._send_command_to_engine)('start_world_stepping', None, True)
 
     def stop_world_admin_command(self):
-        self._send_command_to_engine('stop_world_stepping', None, True, True)
+        async_to_sync(self._send_command_to_engine)('stop_world_stepping', None, True)
 
     def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
-        self._send_command_to_engine('expand_map', {
+        async_to_sync(self._send_command_to_engine)('expand_map', {
             'chunk_rows': chunk_rows,
             'chunk_cols': chunk_cols
-        }, True, True)
+        }, True)
 
     def get_world_data(self):
-        return self._send_command_to_engine('get_world_state', None, True, True)
+        return async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
 
     def _generate_rating_command(self):
-        self._send_command_to_engine('generate_rating', self._usernames_repository.get_usernames(), False, True)
+        async_to_sync(self._send_command_to_engine)('generate_rating', self._usernames_repository.get_usernames(), True)
 
     # </ADMIN_COMMANDS>
 
@@ -94,165 +95,159 @@ class EngineAdapter:
             'player_id': player_id
         })
 
-    def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
-        return self._send_command_to_engine('stop_operation', {
+    async def stop_operation_command(self, user_id: int, colony_id: int, operation_id: int):
+        return await self._send_command_to_engine('stop_operation', {
             'user_id': user_id,
             'colony_id': colony_id,
             'operation_id': operation_id,
-        }, True)
+        })
     
-    def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: List[int], workers_count: int, warriors_count: int, nest_name: str):
-        return self._send_command_to_engine('build_new_sub_nest_operation', {
+    async def build_new_sub_nest_operation_command(self, user_id: int, performing_colony_id: int, building_site: List[int], workers_count: int, warriors_count: int, nest_name: str):
+        return await self._send_command_to_engine('build_new_sub_nest_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'building_site': building_site,
             'workers_count': workers_count,
             'warriors_count': warriors_count,
             'nest_name': nest_name,
-        }, True)
+        })
     
-    def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
-        return self._send_command_to_engine('destroy_nest_operation', {
+    async def destroy_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int, warriors_count: int):
+        return await self._send_command_to_engine('destroy_nest_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'nest_id': nest_id,
             'workers_count': workers_count,
             'warriors_count': warriors_count
-        }, True)
+        })
 
-    def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
-        return self._send_command_to_engine('pillage_nest_operation', {
+    async def pillage_nest_operation_command(self, user_id: int, performing_colony_id: int, nest_to_pillage_id: int, nest_for_loot_id: int, workers_count: int, warriors_count: int):
+        return await self._send_command_to_engine('pillage_nest_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'nest_to_pillage_id': nest_to_pillage_id,
             'nest_for_loot_id': nest_for_loot_id,
             'workers_count': workers_count,
             'warriors_count': warriors_count
-        }, True)
+        })
 
-    def transport_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
-        return self._send_command_to_engine('transport_food_operation', {
+    async def transport_food_operation_command(self, user_id: int, performing_colony_id: int, from_nest_id: int, to_nest_id: int, workers_count: int, warriors_count: int):
+        return await self._send_command_to_engine('transport_food_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'from_nest_id': from_nest_id,
             'to_nest_id': to_nest_id,
             'workers_count': workers_count,
             'warriors_count': warriors_count
-        }, True)
+        })
 
-    def build_fortification_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
-        return self._send_command_to_engine('build_fortification_operation', {
+    async def build_fortification_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int, workers_count: int):
+        return await self._send_command_to_engine('build_fortification_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'nest_id': nest_id,
             'workers_count': workers_count
-        }, True)
+        })
     
-    def bring_bug_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int):
-        return self._send_command_to_engine('bring_bug_operation', {
+    async def bring_bug_operation_command(self, user_id: int, performing_colony_id: int, nest_id: int):
+        return await self._send_command_to_engine('bring_bug_operation', {
             'user_id': user_id,
             'performing_colony_id': performing_colony_id,
             'nest_id': nest_id
-        }, True)
+        })
 
-    def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
-        return self._send_command_to_engine('add_egg', {
+    async def add_egg_command(self, user_id: int, nest_id: int, name: str, is_fertilized: bool):
+        return await self._send_command_to_engine('add_egg', {
             'user_id': user_id,
             'name': name,
             'nest_id': nest_id,
             'is_fertilized': is_fertilized
-        }, True)
+        })
 
-    def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: str):
-        return self._send_command_to_engine('change_egg_caste', {
+    async def change_egg_caste_command(self, user_id: int, nest_id: int, egg_id: str, ant_type: str):
+        return await self._send_command_to_engine('change_egg_caste', {
             'user_id': user_id,
             'nest_id': nest_id,
             'egg_id': egg_id,
             'ant_type': ant_type,
-        }, True)
+        })
 
-    def change_egg_name_command(self, user_id: int, nest_id: int, egg_id: str, name: str):
-        return self._send_command_to_engine('change_egg_name', {
+    async def change_egg_name_command(self, user_id: int, nest_id: int, egg_id: str, name: str):
+        return await self._send_command_to_engine('change_egg_name', {
             'user_id': user_id,
             'nest_id': nest_id,
             'egg_id': egg_id,
             'name': name,
-        }, True)
+        })
 
-    def move_egg_to_larva_chamber_command(self, user_id: int, nest_id: int, egg_id: str):
-        return self._send_command_to_engine('move_egg_to_larva_chamber', {
+
+    async def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):
+        return await self._send_command_to_engine('delete_egg', {
             'user_id': user_id,
             'nest_id': nest_id,
             'egg_id': egg_id
-        }, True)
+        })
 
-    def delete_egg_command(self, user_id: int, nest_id: int, egg_id: str):
-        return self._send_command_to_engine('delete_egg', {
-            'user_id': user_id,
-            'nest_id': nest_id,
-            'egg_id': egg_id
-        }, True)
-
-    def delete_larva_command(self, user_id: int, nest_id: int, larva_id: str):
-        return self._send_command_to_engine('delete_larva', {
+    async def delete_larva_command(self, user_id: int, nest_id: int, larva_id: str):
+        return await self._send_command_to_engine('delete_larva', {
             'user_id': user_id,
             'nest_id': nest_id,
             'larva_id': larva_id
-        }, True)
+        })
 
-    def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: List[int], colony_name: str):
-        return self._send_command_to_engine('found_colony', {
+    async def found_colony_command(self, user_id: int, queen_id: int, nuptial_male_id: int, nest_building_site: List[int], colony_name: str):
+        return await self._send_command_to_engine('found_colony', {
             'user_id': user_id,
             'queen_id': queen_id,
             'nuptial_male_id': nuptial_male_id,
             'nest_building_site': nest_building_site,
             'colony_name': colony_name
-        }, True)
+        })
 
-    def born_new_antara_command(self, user_id: int):
-        return self._send_command_to_engine('born_new_antara', {
+    async def born_new_antara_command(self, user_id: int):
+        return await self._send_command_to_engine('born_new_antara', {
             'user_id': user_id
-        }, True)
+        })
 
-    def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
-        return self._send_command_to_engine('fly_nuptial_flight', {
+    async def fly_nuptial_flight_command(self, user_id: int, ant_id: int):
+        return await self._send_command_to_engine('fly_nuptial_flight', {
             'user_id': user_id,
             'ant_id': ant_id
-        }, True)
+        })
 
-    def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, guaridan_behavior: str):
-        return self._send_command_to_engine('change_ant_guardian_behavior', {
+    async def change_ant_guardian_behavior_command(self, user_id: int, ant_id: int, guaridan_behavior: str):
+        return await self._send_command_to_engine('change_ant_guardian_behavior', {
             'user_id': user_id,
             'ant_id': ant_id,
             'guaridan_behavior': guaridan_behavior,
-        }, True)
+        })
 
-    def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
-        return self._send_command_to_engine('change_ant_cooperative_behavior', {
+    async def change_ant_cooperative_behavior_command(self, user_id: int, ant_id: int, is_enabled: bool):
+        return await self._send_command_to_engine('change_ant_cooperative_behavior', {
             'user_id': user_id,
             'ant_id': ant_id,
             'is_enabled': is_enabled,
-        }, True)
+        })
 
-    def relocate_ant_command(self, user_id: int, ant_id: int, nest_id: int):
-        return self._send_command_to_engine('relocate_ant', {
+    async def relocate_ant_command(self, user_id: int, ant_id: int, nest_id: int):
+        return await self._send_command_to_engine('relocate_ant', {
             'user_id': user_id,
             'ant_id': ant_id,
             'nest_id': nest_id,
-        }, True)
+        })
 
-    def change_specie_schema_command(self, user_id: int, specie_schema: Dict):
-        return self._send_command_to_engine('change_specie_schema', {
+    async def change_specie_schema_command(self, user_id: int, specie_schema: Dict):
+        return await self._send_command_to_engine('change_specie_schema', {
             'user_id': user_id,
             'specie_schema': specie_schema,
-        }, True)
+        })
 
-    def rename_nest_command(self, user_id: int, nest_id: int, name: str):
-        return self._send_command_to_engine('rename_nest', {
+    async def rename_nest_command(self, user_id: int, nest_id: int, name: str):
+        return await self._send_command_to_engine('rename_nest', {
             'user_id': user_id,
             'name': name,
             'nest_id': nest_id
-        }, True)
+        })
 
     # </PLAYER_COMMANDS>
 
@@ -291,26 +286,30 @@ class EngineAdapter:
             self._last_used_command_id += 1
             return self._last_used_command_id
 
-    def _send_command_to_engine(self, type: str, data: Dict, wait_result: bool, is_from_admin: bool = False):
+    async def _send_command_to_engine(self, type: str, data: Dict, is_from_admin: bool = False):
         command_id = self._generate_command_id()
-        if wait_result:
-            command_future = Future()
-            self._command_futures[command_id] = command_future
+        loop = asyncio.get_running_loop()
+        command_future = loop.create_future()
+        self._command_futures[command_id] = command_future
+
         self._send_msg_to_engine('command', {
             'id': command_id,
             'from': 'admin' if is_from_admin else 'player',
             'type': type,
             'data': data
         })
-        if wait_result:
-            try:
-                res = command_future.result(EngineAdapter.WAIT_COMMAND_RESULT_TIMEOUT)
-                return res
-            except TimeoutError as e:
-                log_error(f'command time out, command type={type}')
-                raise EngineResponseTimeoutError()
-            finally:
-                del self._command_futures[command_id]
+
+        try:
+            res = await asyncio.wait_for(
+                command_future,
+                timeout=self.WAIT_COMMAND_RESULT_TIMEOUT
+            )
+            return res
+        except asyncio.TimeoutError:
+            log_error(f'command time out, command type={type}')
+            raise EngineResponseTimeoutError()
+        finally:
+            self._command_futures.pop(command_id, None)
 
     def _redis_watcher(self):
         def ping():
@@ -369,13 +368,13 @@ class EngineAdapter:
     def _on_command_result(self, data: Dict):
         command_id = data['command_id']
         if command_id in self._command_futures:
-            future: Future = self._command_futures[command_id]
+            future = self._command_futures[command_id]
             future.set_result(data['result'])
 
     def _on_command_error(self, data: Dict):
         command_id = data['command_id']
         if command_id in self._command_futures:
-            future: Future = self._command_futures[command_id]
+            future = self._command_futures[command_id]
             match (data['err_code']):
                 case 'state_conflict_error':
                     future.set_exception(EngineStateConflictError(data['err_data']['step']))

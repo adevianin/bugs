@@ -1,7 +1,7 @@
 import { initConsts } from "@domain/consts";
 import { CONSTS } from "@domain/consts";
 
-class MessageHandlerService {
+class WorldMessageHandlerService {
 
     static MAX_STEP_MSGS_Q = 5;
 
@@ -36,11 +36,6 @@ class MessageHandlerService {
             case 'step':
                 this._onStepMsg(msg);
                 break;
-            case 'email_verified':
-                this._handleEmailVerifiedMsg(msg);
-                break;
-            default: 
-                throw `unknown type of message "${ msg.type }"`
         }
     }
 
@@ -50,7 +45,7 @@ class MessageHandlerService {
         }
         this._stepMessageQueue.push(msg);
 
-        if (this._stepMessageQueue.length > MessageHandlerService.MAX_STEP_MSGS_Q) {
+        if (this._stepMessageQueue.length > this.MAX_STEP_MSGS_Q) {
             console.warn('step msgs queue is too long = ', this._stepMessageQueue.length, '. messages arent handling, closing server connection');
             this._serverConnection.disconnect();
         }
@@ -136,10 +131,6 @@ class MessageHandlerService {
         this._mainEventBus.emit('stepDone', msg.step);
     }
 
-    _handleEmailVerifiedMsg() {
-        this._userService.verifyEmailForUser();
-    }
-
     _onConnectionClosedFromServer() {
         this._mainEventBus.emit('connectionClosedFromServer');
     }
@@ -147,5 +138,5 @@ class MessageHandlerService {
 }
 
 export {
-    MessageHandlerService
+    WorldMessageHandlerService
 }
