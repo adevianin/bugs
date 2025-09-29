@@ -17,9 +17,6 @@ class PlayerCommandHandler():
         except EngineError as e:
             self._logger.error(f'player command engine error. command = {command_type}', exc_info=e)
             return self._prepare_command_result(False, { 'err_type': 'engine_error' })
-        except Exception as e:
-            self._logger.error(f'player command unknown error. command = {command_type}', exc_info=e)
-            return self._prepare_command_result(False, { 'err_type': 'unknown' })
 
     async def _handle_player_command(self, user_id: str, command_type: str, data: Dict):
         match (command_type):

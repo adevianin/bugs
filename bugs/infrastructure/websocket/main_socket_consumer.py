@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import async_to_sync
 from infrastructure.event_bus import event_bus
 from infrastructure.services.providers import get_engine_adapter, get_player_command_handler
-import json
+import json, logging
 from typing import Dict
 
 class MainSocketConsumer(AsyncWebsocketConsumer):
@@ -11,6 +11,7 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self._ea = get_engine_adapter()
         self._pch = get_player_command_handler()
+        self._logger = logging.getLogger('request_logger')
         self._init_pack_sent = False
 
         self._sync_send_step_pack = async_to_sync(self._send_step_pack)
@@ -38,10 +39,13 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         return await super().disconnect(code)
     
     async def receive(self, text_data = None, bytes_data = None):
-        msg = json.loads(text_data)
-        match (msg['type']):
-            case 'player_command':
-                await self._on_player_command_msg(msg)
+        try:
+            msg = json.loads(text_data)
+            match (msg['type']):
+                case 'player_command':
+                    await self._on_player_command_msg(msg)
+        except Exception as e:
+            self._logger.warning('WebsocketConsumer error', exc_info=e)
 
     async def _on_player_command_msg(self, command_msg: Dict):
         is_success, data = await self._pch.handle_command_msg(self._user.id, command_msg['player_command_type'], command_msg['data'])

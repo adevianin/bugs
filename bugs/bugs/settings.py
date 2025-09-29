@@ -168,8 +168,8 @@ LOGGING = {
             "propagate": False,
         },
         'request_logger': {
-            'handlers': ['request_file'],
-            'level': 'ERROR',
+            'handlers': ['console', 'game_file'],
+            'level': 'DEBUG',
             'propagate': False,
         },
         'game_logger': {
