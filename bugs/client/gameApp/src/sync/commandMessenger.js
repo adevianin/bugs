@@ -55,8 +55,9 @@ class CommandMessenger {
                         commandResolver.setError(new ConflictRequestError({step: data.step}));
                         break;
                     case 'engine_error':
-                    case 'unknown':
                         commandResolver.setError(new GenericRequestError());
+                    default:
+                        commandResolver.setError(new Error(data.err_type));
                 }
             }
         }

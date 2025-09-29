@@ -83,6 +83,10 @@ class PlayerCommandHandler():
             case 'change_specie_schema':
                 await self._ea.change_specie_schema_command(user_id, data['specie_schema'])
                 return self._prepare_command_result()
+            
+            case _:
+                self._logger.warning(f'unknown type of command = "{command_type}"')
+                return self._prepare_command_result(False, { 'err_type': 'unknown_command_type' })
 
     def _prepare_command_result(self, is_success: bool = True, data: Dict = {}):
         return is_success, data
