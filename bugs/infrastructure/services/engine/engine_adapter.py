@@ -79,8 +79,8 @@ class EngineAdapter:
             except Exception as e:
                 self._logger.error('rating generation error', exc_info=e)
         
-        redis_watcher_thread = threading.Thread(target=send_command, daemon=True)
-        redis_watcher_thread.start()
+        thread = threading.Thread(target=send_command, daemon=True)
+        thread.start()
 
     def _backup_world_command(self):
         def backup():
@@ -90,8 +90,8 @@ class EngineAdapter:
             except Exception as e:
                 self._logger.error('error during backup', exc_info=e)
 
-        redis_watcher_thread = threading.Thread(target=backup, daemon=True)
-        redis_watcher_thread.start()
+        thread = threading.Thread(target=backup, daemon=True)
+        thread.start()
 
     # </ADMIN_COMMANDS>
 
