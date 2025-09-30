@@ -5,6 +5,6 @@ venv
 __pycache__/
 bugs/db.sqlite3
 .env
-game_errors.log
-request_errors.log
+engine_errors.log
+django_errors.log
 backups

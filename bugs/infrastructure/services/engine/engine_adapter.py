@@ -8,7 +8,6 @@ from infrastructure.event_bus import EventBus
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
-from infrastructure.utils.log_error import log_error
 from infrastructure.services.world_backup_saver import WorldBackupSaver
 import logging
 
@@ -279,7 +278,7 @@ class EngineAdapter:
                 is_world_stepping = status['is_world_stepping']
                 players_online = status['players_online']
         except redis.exceptions.ConnectionError as e:
-            log_error('redis connection error. couldnt get world status')
+            self._logger.error('redis connection error. couldnt get world status')
 
         return {
             'is_world_inited': is_world_inited,
@@ -294,7 +293,7 @@ class EngineAdapter:
                 'data': data
             }))
         except redis.exceptions.ConnectionError as e:
-            log_error('redis connection error. couldnt send msg to engine')
+            self._logger.error('redis connection error. couldnt send msg to engine')
 
     def _generate_command_id(self):
         with self._generate_id_lock:
@@ -321,7 +320,7 @@ class EngineAdapter:
             )
             return res
         except asyncio.TimeoutError:
-            log_error(f'command time out, command type={type}')
+            self._logger.error(f'command time out, command type={type}')
             raise EngineResponseTimeoutError()
         finally:
             self._command_futures.pop(command_id, None)
@@ -334,7 +333,7 @@ class EngineAdapter:
                     if self._is_listening_engine_out_error.is_set():
                         self._listen_engine_out()
                 except redis.exceptions.ConnectionError as e:
-                    log_error('redis connection error. watcher')
+                    self._logger.error('redis connection error. watcher')
                 time.sleep(1)
 
         redis_watcher_thread = threading.Thread(target=ping, daemon=True)
@@ -359,7 +358,7 @@ class EngineAdapter:
                         case 'command_error':
                             self._on_command_error(data)
             except redis.exceptions.ConnectionError as e:
-                log_error('redis connection error. listen engine_out')
+                self._logger.error('redis connection error. listen engine_out')
                 self._event_bus.emit('engine_connection_error')
                 self._is_listening_engine_out_error.set()
 

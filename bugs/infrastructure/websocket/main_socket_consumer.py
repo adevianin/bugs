@@ -11,7 +11,7 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         super().__init__(*args, **kwargs)
         self._ea = get_engine_adapter()
         self._pch = get_player_command_handler()
-        self._logger = logging.getLogger('request_logger')
+        self._logger = logging.getLogger('django_logger')
         self._event_bus = get_event_bus()
         self._init_pack_sent = False
 

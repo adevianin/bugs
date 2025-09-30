@@ -139,23 +139,17 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'request_file': {
+        'djangon_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'request_errors.log',
+            'filename': 'django_errors.log',
             'formatter': 'detailed',
         },
         "console": {
             "class": "logging.StreamHandler",
             'level': 'INFO',
             'formatter': 'detailed',
-        },
-        'game_file': {
-            'class': 'logging.FileHandler',
-            'level': 'ERROR',
-            'filename': 'game_errors.log',
-            'formatter': 'detailed',
-        },
+        }
     },
     'formatters': {
         'detailed': {
@@ -168,16 +162,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
-        'request_logger': {
-            'handlers': ['console', 'request_file'],
+        'django_logger': {
+            'handlers': ['console', 'djangon_file'],
             'level': 'DEBUG',
             'propagate': False,
-        },
-        'game_logger': {
-            'handlers': ['console', 'game_file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
+        }
     },
 }
 

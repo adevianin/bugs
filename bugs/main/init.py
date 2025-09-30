@@ -14,7 +14,7 @@ from infrastructure.services.world_backup_saver import WorldBackupSaver
 def init():
     event_bus = EventBus()
 
-    logger = logging.getLogger('request_logger')
+    logger = logging.getLogger('django_logger')
 
     world_data_repository = WorldDataRepository()
     usernames_repository = UsernamesRepository()
