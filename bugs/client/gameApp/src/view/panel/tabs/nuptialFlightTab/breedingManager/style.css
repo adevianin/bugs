@@ -19,6 +19,7 @@
 .breeding-manager__breed-btn-container {
     display: flex;
     justify-content: center;
+    gap: var(--margin-small);
 }
 
 .breeding-manager__queen-section {

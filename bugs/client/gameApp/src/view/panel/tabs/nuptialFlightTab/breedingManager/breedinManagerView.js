@@ -10,6 +10,7 @@ import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { CONSTS } from '@domain/consts';
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
 import { ErrorCodes } from "@domain/enum/errorCodes";
+import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 
 class BreedingManagerView extends BaseGameHTMLView {
 
@@ -45,6 +46,7 @@ class BreedingManagerView extends BaseGameHTMLView {
         this._queenErrorContainerEl = this._el.querySelector('[data-queen-error-container]');
         this._maleErrorContainerEl = this._el.querySelector('[data-male-error-container]');
         this._nestPositionErrorContainerEl = this._el.querySelector('[data-nest-position-error-container]');
+        this._loader = new DotsLoaderView(this._el.querySelector('[data-loader]'));
     }
 
     async _validate() {
@@ -110,6 +112,8 @@ class BreedingManagerView extends BaseGameHTMLView {
             return;
         }
 
+        this._loader.toggleVisibility(true);
+        
         let result = await this.$domain.foundColony(
             this._queenSelectorView.queen.id,
             this._malesSelectorView.selectedMale.id,
@@ -121,7 +125,9 @@ class BreedingManagerView extends BaseGameHTMLView {
             this.$eventBus.emit('showPointRequest', this._nestPositionView.value);
             this.$eventBus.emit('panelFoldRequest');
             this._resetFields();
+            this._loader.toggleVisibility(false);
         } else {
+            this._loader.toggleVisibility(false);
             if (result.errCode == ErrorCodes.CONFLICT) {
                 await this._validate();
             } else {
