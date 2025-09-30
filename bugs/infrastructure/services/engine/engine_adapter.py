@@ -385,7 +385,7 @@ class EngineAdapter:
         command_id = data['command_id']
         if command_id in self._command_futures:
             future = self._command_futures[command_id]
-            future.set_result(data['result'])
+            future._loop.call_soon_threadsafe(future.set_result, data['result'])
 
     def _on_command_error(self, data: Dict):
         command_id = data['command_id']
@@ -393,6 +393,8 @@ class EngineAdapter:
             future = self._command_futures[command_id]
             match (data['err_code']):
                 case 'state_conflict_error':
-                    future.set_exception(EngineStateConflictError(data['err_data']['step']))
+                    exception = EngineStateConflictError(data['err_data']['step'])
                 case _:
-                    future.set_exception(EngineError())
+                    exception = EngineError()
+            
+            future._loop.call_soon_threadsafe(future.set_exception, exception)
