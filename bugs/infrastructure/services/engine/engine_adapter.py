@@ -30,11 +30,8 @@ class EngineAdapter:
         self._command_futures: Dict[str, asyncio.Future] = {}
         self._generate_id_lock = threading.Lock()
 
-        self._is_listening_engine_out_error: threading.Event = threading.Event()
-
         self._world_backup_saver = world_backup_saver
 
-        self._redis_watcher()
         self._listen_engine_out()
 
     @property
@@ -325,42 +322,28 @@ class EngineAdapter:
         finally:
             self._command_futures.pop(command_id, None)
 
-    def _redis_watcher(self):
-        def ping():
+    def _listen_engine_out(self):
+        def listen():
             while True:
                 try:
-                    self._redis.ping()
-                    if self._is_listening_engine_out_error.is_set():
-                        self._listen_engine_out()
+                    pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                    pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
+                    for redis_msg in pubsub.listen():
+                        msg = json.loads(redis_msg['data'])
+                        data = msg['data']
+                        match (msg['type']):
+                            case 'init_step_data_pack':
+                                self._on_init_step_data_pack_msg(data)
+                            case 'step_data_pack':
+                                self._on_step_data_pack_msg(data)
+                            case 'command_result':
+                                self._on_command_result(data)
+                            case 'command_error':
+                                self._on_command_error(data)
                 except redis.exceptions.ConnectionError as e:
-                    self._logger.error('redis connection error. watcher')
-                time.sleep(1)
-
-        redis_watcher_thread = threading.Thread(target=ping, daemon=True)
-        redis_watcher_thread.start()
-
-    def _listen_engine_out(self):
-        self._is_listening_engine_out_error.clear()
-        def listen():
-            try:
-                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
-                for redis_msg in pubsub.listen():
-                    msg = json.loads(redis_msg['data'])
-                    data = msg['data']
-                    match (msg['type']):
-                        case 'init_step_data_pack':
-                            self._on_init_step_data_pack_msg(data)
-                        case 'step_data_pack':
-                            self._on_step_data_pack_msg(data)
-                        case 'command_result':
-                            self._on_command_result(data)
-                        case 'command_error':
-                            self._on_command_error(data)
-            except redis.exceptions.ConnectionError as e:
-                self._logger.error('redis connection error. listen engine_out')
-                self._event_bus.emit('engine_connection_error')
-                self._is_listening_engine_out_error.set()
+                    self._logger.error('redis connection error. listen engine_out')
+                    self._event_bus.emit('engine_connection_error')
+                    time.sleep(5)
 
         world_thread = threading.Thread(target=listen, daemon=True)
         world_thread.start()

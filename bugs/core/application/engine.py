@@ -67,15 +67,12 @@ class Engine():
         self._common_actions = []
         self._personal_actions = {}
         self._connection_thread: threading.Thread = None
-        self._redis_watcher_thread: threading.Thread = None
         self._stop_engine_signal = threading.Event()
-        self._is_listening_engine_in_error: threading.Event = threading.Event()
 
         self._event_bus.add_listener('action', self._on_action)
 
     def start(self):
         self._logger.info('engine start')
-        self._redis_watcher()
         self._listen_engine_in()
         self._run_game_loop()
 
@@ -86,7 +83,6 @@ class Engine():
             self._connection_thread.join()
         except Exception as e:
             self._logger.error('stop listening engine in error')
-        self._redis_watcher_thread.join()
         self._logger.info('engine stopped')
 
     def _init_services(self, services):
@@ -135,41 +131,27 @@ class Engine():
         self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
 
-    def _redis_watcher(self):
-        def ping():
-            while not self._stop_engine_signal.is_set():
-                try:
-                    self._redis.ping()
-                    if self._is_listening_engine_in_error.is_set():
-                        self._listen_engine_in()
-                except redis.exceptions.ConnectionError as e:
-                    self._logger.error('redis connection error. watcher')
-                time.sleep(1)
-
-        self._redis_watcher_thread = threading.Thread(target=ping, daemon=True)
-        self._redis_watcher_thread.start()
-
     def _listen_engine_in(self):
         self._logger.info('listening main connection')
-        self._is_listening_engine_in_error.clear()
         def listen():
-            try:
-                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
-                for msg in pubsub.listen():
-                    
-                    if msg['data'] == '__exit__':
-                        pubsub.unsubscribe()
-                        pubsub.close()
-                        self._logger.info('closed income channel')
-                        return
+            while True:
+                try:
+                    pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                    pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
+                    for msg in pubsub.listen():
+                        
+                        if msg['data'] == '__exit__':
+                            pubsub.unsubscribe()
+                            pubsub.close()
+                            self._logger.info('closed income channel')
+                            return
 
-                    msg_data_json = json.loads(msg['data'])
-                    self._on_client_msg(msg_data_json)
-            except redis.exceptions.ConnectionError as e:
-                self._disconnect_all_players()
-                self._logger.error('redis connection error. engine_in listener')
-                self._is_listening_engine_in_error.set()
+                        msg_data_json = json.loads(msg['data'])
+                        self._on_client_msg(msg_data_json)
+                except redis.exceptions.ConnectionError as e:
+                    self._disconnect_all_players()
+                    self._logger.error('redis connection error. engine_in listener')
+                    time.sleep(5)
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
