@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from infrastructure.event_bus import get_event_bus
-from infrastructure.services.providers import get_engine_adapter, get_player_command_handler
+
 import json, logging, asyncio
 from typing import Dict
 
@@ -8,6 +8,8 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        #lazy import to avoid importing services using ORM before ORM initialization
+        from infrastructure.services.providers import get_engine_adapter, get_player_command_handler
         self._ea = get_engine_adapter()
         self._pch = get_player_command_handler()
         self._logger = logging.getLogger('django_logger')
