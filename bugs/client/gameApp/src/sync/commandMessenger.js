@@ -56,6 +56,7 @@ class CommandMessenger {
                         break;
                     case 'engine_error':
                         commandResolver.setError(new GenericRequestError());
+                        break;
                     default:
                         commandResolver.setError(new Error(data.err_type));
                 }
