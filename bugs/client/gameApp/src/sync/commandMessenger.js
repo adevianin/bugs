@@ -3,6 +3,8 @@ import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 
 class CommandMessenger {
 
+    TIMEOUT = 7000
+
     constructor(serverConnection) {
         this._serverConnection = serverConnection;
         this._lastUsedCommandId = 0;
@@ -27,12 +29,19 @@ class CommandMessenger {
         });
 
         return new Promise((res, rej) => {
+            let timeoutTimer = setTimeout(() => {
+                delete this._pendingCommands[id];
+                rej(new Error(`Command "${type}" timeout`));
+            }, this.TIMEOUT);
+
             this._pendingCommands[id] = {
                 setResult: (result) => {
                     res(result);
+                    clearTimeout(timeoutTimer);
                 },
                 setError: (err) => {
                     rej(err);
+                    clearTimeout(timeoutTimer);
                 }
             };
         });
