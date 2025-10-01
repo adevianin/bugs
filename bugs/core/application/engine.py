@@ -31,7 +31,7 @@ from core.application.client_serializers.larva_client_serializer import LarvaCli
 
 from logging import Logger
 from core.world.entities.world.id_generator import IdGenerator
-from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL, BACKUP_EVERY_STEP
+from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL
 import time, threading, redis, json
 from multiprocessing import SimpleQueue
 from core.world.exceptions import GameError, StateConflictError
@@ -42,8 +42,6 @@ from core.world.entities.ant.base.genetic.chromosome_types import ChromosomeType
 from core.world.utils.point import Point
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.ant.base.ant_types import AntTypes
-from datetime import datetime
-from pathlib import Path
 
 class Engine():
 
@@ -69,15 +67,12 @@ class Engine():
         self._common_actions = []
         self._personal_actions = {}
         self._connection_thread: threading.Thread = None
-        self._redis_watcher_thread: threading.Thread = None
         self._stop_engine_signal = threading.Event()
-        self._is_listening_engine_in_error: threading.Event = threading.Event()
 
         self._event_bus.add_listener('action', self._on_action)
 
     def start(self):
         self._logger.info('engine start')
-        self._redis_watcher()
         self._listen_engine_in()
         self._run_game_loop()
 
@@ -88,7 +83,6 @@ class Engine():
             self._connection_thread.join()
         except Exception as e:
             self._logger.error('stop listening engine in error')
-        self._redis_watcher_thread.join()
         self._logger.info('engine stopped')
 
     def _init_services(self, services):
@@ -137,41 +131,27 @@ class Engine():
         self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
 
-    def _redis_watcher(self):
-        def ping():
-            while not self._stop_engine_signal.is_set():
-                try:
-                    self._redis.ping()
-                    if self._is_listening_engine_in_error.is_set():
-                        self._listen_engine_in()
-                except redis.exceptions.ConnectionError as e:
-                    self._logger.error('redis connection error. watcher')
-                time.sleep(1)
-
-        self._redis_watcher_thread = threading.Thread(target=ping, daemon=True)
-        self._redis_watcher_thread.start()
-
     def _listen_engine_in(self):
         self._logger.info('listening main connection')
-        self._is_listening_engine_in_error.clear()
         def listen():
-            try:
-                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
-                for msg in pubsub.listen():
-                    
-                    if msg['data'] == '__exit__':
-                        pubsub.unsubscribe()
-                        pubsub.close()
-                        self._logger.info('closed income channel')
-                        return
+            while True:
+                try:
+                    pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                    pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
+                    for msg in pubsub.listen():
+                        
+                        if msg['data'] == '__exit__':
+                            pubsub.unsubscribe()
+                            pubsub.close()
+                            self._logger.info('closed income channel')
+                            return
 
-                    msg_data_json = json.loads(msg['data'])
-                    self._on_client_msg(msg_data_json)
-            except redis.exceptions.ConnectionError as e:
-                self._disconnect_all_players()
-                self._logger.error('redis connection error. engine_in listener')
-                self._is_listening_engine_in_error.set()
+                        msg_data_json = json.loads(msg['data'])
+                        self._on_client_msg(msg_data_json)
+                except redis.exceptions.ConnectionError as e:
+                    self._disconnect_all_players()
+                    self._logger.error('redis connection error. engine_in listener')
+                    time.sleep(5)
 
         self._connection_thread = threading.Thread(target=listen, daemon=True)
         self._connection_thread.start()
@@ -199,9 +179,6 @@ class Engine():
                     self._logger.exception(f'game loop iteration error. step={step_number}', exc_info=e)
                     raise e
                     
-                if self._world.current_step % BACKUP_EVERY_STEP == 0:
-                    self._make_world_state_backup()
-                
                 iteration_end = time.time()
                 iteration_time = iteration_end - iteration_start
 
@@ -302,22 +279,6 @@ class Engine():
         self._common_actions = []
         return (serialized_common_actions, serialized_personal_actions)
     
-    def _make_world_state_backup(self):
-        keep_last_n = 3
-        path = Path("backups")
-        path.mkdir(exist_ok=True)
-
-        timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M")
-        filename = path / f"snapshot_{timestamp}.json"
-
-        with open(filename, "w") as f:
-            world_state = self._world_serializer.serialize(self._world)
-            json.dump(world_state, f)
-
-        snapshots = sorted(path.glob("snapshot_*.json"), reverse=True)
-        for old_file in snapshots[keep_last_n:]:
-            old_file.unlink()
-
     def _on_action(self, action: Action):
         if action.is_personal():
             player_id = action.for_user_id
@@ -403,6 +364,7 @@ class Engine():
                     case 'generate_rating':
                         if self._is_world_inited:
                             self._rating_service.generate_rating(command['data'])
+                        self._send_command_result(command_id, True)
                     case 'count_ants':
                         ants_count = self._world_service.count_ants()
                         self._send_command_result(command_id, ants_count)
@@ -480,8 +442,6 @@ class Engine():
                         self._handle_change_egg_caste_command(command)
                     case 'change_egg_name':
                         self._handle_change_egg_name_command(command)
-                    case 'move_egg_to_larva_chamber':
-                        self._handle_move_egg_to_larva_chamber_command(command)
                     case 'delete_egg':
                         self._handle_delete_egg_command(command)
                     case 'delete_larva':
@@ -522,11 +482,6 @@ class Engine():
         data = command['data']
         self._colony_service.delete_egg(data['user_id'], data['nest_id'], data['egg_id'])
         self._send_command_result(command['id'], True)
-
-    def _handle_move_egg_to_larva_chamber_command(self, command: Dict):
-        data = command['data']
-        larva = self._colony_service.move_egg_to_larva_chamber(data['user_id'], data['nest_id'], data['egg_id'])
-        self._send_command_result(command['id'], larva.id)
 
     def _handle_change_egg_name_command(self, command: Dict):
         data = command['data']

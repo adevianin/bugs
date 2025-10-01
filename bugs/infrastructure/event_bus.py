@@ -1,11 +1,12 @@
 from pyee import EventEmitter
 
-class EventBus(EventEmitter):
-    _instance = None
+_container = {}
 
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(EventBus, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-    
-event_bus = EventBus()
+class EventBus(EventEmitter):
+    pass
+
+def register_event_bus(eb):
+    _container['instance'] = eb
+
+def get_event_bus() -> EventBus:
+    return _container['instance']

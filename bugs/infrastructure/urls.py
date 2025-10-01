@@ -8,10 +8,6 @@ from .views.account import (check_username_uniqueness, check_email_uniqueness, a
                             change_username, change_email, change_password, verify_email_request)
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map, get_world_data, count_ants, populate_for_performance_test
-from .views.nest import rename_nest, lay_egg, change_egg_caste, change_egg_name, move_egg_to_larva_chamber, delete_egg, delete_larva
-from .views.colony import stop_operation, build_new_sub_nest, destroy_nest, pillage_nest, transport_food, build_fortification, bring_bug
-from .views.ant import fly_nuptial_flight, change_ant_guardian_behavior, change_ant_cooperative_behavior, relocate_ant
-from .views.nuptial import found_colony, save_specie_schema, born_new_antara
 
 urlpatterns = [
     path('', index, name='game_index'),
@@ -42,31 +38,5 @@ urlpatterns = [
     path('api/admin/world/populate_for_performance_test', populate_for_performance_test, name='populate_for_performance_test'),
     path('api/admin/world/expand_map', expand_map, name='expand_map'),
     path('api/admin/world/get_world_data', get_world_data, name='get_world_data'),
-
-    path('api/world/nests/<int:nest_id>/rename', rename_nest, name='rename_nest'),
-    path('api/world/nests/<int:nest_id>/lay_egg', lay_egg, name='lay_egg'),
-    path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/change_caste', change_egg_caste, name='change_egg_caste'),
-    path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/change_name', change_egg_name, name='change_egg_name'),
-    path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/move_to_larva_chamber', move_egg_to_larva_chamber, name='move_egg_to_larva_chamber'),
-    path('api/world/nests/<int:nest_id>/eggs/<int:egg_id>/delete', delete_egg, name='delete_egg'),
-
-    path('api/world/nests/<int:nest_id>/larvae/<int:larva_id>/delete', delete_larva, name='delete_larva'),
-
-    path('api/world/colonies/<int:colony_id>/operations/<int:operation_id>/stop_operation', stop_operation, name='stop_operation'),
-    path('api/world/colonies/<int:colony_id>/operations/build_new_sub_nest', build_new_sub_nest, name='build_new_sub_nest'),
-    path('api/world/colonies/<int:colony_id>/operations/destroy_nest', destroy_nest, name='destroy_nest'),
-    path('api/world/colonies/<int:colony_id>/operations/pillage_nest', pillage_nest, name='pillage_nest'),
-    path('api/world/colonies/<int:colony_id>/operations/transport_food', transport_food, name='transport_food'),
-    path('api/world/colonies/<int:colony_id>/operations/build_fortification', build_fortification, name='build_fortification'),
-    path('api/world/colonies/<int:colony_id>/operations/bring_bug', bring_bug, name='bring_bug'),
-    
-    path('api/world/ants/<int:ant_id>/fly_nuptial_flight', fly_nuptial_flight, name='fly_nuptial_flight'),
-    path('api/world/ants/<int:ant_id>/guardian_behavior', change_ant_guardian_behavior, name='change_ant_guardian_behavior'),
-    path('api/world/ants/<int:ant_id>/cooperative_behavior', change_ant_cooperative_behavior, name='change_ant_cooperative_behavior'),
-    path('api/world/ants/<int:ant_id>/relocate', relocate_ant, name='relocate_ant'),
-
-    path('api/world/nuptial_environment/found_colony', found_colony, name='found_colony'),
-    path('api/world/nuptial_environment/specie/specie_schema', save_specie_schema, name='save_specie_schema'),
-    path('api/world/nuptial_environment/born_new_antara', born_new_antara, name="born_new_antara")
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

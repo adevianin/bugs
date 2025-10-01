@@ -1,18 +1,30 @@
 from .account_service import AccountService
 from .email_service import EmailService
-from infrastructure.event_bus import event_bus
+from .engine.engine_adapter import EngineAdapter
+from .player_command_handler import PlayerCommandHandler
 
 _instances = {}
 
+def register_email_service(es: EmailService):
+    _instances['email_service'] = es
+
 def get_email_service() -> EmailService:
-    name = 'email_service'
-    if name not in _instances:
-        _instances[name] = EmailService()
-    return _instances[name]
+    return _instances['email_service']
+
+def register_account_service(account_service: AccountService):
+    _instances['account_service'] = account_service
 
 def get_account_service() -> AccountService:
-    name = 'account_service'
-    if name not in _instances:
-        email_service = get_email_service()
-        _instances[name] = AccountService(event_bus, email_service)
-    return _instances[name]
+    return _instances['account_service']
+
+def register_engine_adapter(ea: EngineAdapter):
+    _instances['engine_adapter'] = ea
+
+def get_engine_adapter() -> EngineAdapter:
+    return _instances['engine_adapter']
+
+def register_player_command_handler(pch: PlayerCommandHandler):
+    _instances['player_command_handler'] = pch
+
+def get_player_command_handler() -> PlayerCommandHandler:
+    return _instances['player_command_handler']

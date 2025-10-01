@@ -4,6 +4,8 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STORAGE_FOLDER = BASE_DIR / 'storage'
+
 SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool)
@@ -125,6 +127,7 @@ LANGUAGES = [
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'client/static'
+BACKUP_FOLDER = BASE_DIR / 'backups'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -136,15 +139,17 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-        'request_file': {
+        'djangon_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'request_errors.log',
+            'filename': 'django_errors.log',
             'formatter': 'detailed',
         },
         "console": {
             "class": "logging.StreamHandler",
-        },
+            'level': 'INFO',
+            'formatter': 'detailed',
+        }
     },
     'formatters': {
         'detailed': {
@@ -157,11 +162,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
-        'request_logger': {
-            'handlers': ['request_file'],
-            'level': 'ERROR',
+        'django_logger': {
+            'handlers': ['console', 'djangon_file'],
+            'level': 'DEBUG',
             'propagate': False,
-        },
+        }
     },
 }
 
@@ -187,4 +192,6 @@ REDIS_PORT=config('REDIS_PORT')
 REDIS_PASSWORD=config('REDIS_PASSWORD')
 
 WORLD_ID = config("WORLD_ID", cast=int)
+
 RATING_GENERATION_PERIOD = 3600
+WORLD_BACKUP_PERIOD = 3610

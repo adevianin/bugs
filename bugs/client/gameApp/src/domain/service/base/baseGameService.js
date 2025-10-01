@@ -1,4 +1,5 @@
 import { ConflictRequestError } from "@common/domain/errors/conflictRequestError";
+import { GenericRequestError } from "@common/domain/errors/genericRequestError";
 import { BaseService } from "@common/domain/service/base/baseService";
 import { ErrorCodes } from "@domain/enum/errorCodes";
 
@@ -13,6 +14,19 @@ class BaseGameService extends BaseService {
     async _requestHandler(apiCallFunc) {
         try {
             return await super._requestHandler(apiCallFunc);
+        } catch (e) {
+            if (e instanceof ConflictRequestError) {
+                await this._waitStepSync(e.data.step);
+                throw e;
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    async _commandMessengerRequestHandler(commandMessengerSendFunc) {
+        try {
+            return await commandMessengerSendFunc();
         } catch (e) {
             if (e instanceof ConflictRequestError) {
                 await this._waitStepSync(e.data.step);
@@ -52,6 +66,16 @@ class BaseGameService extends BaseService {
 
     _makeErrorResultUnknownErr() {
         return this._makeErrorResult(ErrorCodes.UNKNOWN_ERR);
+    }
+
+    _handlePlayerCommandKnownErrors(e) {
+        if (e instanceof ConflictRequestError) {
+            return this._makeErrorResultConflict();
+        }
+        if (e instanceof GenericRequestError) {
+            return this._makeErrorResultUnknownErr();
+        }
+        throw e;
     }
 
 }

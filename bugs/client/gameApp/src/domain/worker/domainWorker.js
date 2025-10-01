@@ -15,7 +15,7 @@ class DomainWorker {
         this._nuptialEnvironmentService = services.nuptialEnvironmentService;
         this._nestService = services.nestService;
         this._antService = services.antService;
-        this._messageHandlerService = services.messageHandlerService;
+        this._worldMessageHandlerService = services.worldMessageHandlerService;
 
         this._myStateCollector = myStateCollector;
         this._worldStepEventsCollector = worldStepEventsCollector;
@@ -106,9 +106,6 @@ class DomainWorker {
                 break;
             case 'changeEggCasteInNest':
                 this._handleChangeEggCasteInNestCommand(command)
-                break;
-            case 'moveEggToLarvaInNest':
-                this._handleMoveEggToLarvaInNestCommand(command)
                 break;
             case 'deleteEggInNest':
                 this._handleDeleteEggInNestCommand(command)
@@ -241,7 +238,7 @@ class DomainWorker {
             this._sendCommandResult(command.id, initPack);
         });
 
-        this._messageHandlerService.connect(mainSocketURL);
+        this._worldMessageHandlerService.connect(mainSocketURL);
     }
 
     _listenWorldActivity() {
@@ -256,7 +253,7 @@ class DomainWorker {
     }
 
     _handleCheckIsConnectedCommand(command) {
-        let isConnected = this._messageHandlerService.isConnected();
+        let isConnected = this._worldMessageHandlerService.isConnected();
         this._sendCommandResult(command.id, isConnected);
     }
 
@@ -353,14 +350,6 @@ class DomainWorker {
         let antType = data.antType;
         await this._nestService.changeEggCasteInNest(nestId, eggId, antType);
         this._sendCommandResult(command.id, true);
-    }
-
-    async _handleMoveEggToLarvaInNestCommand(command) {
-        let data = command.data;
-        let nestId = data.nestId;
-        let eggId = data.eggId;
-        let result = await this._nestService.moveEggToLarvaInNest(nestId, eggId);
-        this._sendCommandResult(command.id, result);
     }
 
     async _handleDeleteEggInNestCommand(command) {

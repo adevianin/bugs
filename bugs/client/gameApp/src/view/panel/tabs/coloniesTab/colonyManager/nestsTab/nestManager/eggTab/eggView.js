@@ -3,7 +3,6 @@ import eggTmpl from './eggTmpl.html';
 import { GenomeInlineView } from "@view/panel/base/genome/genomeInlineView";
 import { NameEditorView } from '@view/panel/base/nameEditor/nameEditorView';
 import { doubleClickProtection } from '@common/utils/doubleClickProtection';
-import { DotsLoaderView } from '@common/view/dotsLoader/dotsLoaderView';
 import { EggStates } from "@domain/enum/eggStates";
 import { GAME_MESSAGE_IDS } from '@messages/messageIds';
 import { getAntCasteMsgId } from '@utils/getAntCasteMsgId';
@@ -21,7 +20,6 @@ class EggView extends BaseGameHTMLView {
         this._render();
 
         this._antTypeSelector.addEventListener('change', this._onEggAntTypeChanged.bind(this));
-        this._toLarvaChamberBtn.addEventListener('click', doubleClickProtection(this._onEggtoLarvaChamberClick.bind(this)));
         this._deleteBtn.addEventListener('click', doubleClickProtection(this._onEggDeleteClick.bind(this)));
     }
 
@@ -29,7 +27,6 @@ class EggView extends BaseGameHTMLView {
         super.remove();
         this._genomeView.remove();
         this._nameEditor.remove();
-        this._toLarvaLoaderView.remove();
         this._stopListenProgressChange();
         this._stopWaitAnyLarva();
     }
@@ -39,8 +36,6 @@ class EggView extends BaseGameHTMLView {
 
         this._genomeView = new GenomeInlineView(this._el.querySelector('[data-genome-btn-container]'), this._egg.genome);
 
-        this._toLarvaChamberBtn = this._el.querySelector('[data-to-larva-chamber]');
-        this._toLarvaChamberBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_EGG_TO_LARVA_BTN_LABEL);
         this._deleteBtn = this._el.querySelector('[data-delete]');
         this._deleteBtn.innerHTML = this.$mm.get(GAME_MESSAGE_IDS.NEST_MANAGER_EGG_TAB_DELETE_EGG_BTN_LABEL);
 
@@ -56,8 +51,6 @@ class EggView extends BaseGameHTMLView {
             this._nameEditor.events.on('modeChanged', this._onNameEditorModeChanged.bind(this));
         }
 
-        this._toLarvaLoaderView = new DotsLoaderView(this._el.querySelector('[data-to-larva-loader]'));
-
         this._casteSelectorTdEl = this._el.querySelector('[data-caste-selector-td]');
         this._nameEditorTdEl = this._el.querySelector('[data-name-editor-td]');
     }
@@ -69,7 +62,6 @@ class EggView extends BaseGameHTMLView {
 
     _renderProgress() {
         this._stateEl.innerHTML = this._egg.isDevelopment ? `${this._egg.progress}%` : this._getEggStateText(this._egg.state);
-        this._renderToLarvaChamberBtnState();
     }
 
     _getEggStateText(state) {
@@ -83,14 +75,8 @@ class EggView extends BaseGameHTMLView {
         }
     }
 
-    _renderToLarvaChamberBtnState() {
-        this._toLarvaChamberBtn.disabled = !this._egg.isReady || this._isToLarvaChamberBtnBlocked;
-        this._toLarvaChamberBtn.classList.toggle('nest-manage__to-larva-btn--ready', !this._toLarvaChamberBtn.disabled);
-    }
-
     _toggleToLarvaChamberBtnBlock(isBlocked) {
         this._isToLarvaChamberBtnBlocked = isBlocked;
-        this._renderToLarvaChamberBtnState();
     }
 
     _renderAntTypeSelectorOptions() {
@@ -110,22 +96,6 @@ class EggView extends BaseGameHTMLView {
     async _onEggAntTypeChanged() {
         let antType = this._antTypeSelector.value;
         await this.$domain.changeEggCasteInNest(this._nest.id, this._egg.id, antType)
-    }
-
-    async _onEggtoLarvaChamberClick() {
-        this._toLarvaLoaderView.toggleVisibility(true);
-        this._toggleToLarvaChamberBtnBlock(true);
-        let result = await this.$domain.moveEggToLarvaInNest(this._nest.id, this._egg.id);
-        if (result.success) {
-            this._waitLarva(result.larvaId, () => {
-                this._toLarvaLoaderView.toggleVisibility(false);
-                this._toggleToLarvaChamberBtnBlock(false);
-                this.toggle(false);
-            });
-        } else {
-            this._toLarvaLoaderView.toggleVisibility(false);
-            this._toggleToLarvaChamberBtnBlock(false);
-        }
     }
 
     _onEggDeleteClick() {

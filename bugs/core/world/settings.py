@@ -1,8 +1,6 @@
 from core.world.entities.world.season_types import SeasonTypes
 from core.world.utils.size import Size
 
-BACKUP_EVERY_STEP = 3600
-
 STEP_TIME = 1
 
 STEPS_IN_YEAR = 100000
