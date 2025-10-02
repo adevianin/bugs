@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'bugs.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': STORAGE_FOLDER / 'db/db.sqlite3',
     }
 }
 
@@ -127,7 +127,7 @@ LANGUAGES = [
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'client/static'
-BACKUP_FOLDER = BASE_DIR / 'backups'
+BACKUP_FOLDER = STORAGE_FOLDER / 'backups'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -142,7 +142,7 @@ LOGGING = {
         'djangon_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': 'django_errors.log',
+            'filename': STORAGE_FOLDER / 'logs/django_errors.log',
             'formatter': 'detailed',
         },
         "console": {

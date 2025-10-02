@@ -3,8 +3,5 @@ bugs/client/static
 venv
 .venv
 __pycache__/
-bugs/db.sqlite3
 .env
-engine_errors.log
-django_errors.log
-backups
+storage/
