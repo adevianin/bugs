@@ -14,3 +14,9 @@ daphne -b 0.0.0.0 -p 8000 bugs.asgi:application
 
 #engine start
 python engine_start.py
+
+#docker
+docker compose build
+docker compose --profile migration up migrator
+docker compose up -d
+docker compose exec web python manage.py createsuperuser
