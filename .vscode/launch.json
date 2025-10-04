@@ -8,6 +8,7 @@
             "name":"Engine Debug",
             "type":"debugpy",
             "request":"launch",
+            "cwd": "${workspaceFolder}/bugs",
             "program":"${workspaceFolder}/bugs/engine_start.py",
             "console":"integratedTerminal"
         },
@@ -15,6 +16,7 @@
             "name": "Django Debug",
             "type": "debugpy",
             "request": "launch",
+            "cwd": "${workspaceFolder}/bugs",
             "program": "${workspaceFolder}/bugs/manage.py",
             "args": [
                 "runserver",

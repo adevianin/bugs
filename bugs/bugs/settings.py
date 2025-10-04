@@ -10,6 +10,8 @@ SECRET_KEY = config("SECRET_KEY")
 
 DEBUG = config("DEBUG", cast=bool)
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
@@ -186,10 +188,6 @@ AUTH_USER_MODEL = 'infrastructure.User'
 AUTHENTICATION_BACKENDS = [
     'infrastructure.email_authentication_backend.EmailBackend'
 ]
-
-REDIS_HOST=config('REDIS_HOST')
-REDIS_PORT=config('REDIS_PORT')
-REDIS_PASSWORD=config('REDIS_PASSWORD')
 
 WORLD_ID = config("WORLD_ID", cast=int)
 

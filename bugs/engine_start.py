@@ -115,7 +115,7 @@ import logging, redis
 def main():
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
-    file_handler = logging.FileHandler('bugs/storage/logs/engine_errors.log')
+    file_handler = logging.FileHandler('storage/logs/engine_errors.log')
     file_handler.setLevel(logging.ERROR)
     formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
     console_handler.setFormatter(formatter)
@@ -242,7 +242,7 @@ def main():
     constants_client_serializer = ConstantsClientSerializer()
 
     # listener = Listener(('localhost', 6000), authkey=config('SECRET_KEY').encode('utf-8'))
-    r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD'), decode_responses=True)
+    r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD', default=None), decode_responses=True)
 
     services = {
         'colony_service': colony_service,

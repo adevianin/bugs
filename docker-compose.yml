@@ -1,0 +1,60 @@
+services:
+  web:
+    build: .
+    env_file:
+      - bugs/.env.docker
+    expose:
+      - "8000"
+    depends_on:
+      - redis
+    restart: unless-stopped
+    volumes:
+      - database:/app/storage/db/
+      - log_files:/app/storage/logs/
+      - static_files:/app/client/static/
+
+  engine:
+    build: .
+    command: python engine_start.py
+    env_file:
+      - bugs/.env.docker
+    depends_on:
+      - redis
+    restart: no
+    volumes:
+      - log_files:/app/storage/logs/
+
+  redis:
+    image: redis:7-alpine
+    expose:
+      - "6379"
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    depends_on:
+      - web
+    volumes:
+      - ./caddy:/etc/caddy
+      - static_files:/static_files
+      - caddy_data:/data
+
+  initialize:
+    build: .
+    env_file:
+      - bugs/.env.docker
+    volumes:
+      - database:/app/storage/db/
+    command: python manage.py migrate --noinput
+    profiles: [init]
+
+volumes:
+  database:
+  static_files:
+  log_files:
+  caddy_data:

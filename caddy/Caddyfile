@@ -1,0 +1,22 @@
+http://127.0.0.1,
+http://localhost,
+evolutionofants.click {
+    encode gzip
+
+    log {
+        output stdout
+        format console
+        level INFO
+    }
+
+    handle_path /static/* {
+        root * /static_files
+        file_server
+    }
+
+    handle {
+        reverse_proxy web:8000
+    }
+
+}
+

@@ -19,7 +19,7 @@ def init():
     world_data_repository = WorldDataRepository()
     usernames_repository = UsernamesRepository()
 
-    r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD'), decode_responses=True)
+    r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD', default=None), decode_responses=True)
 
     world_backup_saver = WorldBackupSaver()
     ea = EngineAdapter(event_bus, world_data_repository, usernames_repository, r, world_backup_saver, logger)
