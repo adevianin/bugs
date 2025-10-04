@@ -6,5 +6,8 @@ venv
 bugs/.env
 bugs/.env.docker
 bugs/storage/backups/*
+!bugs/storage/backups/.gitkeep
 bugs/storage/db/*
+!bugs/storage/db/.gitkeep
 bugs/storage/logs/*
+!bugs/storage/logs/.gitkeep
