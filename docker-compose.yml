@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - database:/app/storage/db/
+      - backups:/app/storage/backups/
       - log_files:/app/storage/logs/
       - static_files:/app/client/static/
 
@@ -59,4 +60,5 @@ volumes:
   database:
   static_files:
   log_files:
+  backups:
   caddy_data:
