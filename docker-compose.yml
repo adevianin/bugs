@@ -44,14 +44,14 @@ services:
       - static_files:/static_files
       - caddy_data:/data
 
-  initialize:
+  migrator:
     build: .
     env_file:
       - bugs/.env.docker
     volumes:
       - database:/app/storage/db/
     command: python manage.py migrate --noinput
-    profiles: [init]
+    profiles: [migration]
 
 volumes:
   database:
