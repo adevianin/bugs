@@ -10,7 +10,8 @@ class MainConfig(AppConfig):
         ignored_commands = [
             'makemigrations', 
             'migrate', 
-            'build_frontend'
+            'build_frontend',
+            'createsuperuser'
         ]
 
         if len(sys.argv) > 1 and sys.argv[1] in ignored_commands:
