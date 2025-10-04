@@ -12,7 +12,7 @@ def index(request: HttpRequest):
     if not ea.is_game_working:
         return render(request, 'client/maintenance.html')
     
-    ws_protocol = 'ws' if DEBUG else 'wss'
+    ws_protocol = 'wss' if request.is_secure() else 'ws'
     host = request.get_host()
     full_socket_url = f'{ws_protocol}://{host}{MAIN_SOCKET_URL}'
 

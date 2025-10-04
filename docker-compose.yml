@@ -33,6 +33,8 @@ services:
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
+    env_file:
+      - bugs/.env.docker
     ports:
       - "80:80"
       - "443:443"
