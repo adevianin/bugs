@@ -1,5 +1,6 @@
 services:
   web:
+    image: bugs_app_image:latest
     build: .
     env_file:
       - bugs/.env.docker
@@ -15,7 +16,7 @@ services:
       - static_files:/app/client/static/
 
   engine:
-    build: .
+    image: bugs_app_image:latest
     command: python engine_start.py
     env_file:
       - bugs/.env.docker
