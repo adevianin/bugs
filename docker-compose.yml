@@ -49,7 +49,7 @@ services:
       - caddy_data:/data
 
   migrator:
-    build: .
+    image: bugs_app_image:latest
     env_file:
       - bugs/.env.docker
     volumes:
