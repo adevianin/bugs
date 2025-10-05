@@ -7,15 +7,9 @@ class MainConfig(AppConfig):
 
     def ready(self):
 
-        ignored_commands = [
-            'makemigrations', 
-            'migrate', 
-            'build_frontend',
-            'createsuperuser'
-        ]
-
-        if len(sys.argv) > 1 and sys.argv[1] in ignored_commands:
-            return
+        if 'manage.py' in sys.argv[0]:
+            if len(sys.argv) > 1 and sys.argv[1] != 'runserver':
+                return
         
         from .init import init
         init()
