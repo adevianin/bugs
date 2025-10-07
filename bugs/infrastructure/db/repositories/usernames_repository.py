@@ -1,4 +1,4 @@
-from core.world.usernames_repository_interface import iUsernamesRepository
+from infrastructure.services.engine.usernames_repository_interface import iUsernamesRepository
 from infrastructure.models import User
 from typing import Dict
 

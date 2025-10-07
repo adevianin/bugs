@@ -5,8 +5,8 @@ import threading, redis, json, time
 import asyncio
 from asgiref.sync import async_to_sync
 from infrastructure.event_bus import EventBus
-from infrastructure.db.repositories.world_data_repository import WorldDataRepository
-from infrastructure.db.repositories.usernames_repository import UsernamesRepository
+from .world_data_repository_interface import iWorldDataRepository
+from .usernames_repository_interface import iUsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
 from infrastructure.services.world_backup_saver import WorldBackupSaver
 import logging
@@ -16,7 +16,7 @@ class EngineAdapter:
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
-    def __init__(self, event_bus: EventBus, world_data_repository: WorldDataRepository, usernames_repository: UsernamesRepository, redis: redis.Redis, 
+    def __init__(self, event_bus: EventBus, world_data_repository: iWorldDataRepository, usernames_repository: iUsernamesRepository, redis: redis.Redis, 
                  world_backup_saver: WorldBackupSaver, logger: logging.Logger):
         self._event_bus = event_bus
         self._logger = logger
