@@ -150,12 +150,29 @@ class GeneView extends BaseGameHTMLView {
         this._renderCasteGeneBase();
         this._el.querySelector('[data-title]').innerHTML = this._getGeneTitleForDevelopmentGene();
 
-        this._el.querySelector('[data-dev-strength]').innerHTML = `x${this._gene.strength}`;
-        this._el.querySelector('[data-dev-defense]').innerHTML = `x${this._gene.defense}`;
-        this._el.querySelector('[data-dev-max-hp]').innerHTML = `x${this._gene.maxHp}`;
-        this._el.querySelector('[data-dev-hp-regen-rate]').innerHTML = `x${this._gene.hpRegenRate}`;
-        this._el.querySelector('[data-dev-speed]').innerHTML = `x${this._gene.speed}`;
-        this._el.querySelector('[data-dev-life-span]').innerHTML = `x${this._gene.lifeSpan}`;
+        let strengthEl = this._el.querySelector('[data-dev-strength]');
+        strengthEl.innerHTML = `x${this._gene.strength.toFixed(1)}`;
+        strengthEl.setAttribute('title', `x${this._gene.strength}`);
+
+        let defenseEl = this._el.querySelector('[data-dev-defense]');
+        defenseEl.innerHTML = `x${this._gene.defense.toFixed(1)}`;
+        defenseEl.setAttribute('title', `x${this._gene.defense}`);
+
+        let maxHpEl = this._el.querySelector('[data-dev-max-hp]');
+        maxHpEl.innerHTML = `x${this._gene.maxHp.toFixed(1)}`;
+        maxHpEl.setAttribute('title', `x${this._gene.maxHp}`);
+
+        let hpRegenRateEl = this._el.querySelector('[data-dev-hp-regen-rate]');
+        hpRegenRateEl.innerHTML = `x${this._gene.hpRegenRate.toFixed(1)}`;
+        hpRegenRateEl.setAttribute('title', `x${this._gene.hpRegenRate}`);
+
+        let speedEl = this._el.querySelector('[data-dev-speed]');
+        speedEl.innerHTML = `x${this._gene.speed.toFixed(1)}`;
+        speedEl.setAttribute('title', `x${this._gene.speed}`);
+
+        let lifeSpanEl = this._el.querySelector('[data-dev-life-span]');
+        lifeSpanEl.innerHTML = `x${this._gene.lifeSpan.toFixed(1)}`;
+        lifeSpanEl.setAttribute('title', `x${this._gene.lifeSpan}`);
     }
 
     _getGeneTitleForDevelopmentGene() {

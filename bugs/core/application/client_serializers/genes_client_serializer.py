@@ -113,13 +113,14 @@ class GenesClientSerializer():
     
     def _serialize_development_base_caste_gene(self, gene: DevelopmentCasteGene):
         json = self._serialize_base_gene(gene)
+        caste_ndigits = 4
         json.update({
-            'strength': round(gene.strength, self.NDIGITS),
-            'defense': round(gene.defense, self.NDIGITS),
-            'maxHp': round(gene.max_hp, self.NDIGITS),
-            'hpRegenRate': round(gene.hp_regen_rate, self.NDIGITS),
-            'speed': round(gene.speed, self.NDIGITS),
-            'lifeSpan': round(gene.life_span, self.NDIGITS),
+            'strength': round(gene.strength, caste_ndigits),
+            'defense': round(gene.defense, caste_ndigits),
+            'maxHp': round(gene.max_hp, caste_ndigits),
+            'hpRegenRate': round(gene.hp_regen_rate, caste_ndigits),
+            'speed': round(gene.speed, caste_ndigits),
+            'lifeSpan': round(gene.life_span, caste_ndigits),
         })
         return json
     
