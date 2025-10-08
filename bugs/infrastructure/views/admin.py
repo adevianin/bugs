@@ -28,7 +28,7 @@ async def _build_world_status():
 async def admin_index(request):
     if not check_is_engine_adapter_inited():
         from main.init import init
-        init()
+        init() #init is here to attach async engine adapter to global event loop
         
     return render(request, 'client/admin.html')
 
