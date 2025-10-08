@@ -1,9 +1,9 @@
 import redis.exceptions
 from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, WORLD_BACKUP_PERIOD
 from typing import List, Dict
-import threading, redis, json, time
+import redis, json
 import asyncio
-from asgiref.sync import async_to_sync
+from asgiref.sync import sync_to_async
 from infrastructure.event_bus import EventBus
 from .world_data_repository_interface import iWorldDataRepository
 from .usernames_repository_interface import iUsernamesRepository
@@ -16,7 +16,7 @@ class EngineAdapter:
     CHANNEL_ENGINE_IN = 'engine_in'
     CHANNEL_ENGINE_OUT = 'engine_out'
 
-    def __init__(self, event_bus: EventBus, world_data_repository: iWorldDataRepository, usernames_repository: iUsernamesRepository, redis: redis.Redis, 
+    def __init__(self, event_bus: EventBus, world_data_repository: iWorldDataRepository, usernames_repository: iUsernamesRepository, redis: redis.asyncio.Redis, 
                  world_backup_saver: WorldBackupSaver, logger: logging.Logger):
         self._event_bus = event_bus
         self._logger = logger
@@ -28,81 +28,80 @@ class EngineAdapter:
 
         self._last_used_command_id = 0
         self._command_futures: Dict[str, asyncio.Future] = {}
-        self._generate_id_lock = threading.Lock()
 
         self._world_backup_saver = world_backup_saver
 
-        self._listen_engine_out()
+        self._started_listening_engine = False
+
+    def start_listening_engine(self):
+        if self._started_listening_engine:
+            raise Exception('engine is already listening')
+        
+        self._started_listening_engine = True
+        asyncio.create_task(self._listen_engine_out())
 
     @property
-    def is_game_working(self):
-        status = self.get_world_status()
+    async def is_game_working(self):
+        status = await self.get_world_status()
         return status['is_world_inited'] and status['is_world_stepping']
     
     # <ADMIN_COMMANDS>
-    def init_world_admin_command(self):
-        world_data = self._world_data_repository.get(WORLD_ID)
-        async_to_sync(self._send_command_to_engine)('init_world', {
+    async def init_world_admin_command(self):
+        world_data = await sync_to_async(self._world_data_repository.get)(WORLD_ID)
+        await self._send_command_to_engine('init_world', {
             'world_data': world_data,
-            'users_data': self._usernames_repository.get_usernames()
+            'users_data': await sync_to_async(self._usernames_repository.get_usernames)()
         }, True)
 
-    def save_world_admin_command(self):
-        world_data = async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
-        self._world_data_repository.push(WORLD_ID, world_data)
+    async def save_world_admin_command(self):
+        world_data = await self._send_command_to_engine('get_world_state', None, True)
+        await sync_to_async(self._world_data_repository.push)(WORLD_ID, world_data)
 
-    def count_ants_command(self):
-        return async_to_sync(self._send_command_to_engine)('count_ants', None, True)
+    async def count_ants_command(self):
+        return await self._send_command_to_engine('count_ants', None, True)
 
-    def populate_for_performance_test_command(self, player_id: int):
-        async_to_sync(self._send_command_to_engine)('populate_for_performance_test', player_id, True)
+    async def populate_for_performance_test_command(self, player_id: int):
+        await self._send_command_to_engine('populate_for_performance_test', player_id, True)
     
-    def run_world_admin_command(self):
-        async_to_sync(self._send_command_to_engine)('start_world_stepping', None, True)
+    async def run_world_admin_command(self):
+        await self._send_command_to_engine('start_world_stepping', None, True)
 
-    def stop_world_admin_command(self):
-        async_to_sync(self._send_command_to_engine)('stop_world_stepping', None, True)
+    async def stop_world_admin_command(self):
+        await self._send_command_to_engine('stop_world_stepping', None, True)
 
-    def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
-        async_to_sync(self._send_command_to_engine)('expand_map', {
+    async def expand_map_admin_command(self, chunk_rows: int, chunk_cols: int):
+        await self._send_command_to_engine('expand_map', {
             'chunk_rows': chunk_rows,
             'chunk_cols': chunk_cols
         }, True)
 
-    def get_world_data(self):
-        return async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
+    async def get_world_data(self):
+        return await self._send_command_to_engine('get_world_state', None, True)
 
-    def _generate_rating_command(self):
-        def send_command():
-            try:
-                async_to_sync(self._send_command_to_engine)('generate_rating', self._usernames_repository.get_usernames(), True)
-            except Exception as e:
-                self._logger.error('rating generation error', exc_info=e)
-        
-        thread = threading.Thread(target=send_command, daemon=True)
-        thread.start()
+    async def _generate_rating_command(self):
+        try:
+            usernames = await sync_to_async(self._usernames_repository.get_usernames)()
+            await self._send_command_to_engine('generate_rating', usernames, True)
+        except Exception as e:
+            self._logger.error('rating generation error', exc_info=e)
 
-    def _backup_world_command(self):
-        def backup():
-            try:
-                world_data = async_to_sync(self._send_command_to_engine)('get_world_state', None, True)
-                self._world_backup_saver.save_backup(world_data)
-            except Exception as e:
-                self._logger.error('error during backup', exc_info=e)
-
-        thread = threading.Thread(target=backup, daemon=True)
-        thread.start()
+    async def _backup_world_command(self):
+        try:
+            world_data = await self._send_command_to_engine('get_world_state', None, True)
+            self._world_backup_saver.save_backup(world_data)
+        except Exception as e:
+            self._logger.error('error during backup', exc_info=e)
 
     # </ADMIN_COMMANDS>
 
     # <PLAYER_COMMANDS>
-    def connect_player(self, player_id: int):
-        self._send_msg_to_engine('player_connect_request', {
+    async def connect_player(self, player_id: int):
+        await self._send_msg_to_engine('player_connect_request', {
             'player_id': player_id
         })
 
-    def disconnect_player(self, player_id: int):
-        self._send_msg_to_engine('player_disconect_request', {
+    async def disconnect_player(self, player_id: int):
+        await self._send_msg_to_engine('player_disconect_request', {
             'player_id': player_id
         })
 
@@ -262,13 +261,13 @@ class EngineAdapter:
 
     # </PLAYER_COMMANDS>
 
-    def get_world_status(self):
+    async def get_world_status(self):
         is_world_inited = False
         is_world_stepping = False
         players_online = -1
 
         try:
-            status = self._redis.get('engine_status')
+            status = await self._redis.get('engine_status')
             if status:
                 status = json.loads(status)
                 is_world_inited = status['is_world_inited']
@@ -283,9 +282,9 @@ class EngineAdapter:
             'players_online': players_online
         }
 
-    def _send_msg_to_engine(self, type: str, data: Dict = None):
+    async def _send_msg_to_engine(self, type: str, data: Dict = None):
         try:
-            self._redis.publish(EngineAdapter.CHANNEL_ENGINE_IN, json.dumps({
+            await self._redis.publish(EngineAdapter.CHANNEL_ENGINE_IN, json.dumps({
                 'type': type,
                 'data': data
             }))
@@ -293,9 +292,8 @@ class EngineAdapter:
             self._logger.error('redis connection error. couldnt send msg to engine')
 
     def _generate_command_id(self):
-        with self._generate_id_lock:
-            self._last_used_command_id += 1
-            return self._last_used_command_id
+        self._last_used_command_id += 1
+        return self._last_used_command_id
 
     async def _send_command_to_engine(self, type: str, data: Dict, is_from_admin: bool = False):
         command_id = self._generate_command_id()
@@ -303,7 +301,7 @@ class EngineAdapter:
         command_future = loop.create_future()
         self._command_futures[command_id] = command_future
 
-        self._send_msg_to_engine('command', {
+        await self._send_msg_to_engine('command', {
             'id': command_id,
             'from': 'admin' if is_from_admin else 'player',
             'type': type,
@@ -322,31 +320,29 @@ class EngineAdapter:
         finally:
             self._command_futures.pop(command_id, None)
 
-    def _listen_engine_out(self):
-        def listen():
-            while True:
-                try:
-                    pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                    pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
-                    for redis_msg in pubsub.listen():
-                        msg = json.loads(redis_msg['data'])
-                        data = msg['data']
-                        match (msg['type']):
-                            case 'init_step_data_pack':
-                                self._on_init_step_data_pack_msg(data)
-                            case 'step_data_pack':
-                                self._on_step_data_pack_msg(data)
-                            case 'command_result':
-                                self._on_command_result(data)
-                            case 'command_error':
-                                self._on_command_error(data)
-                except redis.exceptions.ConnectionError as e:
-                    self._logger.error('redis connection error. listen engine_out')
-                    self._event_bus.emit('engine_connection_error')
-                    time.sleep(5)
+    async def _listen_engine_out(self):
+        self._logger.info('listening engine connection')
+        while True:
+            try:
+                pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
+                await pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
 
-        world_thread = threading.Thread(target=listen, daemon=True)
-        world_thread.start()
+                async for redis_msg in pubsub.listen():
+                    msg = json.loads(redis_msg['data'])
+                    data = msg['data']
+                    match (msg['type']):
+                        case 'init_step_data_pack':
+                            self._on_init_step_data_pack_msg(data)
+                        case 'step_data_pack':
+                            self._on_step_data_pack_msg(data)
+                        case 'command_result':
+                            self._on_command_result(data)
+                        case 'command_error':
+                            self._on_command_error(data)
+            except redis.exceptions.ConnectionError as e:
+                self._logger.error('redis connection error. listen engine_out')
+                self._event_bus.emit('engine_connection_error')
+                await asyncio.sleep(5)
 
     def _on_init_step_data_pack_msg(self, data: Dict):
         data['players_data'] = {int(player_id): player_data for player_id, player_data in data['players_data'].items()}
@@ -356,19 +352,19 @@ class EngineAdapter:
     def _on_step_data_pack_msg(self, data: Dict):
         data['personal_actions'] = {int(player_id): actions for player_id, actions in data['personal_actions'].items()}
         self._event_bus.emit(f'step_data_pack_ready', data)
-        self._step_number_manager(data['step'])
+        asyncio.create_task(self._step_number_manager(data['step']))
 
-    def _step_number_manager(self, step_number: int):
+    async def _step_number_manager(self, step_number: int):
         if step_number % RATING_GENERATION_PERIOD == 0:
-            self._generate_rating_command()
+            await self._generate_rating_command()
         if step_number % WORLD_BACKUP_PERIOD == 0:
-            self._backup_world_command()
+            await self._backup_world_command()
     
     def _on_command_result(self, data: Dict):
         command_id = data['command_id']
         if command_id in self._command_futures:
             future = self._command_futures[command_id]
-            future._loop.call_soon_threadsafe(future.set_result, data['result'])
+            future.set_result(data['result'])
 
     def _on_command_error(self, data: Dict):
         command_id = data['command_id']
@@ -380,4 +376,4 @@ class EngineAdapter:
                 case _:
                     exception = EngineError()
             
-            future._loop.call_soon_threadsafe(future.set_exception, exception)
+            future.set_exception(exception)

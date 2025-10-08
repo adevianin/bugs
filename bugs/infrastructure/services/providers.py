@@ -21,7 +21,7 @@ def register_engine_adapter(ea: EngineAdapter):
     _instances['engine_adapter'] = ea
 
 def get_engine_adapter() -> EngineAdapter:
-    return _instances['engine_adapter']
+    return _instances.get('engine_adapter', None)
 
 def register_player_command_handler(pch: PlayerCommandHandler):
     _instances['player_command_handler'] = pch

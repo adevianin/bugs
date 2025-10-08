@@ -5,13 +5,18 @@ from django.views.decorators.http import require_POST, require_GET
 from infrastructure.services.providers import get_engine_adapter
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie
+from infrastructure.utils.get_user_id_async import get_user_id_async
 
 def is_superuser(user):
     return user.is_superuser
 
-def _build_world_status():
+def check_is_engine_adapter_inited():
     ea = get_engine_adapter()
-    world_status = ea.get_world_status()
+    return ea is not None
+
+async def _build_world_status():
+    ea = get_engine_adapter()
+    world_status = await ea.get_world_status()
     return {
         'isInited': world_status['is_world_inited'],
         'isRunning': world_status['is_world_stepping'],
@@ -20,15 +25,22 @@ def _build_world_status():
 
 @user_passes_test(is_superuser)
 @ensure_csrf_cookie
-def admin_index(request):
+async def admin_index(request):
+    if not check_is_engine_adapter_inited():
+        from main.init import init
+        init()
+        
     return render(request, 'client/admin.html')
 
 @user_passes_test(is_superuser)
 @require_GET
-def world_status_check(request):
+async def world_status_check(request):
+    if not check_is_engine_adapter_inited():
+        return HttpResponse(status=503)
+    
     return JsonResponse(
         {
-            'status': _build_world_status()
+            'status': await _build_world_status()
         },
         headers={
             'Cache-Control': 'no-cache, no-store, must-revalidate'
@@ -37,59 +49,60 @@ def world_status_check(request):
 
 @user_passes_test(is_superuser)
 @require_POST
-def init_world(request):
+async def init_world(request):
     ea = get_engine_adapter()
-    ea.init_world_admin_command()
+    await ea.init_world_admin_command()
     return JsonResponse({
-        'status': _build_world_status()
+        'status': await _build_world_status()
     }) 
 
 @user_passes_test(is_superuser)
 @require_POST
-def stop_world(request):
+async def stop_world(request):
     ea = get_engine_adapter()
-    ea.stop_world_admin_command()
+    await ea.stop_world_admin_command()
     return JsonResponse({
-        'status': _build_world_status()
+        'status': await _build_world_status()
     }) 
 
 @user_passes_test(is_superuser)
 @require_POST
-def run_world(request):
+async def run_world(request):
     ea = get_engine_adapter()
-    ea.run_world_admin_command()
+    await ea.run_world_admin_command()
     return JsonResponse({
-        'status': _build_world_status()
+        'status': await _build_world_status()
     }) 
 
 @user_passes_test(is_superuser)
 @require_POST
-def save_world(request):
+async def save_world(request):
     ea = get_engine_adapter()
-    ea.save_world_admin_command()
+    await ea.save_world_admin_command()
     return JsonResponse({
         'status': 'saved'
     }) 
 
 @user_passes_test(is_superuser)
 @require_POST
-def count_ants(request):
+async def count_ants(request):
     ea = get_engine_adapter()
-    ants_count = ea.count_ants_command()
+    ants_count = await ea.count_ants_command()
     return JsonResponse({
         'ants_count': ants_count
     }, status=200)
 
 @user_passes_test(is_superuser)
 @require_POST
-def populate_for_performance_test(request):
+async def populate_for_performance_test(request):
     ea = get_engine_adapter()
-    ea.populate_for_performance_test_command(request.user.id)
+    user_id = await get_user_id_async(request.user)
+    await ea.populate_for_performance_test_command(user_id)
     return HttpResponse(status=201) 
 
 @user_passes_test(is_superuser)
 @require_POST
-def expand_map(request: HttpRequest):
+async def expand_map(request: HttpRequest):
     ea = get_engine_adapter()
     try:
         data = json.loads(request.body)
@@ -98,7 +111,7 @@ def expand_map(request: HttpRequest):
     except Exception as e:
         return HttpResponse(status=400)
 
-    error_msg = ea.expand_map_admin_command(chunk_rows, chunk_cols)
+    error_msg = await ea.expand_map_admin_command(chunk_rows, chunk_cols)
 
     if error_msg:
         return JsonResponse({
@@ -112,10 +125,10 @@ def expand_map(request: HttpRequest):
     
 @user_passes_test(is_superuser)
 @require_GET
-def get_world_data(request: HttpRequest):
+async def get_world_data(request: HttpRequest):
     ea = get_engine_adapter()
 
-    world_data = ea.get_world_data()
+    world_data = await ea.get_world_data()
     json_data = json.dumps(world_data, indent=4)
 
     response = HttpResponse(json_data, content_type='application/json')

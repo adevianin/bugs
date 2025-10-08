@@ -27,14 +27,14 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         self._event_bus.add_listener('engine_connection_error', self._on_engine_connection_error)
         self._proccess_events_task = asyncio.create_task(self._process_events())
 
-        if self._user.is_authenticated and self._ea.is_game_working:
+        if self._user.is_authenticated and await self._ea.is_game_working:
             await self.accept()
-            self._ea.connect_player(self._user.id)
+            await self._ea.connect_player(self._user.id)
         else:
             await self.close()
 
     async def disconnect(self, code):
-        self._ea.disconnect_player(self._user.id)
+        await self._ea.disconnect_player(self._user.id)
         self._event_bus.remove_listener('email_verified', self._on_email_verified)
         self._event_bus.remove_listener(f'init_step_data_pack_ready:{self._user.id}', self._on_init_step_data_pack_ready)
         self._event_bus.remove_listener('step_data_pack_ready', self._on_step_data_pack_ready)
@@ -110,7 +110,7 @@ class MainSocketConsumer(AsyncWebsocketConsumer):
         self._push_event_record('engine_connection_error')
 
     async def _send_engine_connection_error_signal(self):
-        self.close(4001)
+        await self.close(4001)
 
     async def _process_events(self):
         while True:

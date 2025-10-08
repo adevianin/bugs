@@ -1,7 +1,7 @@
 from infrastructure.db.repositories.world_data_repository import WorldDataRepository
 from infrastructure.db.repositories.usernames_repository import UsernamesRepository
 from infrastructure.services.engine.engine_adapter import EngineAdapter
-import redis, logging
+import logging
 from decouple import config
 from infrastructure.event_bus import register_event_bus, EventBus
 from infrastructure.services.providers import register_engine_adapter, register_account_service, register_email_service, register_player_command_handler
@@ -9,6 +9,7 @@ from infrastructure.services.email_service import EmailService
 from infrastructure.services.account_service import AccountService
 from infrastructure.services.player_command_handler import PlayerCommandHandler
 from infrastructure.services.world_backup_saver import WorldBackupSaver
+import redis.asyncio as aioredis
 
 
 def init():
@@ -19,7 +20,7 @@ def init():
     world_data_repository = WorldDataRepository()
     usernames_repository = UsernamesRepository()
 
-    r = redis.Redis(config('REDIS_HOST'), config('REDIS_PORT'), password=config('REDIS_PASSWORD', default=None), decode_responses=True)
+    r = aioredis.Redis(host=config('REDIS_HOST'), port=config('REDIS_PORT'), password=config('REDIS_PASSWORD', default=None), decode_responses=True)
 
     world_backup_saver = WorldBackupSaver()
     ea = EngineAdapter(event_bus, world_data_repository, usernames_repository, r, world_backup_saver, logger)
@@ -33,3 +34,5 @@ def init():
     register_email_service(email_service)
     register_account_service(account_service)
     register_player_command_handler(player_command_handler)
+
+    ea.start_listening_engine()
