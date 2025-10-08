@@ -84,7 +84,9 @@ class RatingTabView extends BaseGameHTMLView {
     }
 
     _onRatingChanged() {
-        this._render();
+        this._currentPortionIndex = 0;
+        this._renderCurrentPortion();
+        this._renderBtnsState();
     }
 
 }
