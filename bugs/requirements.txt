@@ -25,6 +25,7 @@ pyee==12.1.1
 Pygments==2.19.2
 pyOpenSSL==25.0.0
 pytest==8.4.2
+pytest-asyncio==1.2.0
 python-decouple==3.8
 redis==5.2.1
 requests==2.32.3

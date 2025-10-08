@@ -62,6 +62,8 @@ services:
     env_file:
       - bugs/.env.docker
     command: pytest
+    depends_on:
+      - redis
     profiles: [test]
 
 volumes:
