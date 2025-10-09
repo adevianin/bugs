@@ -1,4 +1,6 @@
 FROM node:22.20.0-alpine AS frontend_builder
+ARG BUILD_ENV=production
+ENV NODE_ENV=${BUILD_ENV}
 WORKDIR /app
 COPY bugs/client/package.json bugs/client/package-lock.json ./
 RUN npm install
