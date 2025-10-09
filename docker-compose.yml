@@ -1,7 +1,10 @@
 services:
   web:
-    image: bugs_app_image:latest
-    build: .
+    image: bugs-backend-image
+    build:
+      target: backend
+      context: .
+    command: daphne bugs.asgi:application -b 0.0.0.0 -p 8000
     env_file:
       - bugs/.env.docker
     expose:
@@ -13,10 +16,9 @@ services:
       - database:/app/storage/db/
       - backups:/app/storage/backups/
       - log_files:/app/storage/logs/
-      - static_files:/app/client/static/
 
   engine:
-    image: bugs_app_image:latest
+    image: bugs-backend-image
     command: python engine_start.py
     env_file:
       - bugs/.env.docker
@@ -33,7 +35,9 @@ services:
     restart: unless-stopped
 
   caddy:
-    image: caddy:2-alpine
+    build:
+      target: caddy_proxie
+      context: .
     restart: unless-stopped
     env_file:
       - bugs/.env.docker
@@ -45,11 +49,10 @@ services:
       - web
     volumes:
       - ./caddy:/etc/caddy
-      - static_files:/static_files
       - caddy_data:/data
 
   migrator:
-    image: bugs_app_image:latest
+    image: bugs-backend-image
     env_file:
       - bugs/.env.docker
     volumes:
@@ -58,7 +61,7 @@ services:
     profiles: [migration]
 
   test:
-    image: bugs_app_image:latest
+    image: bugs-backend-image
     env_file:
       - bugs/.env.docker
     command: pytest
@@ -68,7 +71,6 @@ services:
 
 volumes:
   database:
-  static_files:
   log_files:
   backups:
   caddy_data:

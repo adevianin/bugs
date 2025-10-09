@@ -5,13 +5,12 @@ RUN npm install
 COPY bugs/client .
 RUN npx webpack
 
-FROM python:3.12.11-slim-bookworm AS production
+FROM caddy:2-alpine AS caddy_proxie
+COPY --from=frontend_builder /app/dist /static_files
+
+FROM python:3.12.11-slim-bookworm AS backend
 WORKDIR /app
 COPY bugs/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY bugs .
-COPY --from=frontend_builder /app/dist /app/client/static
-
-EXPOSE 8000
-
-CMD ["daphne", "bugs.asgi:application", "-b", "0.0.0.0", "-p", "8000"]
+COPY --from=frontend_builder /app/dist/manifest.json /app/client/static/manifest.json
