@@ -53,6 +53,7 @@ module.exports = (env = {}) => {
         },
         optimization: {
             minimizer: [
+                '...',
                 new CssMinimizerPlugin()
             ],
         },
@@ -65,8 +66,7 @@ module.exports = (env = {}) => {
                 fileName: 'manifest.json',
                 publicPath: '',
                 writeToFileEmit: true
-            }),
-            new CssMinimizerPlugin()
+            })
         ],
     }
 };
