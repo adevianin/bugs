@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from bugs.settings import BASE_DIR, STATIC_ROOT, STATIC_URL
+from bugs.settings import BASE_DIR, STATIC_ROOT
 import os
 import subprocess
 

@@ -127,7 +127,7 @@ LANGUAGES = [
 ]
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'client/static'
 BACKUP_FOLDER = STORAGE_FOLDER / 'backups'
 

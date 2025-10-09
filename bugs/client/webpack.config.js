@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -15,10 +16,7 @@ module.exports = (env = {}) => {
             adminApp: './adminApp/src/index.js',
             accountApp: './accountApp/src/index.js',
             resetPasswordApp: './resetPasswordApp/src/index.js',
-            initialStylesGameApp: './gameApp/src/view/initialStyles.css',
-            initialStylesAccountApp: './accountApp/src/view/initialStyles.css',
-            initialStylesResetPasswordApp: './resetPasswordApp/src/view/initialStyles.css',
-            initialStylesEmailVerificationPage: './emailVerificationPage/initialStyles.css',
+            emailVerificationPageStyles: './emailVerificationPage/styles.css',
             faviconContainer: './favicon/faviconContainer.js'
         },
         output: {
@@ -40,19 +38,8 @@ module.exports = (env = {}) => {
         module: {
             rules: [
                 {
-                    oneOf: [
-                        {
-                            test: /initialStyles\.css$/i,
-                            use: [
-                                MiniCssExtractPlugin.loader,
-                                'css-loader',
-                            ],
-                        },
-                        {
-                            test: /\.css$/i,
-                            use: ["style-loader", "css-loader"],
-                        },
-                    ],
+                    test: /\.css$/i,
+                    use: [MiniCssExtractPlugin.loader, "css-loader"],
                 },
                 {
                     test: /\.html$/i,
@@ -64,6 +51,11 @@ module.exports = (env = {}) => {
                 }
             ],
         },
+        optimization: {
+            minimizer: [
+                new CssMinimizerPlugin()
+            ],
+        },
         plugins: [
             new RemoveEmptyScriptsPlugin(),
             new MiniCssExtractPlugin({
@@ -73,7 +65,8 @@ module.exports = (env = {}) => {
                 fileName: 'manifest.json',
                 publicPath: '',
                 writeToFileEmit: true
-            })
+            }),
+            new CssMinimizerPlugin()
         ],
     }
 };

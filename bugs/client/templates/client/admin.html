@@ -3,6 +3,10 @@
 
 {% block title %}Admin{% endblock %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{% hashed_static 'adminApp.css' %}">
+{% endblock %}
+
 {% block javascript %}
     <script src="{% hashed_static 'adminApp.js' %}"></script>
 {% endblock %}

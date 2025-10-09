@@ -1,3 +1,4 @@
+import './styles.css';
 import { BaseHTMLView } from "@common/view/base/baseHTMLView";
 import { RequestModeContainerView } from "./requestModeContainerView";
 import { SetPasswordModeView } from "./setPasswordModeView";
