@@ -32,6 +32,7 @@ class EngineAdapter:
         self._world_backup_saver = world_backup_saver
 
         self._started_listening_engine = False
+        self._is_inited = False
 
     def start_listening_engine(self):
         if self._started_listening_engine:
@@ -47,6 +48,10 @@ class EngineAdapter:
     
     # <ADMIN_COMMANDS>
     async def init_world_admin_command(self):
+        if self._is_inited:
+            return
+        
+        self._is_inited = True
         world_data = await sync_to_async(self._world_data_repository.get)(WORLD_ID)
         await self._send_command_to_engine('init_world', {
             'world_data': world_data,
