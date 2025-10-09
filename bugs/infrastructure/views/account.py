@@ -133,9 +133,9 @@ def check_email_uniqueness(request):
     })
 
 @require_GET
-def verify_email(request, uidb64, token):
+async def verify_email(request, uidb64, token):
     acc_serv = get_account_service()
-    is_success = acc_serv.verify_email(uidb64, token)
+    is_success = await acc_serv.verify_email(uidb64, token)
 
     return render(request, 'client/account/email_verification.html', {
         "is_success": is_success

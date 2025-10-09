@@ -1,8 +1,8 @@
-from pyee import EventEmitter
+from pyee.asyncio import AsyncIOEventEmitter
 
 _container = {}
 
-class EventBus(EventEmitter):
+class EventBus(AsyncIOEventEmitter):
     pass
 
 def register_event_bus(eb):
