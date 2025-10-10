@@ -17,7 +17,8 @@ module.exports = (env = {}) => {
             accountApp: './accountApp/src/index.js',
             resetPasswordApp: './resetPasswordApp/src/index.js',
             emailVerificationPageStyles: './emailVerificationPage/styles.css',
-            faviconContainer: './favicon/faviconContainer.js'
+            faviconContainer: './favicon/faviconContainer.js',
+            theft2App: './miniGameTheft2App/src/index.js'
         },
         output: {
             filename: isProduction ? '[name].[contenthash].js' : '[name].js',

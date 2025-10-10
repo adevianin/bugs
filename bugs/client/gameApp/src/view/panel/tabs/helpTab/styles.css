@@ -96,3 +96,8 @@
     text-align: center;
     color: gray;
 }
+
+.help__theft2-link {
+    display: flex;
+    justify-content: center;
+}

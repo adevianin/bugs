@@ -8,6 +8,7 @@ from .views.account import (check_username_uniqueness, check_email_uniqueness, a
                             change_username, change_email, change_password, verify_email_request)
 from .views.game import index
 from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map, get_world_data, count_ants, populate_for_performance_test
+from .views.theft2 import theft2_index
 
 urlpatterns = [
     path('', index, name='game_index'),
@@ -38,5 +39,7 @@ urlpatterns = [
     path('api/admin/world/populate_for_performance_test', populate_for_performance_test, name='populate_for_performance_test'),
     path('api/admin/world/expand_map', expand_map, name='expand_map'),
     path('api/admin/world/get_world_data', get_world_data, name='get_world_data'),
+
+    path('theft2_mini_game', theft2_index, name='theft2_index'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
