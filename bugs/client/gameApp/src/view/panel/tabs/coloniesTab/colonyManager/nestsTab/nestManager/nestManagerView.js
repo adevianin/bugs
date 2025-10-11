@@ -75,7 +75,7 @@ class NestManagerView extends BaseGameHTMLView {
             this._emitShowNestAreaRequest();
             setTimeout(() => {
                 this._emitShowNestAreaRequest();
-            }, 600);// delay needed if nest is another chunk;
+            }, 750);// delay needed if nest is another chunk;
         }
     }
 
