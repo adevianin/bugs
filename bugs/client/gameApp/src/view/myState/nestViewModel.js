@@ -43,6 +43,14 @@ class NestViewModel extends EntityViewModel {
         return this._props.isMain;
     }
 
+    set isDied(isDied) {
+        this._props.isDied = isDied;
+    }
+
+    get isDied() {
+        return this._props.isDied;
+    }
+
     get larvae() {
         return this._larvae;
     }

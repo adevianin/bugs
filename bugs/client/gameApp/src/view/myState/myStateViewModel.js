@@ -110,6 +110,7 @@ class MyStateViewModel extends BaseViewModel {
         if (index != -1) {
             let nests = this._nests.splice(index, 1);
             let nest = nests[0];
+            nest.isDied = true;
             this.emit('nestDied', nest);
             this.emit(`nestDied:${nest.fromColony}`, nest);
         }

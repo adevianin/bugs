@@ -21,6 +21,8 @@ class NestManagerView extends BaseGameHTMLView {
             return;
         }
 
+        this._showNestPosition(nest, this._nest);
+
         this._emitHideNestAreaRequest();
         this._nest = nest;
         if (this.isVisible()) {
@@ -61,6 +63,14 @@ class NestManagerView extends BaseGameHTMLView {
         } else {
             this._emitHideNestAreaRequest();
         }
+    }
+
+    _showNestPosition(newNest, prevNest) {
+        if (prevNest && prevNest.isDied) {
+            return
+        }
+        let isFirstNestShow = !prevNest;
+        this.$eventBus.emit('showPointRequest', newNest.position, isFirstNestShow);
     }
 
 }
