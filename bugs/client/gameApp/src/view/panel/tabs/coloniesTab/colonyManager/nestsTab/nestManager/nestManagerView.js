@@ -21,13 +21,10 @@ class NestManagerView extends BaseGameHTMLView {
             return;
         }
 
-        this._showNestPosition(nest, this._nest);
-
-        this._emitHideNestAreaRequest();
+        let newNest = nest;
+        let prevNest = this._nest;
         this._nest = nest;
-        if (this.isVisible()) {
-            this._emitShowNestAreaRequest();
-        }
+        this._showNest(newNest, prevNest);
         
         this._mainTab.manageNest(nest);
         this._larvaTab.manageNest(nest);
@@ -35,6 +32,10 @@ class NestManagerView extends BaseGameHTMLView {
 
         this._larvaTab.toggle(nest.isMain);
         this._eggTab.toggle(nest.isMain);
+    }
+
+    showCurrentNest() {
+        this._showNest(this._nest, this._nest);
     }
 
     _render() {
@@ -46,9 +47,7 @@ class NestManagerView extends BaseGameHTMLView {
     }
 
     _emitHideNestAreaRequest() {
-        if (this._nest) {
-            this.$eventBus.emit(`hideNestAreaRequest:${this._nest.id}`);
-        }
+        this.$eventBus.emit(`hideNestAreaRequest`);
     }
 
     _emitShowNestAreaRequest() {
@@ -65,12 +64,19 @@ class NestManagerView extends BaseGameHTMLView {
         }
     }
 
-    _showNestPosition(newNest, prevNest) {
+    _showNest(newNest, prevNest) {
         if (prevNest && prevNest.isDied) {
             return
         }
         let isFirstNestShow = !prevNest;
         this.$eventBus.emit('showPointRequest', newNest.position, isFirstNestShow);
+        if (!isFirstNestShow) {
+            this._emitHideNestAreaRequest();
+            this._emitShowNestAreaRequest();
+            setTimeout(() => {
+                this._emitShowNestAreaRequest();
+            }, 600);// delay needed if nest is another chunk;
+        }
     }
 
 }

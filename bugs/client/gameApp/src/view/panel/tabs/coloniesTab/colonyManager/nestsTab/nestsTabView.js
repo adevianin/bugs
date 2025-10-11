@@ -37,7 +37,7 @@ class NestsTabView extends BaseGameHTMLView {
     }
 
     _onShowNestBtnClick() {
-        this.$eventBus.emit('showPointRequest', this._nestsList.selectedNest.position);
+        this._nestManager.showCurrentNest();
     }
 }
 
