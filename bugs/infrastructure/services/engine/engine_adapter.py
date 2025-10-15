@@ -3,7 +3,6 @@ from bugs.settings import WORLD_ID, RATING_GENERATION_PERIOD, WORLD_BACKUP_PERIO
 from typing import List, Dict
 import redis, json
 import asyncio
-from asgiref.sync import sync_to_async
 from infrastructure.event_bus import EventBus
 from .world_data_repository_interface import iWorldDataRepository
 from .usernames_repository_interface import iUsernamesRepository
@@ -52,15 +51,15 @@ class EngineAdapter:
             return
         
         self._is_inited = True
-        world_data = await sync_to_async(self._world_data_repository.get)(WORLD_ID)
+        world_data = await self._world_data_repository.get(WORLD_ID)
         await self._send_command_to_engine('init_world', {
             'world_data': world_data,
-            'users_data': await sync_to_async(self._usernames_repository.get_usernames)()
+            'users_data': await self._usernames_repository.get_usernames()
         }, True)
 
     async def save_world_admin_command(self):
         world_data = await self._send_command_to_engine('get_world_state', None, True)
-        await sync_to_async(self._world_data_repository.push)(WORLD_ID, world_data)
+        await self._world_data_repository.push(WORLD_ID, world_data)
 
     async def count_ants_command(self):
         return await self._send_command_to_engine('count_ants', None, True)
@@ -85,7 +84,7 @@ class EngineAdapter:
 
     async def _generate_rating_command(self):
         try:
-            usernames = await sync_to_async(self._usernames_repository.get_usernames)()
+            usernames = await self._usernames_repository.get_usernames()
             await self._send_command_to_engine('generate_rating', usernames, True)
         except Exception as e:
             self._logger.error('rating generation error', exc_info=e)

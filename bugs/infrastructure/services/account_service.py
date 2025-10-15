@@ -14,7 +14,6 @@ from google.auth.transport import requests
 from bugs.settings import GOOGLE_CLIENT_ID
 from infrastructure.utils.generate_username import generate_username
 from django.db import IntegrityError
-from asgiref.sync import sync_to_async
 
 class AccountService():
 
@@ -84,14 +83,14 @@ class AccountService():
     async def verify_email(self, uidb64: str, token: str) -> bool:
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
-            user = await sync_to_async(User.objects.get)(pk=uid)
+            user = await User.objects.aget(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
 
         is_success = None
         if user and EmailVerificationTokenGenerator.validate(user, token):
             user.is_email_verified = True
-            await sync_to_async(user.save)()
+            await user.asave()
             self._event_bus.emit('email_verified', user)
             is_success = True
         else:

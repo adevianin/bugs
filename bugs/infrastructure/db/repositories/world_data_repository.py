@@ -4,11 +4,11 @@ from typing import Dict
 
 class WorldDataRepository(iWorldDataRepository):
     
-    def get(self, world_id: int):
-        world, created = World.objects.get_or_create(id=world_id, defaults={'state': ''})
+    async def get(self, world_id: int):
+        world, created = await World.objects.aget_or_create(id=world_id, defaults={'state': ''})
         return world.state if world.state else None 
 
-    def push(self, world_id: int, data: Dict):
-        world = World.objects.get(id=world_id)
+    async def push(self, world_id: int, data: Dict):
+        world = await World.objects.aget(id=world_id)
         world.state = data
-        world.save()
+        await world.asave()
