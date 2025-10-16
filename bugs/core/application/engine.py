@@ -1,4 +1,3 @@
-import redis.exceptions
 from core.world.utils.event_emiter import EventEmitter
 
 from core.world.services.notification_serivce import NotificationService
@@ -32,7 +31,7 @@ from core.application.client_serializers.larva_client_serializer import LarvaCli
 from logging import Logger
 from core.world.entities.world.id_generator import IdGenerator
 from core.world.settings import STEP_TIME, NEW_WORLD_GENERATING_CHUNKS_HORIZONTAL, NEW_WORLD_GENERATING_CHUNKS_VERTICAL
-import time, threading, redis, json
+import time
 from multiprocessing import SimpleQueue
 from core.world.exceptions import GameError, StateConflictError
 from core.world.entities.action.base.action import Action
@@ -43,16 +42,15 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.ant.base.ant_types import AntTypes
 
+from .engine_channel_interface import iEngineChannel
+
 class Engine():
 
-    CHANNEL_ENGINE_IN = 'engine_in'
-    CHANNEL_ENGINE_OUT = 'engine_out'
-
-    def __init__(self, event_bus: EventEmitter, redis: redis.Redis, logger: Logger, services, client_serializers, world_deserializer: WorldDeserializer, world_serializer: WorldSerializer):
+    def __init__(self, event_bus: EventEmitter, engine_channel: iEngineChannel, logger: Logger, services, client_serializers, world_deserializer: WorldDeserializer, world_serializer: WorldSerializer):
         self._init_services(services)
         self._init_client_serializers(client_serializers)
         self._event_bus = event_bus
-        self._redis = redis
+        self._channel = engine_channel
         self._player_connect_q = SimpleQueue()
         self._player_disconnect_q = SimpleQueue()
         self._player_commands_q = SimpleQueue()
@@ -66,23 +64,18 @@ class Engine():
         self._connected_player_ids = []
         self._common_actions = []
         self._personal_actions = {}
-        self._connection_thread: threading.Thread = None
-        self._stop_engine_signal = threading.Event()
-
-        self._event_bus.add_listener('action', self._on_action)
+        self._stop_engine_signal = False
 
     def start(self):
         self._logger.info('engine start')
-        self._listen_engine_in()
+        self._event_bus.add_listener('action', self._on_action)
+        self._start_engine_channel()
         self._run_game_loop()
 
     def stop(self):
-        self._stop_engine_signal.set()
-        try:
-            self._redis.publish(Engine.CHANNEL_ENGINE_IN, '__exit__')
-            self._connection_thread.join()
-        except Exception as e:
-            self._logger.error('stop listening engine in error')
+        self._stop_engine_signal = True
+        self._channel.stop()
+        self._event_bus.remove_listener('action', self._on_action)
         self._logger.info('engine stopped')
 
     def _init_services(self, services):
@@ -131,35 +124,15 @@ class Engine():
         self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
 
-    def _listen_engine_in(self):
-        self._logger.info('listening main connection')
-        def listen():
-            while True:
-                try:
-                    pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                    pubsub.subscribe(Engine.CHANNEL_ENGINE_IN)
-                    for msg in pubsub.listen():
-                        
-                        if msg['data'] == '__exit__':
-                            pubsub.unsubscribe()
-                            pubsub.close()
-                            self._logger.info('closed income channel')
-                            return
-
-                        msg_data_json = json.loads(msg['data'])
-                        self._on_client_msg(msg_data_json)
-                except redis.exceptions.ConnectionError as e:
-                    self._disconnect_all_players()
-                    self._logger.error('redis connection error. engine_in listener')
-                    time.sleep(5)
-
-        self._connection_thread = threading.Thread(target=listen, daemon=True)
-        self._connection_thread.start()
+    def _start_engine_channel(self):
+        self._channel.start()
+        self._channel.events.add_listener('message', self._on_channel_msg)
+        self._channel.events.add_listener('connection_error', self._on_channel_conenction_error)
 
     def _run_game_loop(self):
         self._logger.info('running game loop')
 
-        while not self._stop_engine_signal.is_set():
+        while not self._stop_engine_signal:
             self._handle_admin_commands()
 
             if self._is_world_inited:
@@ -197,14 +170,7 @@ class Engine():
                 time.sleep(1)
 
     def _update_engine_status(self):
-        try:
-            self._redis.set('engine_status', json.dumps({
-                'is_world_inited': self._is_world_inited,
-                'is_world_stepping': self._is_world_stepping,
-                'players_online': len(self._connected_player_ids)
-            }), STEP_TIME + 3)
-        except redis.exceptions.ConnectionError as e:
-            self._logger.error('redis connection error. update_engine_status')
+        self._channel.send_engine_status(self._is_world_inited, self._is_world_stepping, len(self._connected_player_ids))
 
     def _handle_player_disconnections(self):
         while not self._player_disconnect_q.empty():
@@ -298,7 +264,7 @@ class Engine():
             case _:
                 raise GameError('unknown command sender')
             
-    def _on_client_msg(self, msg: Dict):
+    def _on_channel_msg(self, msg: Dict):
         is_game_running = self._is_world_stepping and self._is_world_inited
         is_admin_command = msg['type'] == 'command' and msg['data']['from'] == 'admin'
         if not is_game_running and not is_admin_command:
@@ -316,14 +282,11 @@ class Engine():
             case _:
                 raise GameError('unknown msg type')
             
+    def _on_channel_conenction_error(self):
+        self._disconnect_all_players()
+            
     def _send_msg(self, type: str, data: Dict):
-        try:
-            self._redis.publish(Engine.CHANNEL_ENGINE_OUT, json.dumps({
-                'type': type,
-                'data': data
-            }))
-        except redis.exceptions.ConnectionError as e:
-            self._logger.error('redis connection error. _send_msg')
+        self._channel.send_msg(type, data)
 
     def _send_command_result(self, command_id: int, result):
         self._send_msg('command_result', {
