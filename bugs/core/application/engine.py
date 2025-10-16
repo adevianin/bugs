@@ -71,8 +71,8 @@ class Engine():
 
         self._event_bus.add_listener('action', self._on_action)
 
-        self._communicator.events.add_listener('message', self._on_channel_msg)
-        self._communicator.events.add_listener('connection_error', self._on_channel_conenction_error)
+        self._communicator.events.add_listener('threaded:message', self._on_channel_msg)
+        self._communicator.events.add_listener('threaded:connection_error', self._on_channel_conenction_error)
         self._communicator.start()
 
         self._run_game_loop()

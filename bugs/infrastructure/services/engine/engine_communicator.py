@@ -10,6 +10,12 @@ from .redis_channel_names import RedisChannelNames
 
 class EngineCommunicator(iEngineCommunicator):
 
+    """
+    Communicator between Engine and EngineAdapter via Redis.
+
+    All emitted events are fired from a background thread. Event listeners must be thread-safe.
+    """
+
     def __init__(self, events: EventEmitter, redis: redis.Redis, logger: Logger):
         super().__init__()
         self._events = events
@@ -40,9 +46,9 @@ class EngineCommunicator(iEngineCommunicator):
                             return
 
                         msg_data_json = json.loads(msg['data'])
-                        self._events.emit('message', msg_data_json)
+                        self._events.emit('threaded:message', msg_data_json)
                 except redis.exceptions.ConnectionError as e:
-                    self._events.emit('connection_error')
+                    self._events.emit('threaded:connection_error')
                     self._logger.error('redis connection error. engine_in listener')
                     time.sleep(5)
 
