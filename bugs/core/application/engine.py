@@ -68,8 +68,13 @@ class Engine():
 
     def start(self):
         self._logger.info('engine start')
+
         self._event_bus.add_listener('action', self._on_action)
-        self._start_engine_channel()
+
+        self._channel.events.add_listener('message', self._on_channel_msg)
+        self._channel.events.add_listener('connection_error', self._on_channel_conenction_error)
+        self._channel.start()
+
         self._run_game_loop()
 
     def stop(self):
@@ -123,11 +128,6 @@ class Engine():
         self._thermal_service.set_world(self._world)
         self._item_service.set_world(self._world)
         self._world_service.set_world(self._world)
-
-    def _start_engine_channel(self):
-        self._channel.start()
-        self._channel.events.add_listener('message', self._on_channel_msg)
-        self._channel.events.add_listener('connection_error', self._on_channel_conenction_error)
 
     def _run_game_loop(self):
         self._logger.info('running game loop')
