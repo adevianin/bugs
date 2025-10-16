@@ -42,15 +42,15 @@ from core.world.utils.point import Point
 from core.world.entities.ant.base.guardian_behaviors import GuardianBehaviors
 from core.world.entities.ant.base.ant_types import AntTypes
 
-from .engine_channel_interface import iEngineChannel
+from .engine_communicator_interface import iEngineCommunicator
 
 class Engine():
 
-    def __init__(self, event_bus: EventEmitter, engine_channel: iEngineChannel, logger: Logger, services, client_serializers, world_deserializer: WorldDeserializer, world_serializer: WorldSerializer):
+    def __init__(self, event_bus: EventEmitter, engine_communicator: iEngineCommunicator, logger: Logger, services, client_serializers, world_deserializer: WorldDeserializer, world_serializer: WorldSerializer):
         self._init_services(services)
         self._init_client_serializers(client_serializers)
         self._event_bus = event_bus
-        self._channel = engine_channel
+        self._communicator = engine_communicator
         self._player_connect_q = SimpleQueue()
         self._player_disconnect_q = SimpleQueue()
         self._player_commands_q = SimpleQueue()
@@ -71,15 +71,15 @@ class Engine():
 
         self._event_bus.add_listener('action', self._on_action)
 
-        self._channel.events.add_listener('message', self._on_channel_msg)
-        self._channel.events.add_listener('connection_error', self._on_channel_conenction_error)
-        self._channel.start()
+        self._communicator.events.add_listener('message', self._on_channel_msg)
+        self._communicator.events.add_listener('connection_error', self._on_channel_conenction_error)
+        self._communicator.start()
 
         self._run_game_loop()
 
     def stop(self):
         self._stop_engine_signal = True
-        self._channel.stop()
+        self._communicator.stop()
         self._event_bus.remove_listener('action', self._on_action)
         self._logger.info('engine stopped')
 
@@ -170,7 +170,7 @@ class Engine():
                 time.sleep(1)
 
     def _update_engine_status(self):
-        self._channel.send_engine_status(self._is_world_inited, self._is_world_stepping, len(self._connected_player_ids))
+        self._communicator.send_engine_status(self._is_world_inited, self._is_world_stepping, len(self._connected_player_ids))
 
     def _handle_player_disconnections(self):
         while not self._player_disconnect_q.empty():
@@ -286,7 +286,7 @@ class Engine():
         self._disconnect_all_players()
             
     def _send_msg(self, type: str, data: Dict):
-        self._channel.send_msg(type, data)
+        self._communicator.send_msg(type, data)
 
     def _send_command_result(self, command_id: int, result):
         self._send_msg('command_result', {

@@ -109,7 +109,7 @@ from core.application.client_serializers.tree_client_serializer import TreeClien
 from core.application.client_serializers.ladybug_client_serializer import LadybugClientSerializer
 
 from core.application.engine import Engine
-from infrastructure.services.engine.engine_channel import EngineChannel
+from infrastructure.services.engine.engine_communicator import EngineCommunicator
 from decouple import config
 import logging, redis
 
@@ -289,8 +289,8 @@ def main():
         'constants_client_serializer': constants_client_serializer
     }
     engine_channel_events = EventEmitter()
-    engine_channel = EngineChannel(engine_channel_events, r, logger)
-    engine = Engine(event_bus, engine_channel, logger, services, client_serializers, world_deserializer, world_serializer)
+    engine_communicator = EngineCommunicator(engine_channel_events, r, logger)
+    engine = Engine(event_bus, engine_communicator, logger, services, client_serializers, world_deserializer, world_serializer)
     try:
         engine.start()
     except KeyboardInterrupt:

@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, AsyncMock
 import pytest, redis, pytest_asyncio, threading, asyncio
 from decouple import config
 from infrastructure.services.engine.engine_adapter import EngineAdapter
-from infrastructure.services.engine.engine_channel import EngineChannel
+from infrastructure.services.engine.engine_communicator import EngineCommunicator
 from core.world.utils.event_emiter import EventEmitter
 from core.application.engine import Engine
 
@@ -122,9 +122,9 @@ def engine_factory(redis_client_engine):
         }
         world_deserializer = MagicMock()
         world_serializer = MagicMock()
-        engine_channel_events = EventEmitter()
-        engine_channel = EngineChannel(engine_channel_events, r, logger)
-        return Engine(event_bus, engine_channel, logger, services, client_serializers, world_deserializer, world_serializer)
+        engine_communicator_events = EventEmitter()
+        engine_communicator = EngineCommunicator(engine_communicator_events, r, logger)
+        return Engine(event_bus, engine_communicator, logger, services, client_serializers, world_deserializer, world_serializer)
     return create
 
 @pytest_asyncio.fixture

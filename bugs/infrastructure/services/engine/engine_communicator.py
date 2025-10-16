@@ -1,4 +1,4 @@
-from core.application.engine_channel_interface import iEngineChannel
+from core.application.engine_communicator_interface import iEngineCommunicator
 from typing import Dict
 import redis, json, time
 import redis.exceptions
@@ -8,7 +8,7 @@ import threading
 from core.world.utils.event_emiter import EventEmitter
 from .redis_channel_names import RedisChannelNames
 
-class EngineChannel(iEngineChannel):
+class EngineCommunicator(iEngineCommunicator):
 
     def __init__(self, events: EventEmitter, redis: redis.Redis, logger: Logger):
         super().__init__()

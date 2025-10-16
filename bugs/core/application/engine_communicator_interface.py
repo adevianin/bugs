@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Dict
 from core.world.utils.event_emiter import EventEmitter
 
-class iEngineChannel(ABC):
+class iEngineCommunicator(ABC):
 
     @property
     @abstractmethod
