@@ -43,6 +43,15 @@ The Application Layer and Domain Layer constitute the game core. They run in a s
 
 The placement of the game core(Domain + Application Layers) in a separate process(Python Process 2) prevents the web server's operations, HTTP request processing, or database queries from affecting the stability and speed of the game world.
 
+### **Tech Stack**
+* **Client side**: JavaScript, Pixi.js/WebGL, WebWorker, WebSocket, Webpack
+* **Server side**: Python 3, Django 5, Redis(as IPC), Multiprocessing(Custom Game Engine), Google OAuth 2.0 & SMTP, Docker, Caddy 2, SQLite(since RAM limit on free VPS)
+
+### ***Composition Roots:***
+* [Game Engine](https://github.com/adevianin/bugs/blob/master/bugs/engine_start.py)
+* [Engine Adapter](https://github.com/adevianin/bugs/blob/master/bugs/main/init.py)
+* [Client Game App](https://github.com/adevianin/bugs/blob/master/bugs/client/gameApp/src/index.js)
+
 ### **Performance Tests**
 
 * **Test with ~4K Ants:** [YouTube Video](https://www.youtube.com/watch?v=fsOqnIcIcdM)
@@ -52,3 +61,5 @@ The placement of the game core(Domain + Application Layers) in a separate proces
 ### **Development Showcase**
 
 * **Early Stages of Development:** [YouTube Video](https://www.youtube.com/watch?v=pUTJYvNdoUg)
+
+
