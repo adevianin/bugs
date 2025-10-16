@@ -27,7 +27,7 @@ The client side is divided into three layers:
 
 * **Synchronization Layer:** The layer responsible for communication with the server. It receives change packages via WebSocket and sends player commands to the server.
 
-Key Solution: The Domain Layer and Synchronization Layer run in a separate thread(Web Worker). This is necessary to decouple model processing from rendering. While the domain layer updates the model, the browser's main thread remains free for smooth animation performance.
+Key Solution: The Domain Layer and Synchronization Layer run in a separate thread(WebWorker). This is necessary to decouple model processing from rendering. While the domain layer updates the model, the browser's main thread remains free for smooth animation performance.
 
 #### Server Architecture
 On the server side, the code is implemented using Clean Architecture and is divided into three logical layers that form two separate processes to ensure stability and scalability.
