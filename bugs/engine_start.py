@@ -111,7 +111,7 @@ from core.application.client_serializers.ladybug_client_serializer import Ladybu
 from core.application.engine import Engine
 from infrastructure.services.engine.engine_communicator import EngineCommunicator
 from decouple import config
-import logging, redis
+import logging, redis, signal
 
 def main():
     console_handler = logging.StreamHandler()
@@ -291,13 +291,17 @@ def main():
     engine_channel_events = EventEmitter()
     engine_communicator = EngineCommunicator(engine_channel_events, r, logger)
     engine = Engine(event_bus, engine_communicator, logger, services, client_serializers, world_deserializer, world_serializer)
-    try:
-        engine.start()
-    except KeyboardInterrupt:
+
+    def stop_signal_handler(signum, frame):
         logger.info('stopping engine')
-    finally:
         engine.stop()
         r.close()
+        exit(0)
+
+    signal.signal(signal.SIGINT, stop_signal_handler) # ctrl + c
+    signal.signal(signal.SIGTERM, stop_signal_handler) # docker compose down
+
+    engine.start()
 
 if __name__ == '__main__':
     main()
