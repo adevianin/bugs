@@ -6,11 +6,9 @@ from logging import Logger
 from core.world.settings import STEP_TIME
 import threading
 from core.world.utils.event_emiter import EventEmitter
+from .redis_channel_names import RedisChannelNames
 
 class EngineChannel(iEngineChannel):
-
-    CHANNEL_ENGINE_IN = 'engine_in'
-    CHANNEL_ENGINE_OUT = 'engine_out'
 
     def __init__(self, events: EventEmitter, redis: redis.Redis, logger: Logger):
         super().__init__()
@@ -32,7 +30,7 @@ class EngineChannel(iEngineChannel):
             while True:
                 try:
                     pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                    pubsub.subscribe(EngineChannel.CHANNEL_ENGINE_IN)
+                    pubsub.subscribe(RedisChannelNames.CHANNEL_ENGINE_IN)
                     for msg in pubsub.listen():
                         
                         if msg['data'] == '__exit__':
@@ -55,7 +53,7 @@ class EngineChannel(iEngineChannel):
     def stop(self):
         self._events.remove_all_listeners()
         try:
-            self._redis.publish(EngineChannel.CHANNEL_ENGINE_IN, '__exit__')
+            self._redis.publish(RedisChannelNames.CHANNEL_ENGINE_IN, '__exit__')
             self._listen_thread.join()
         except Exception as e:
             self._logger.error('stop engine channel error')
@@ -72,7 +70,7 @@ class EngineChannel(iEngineChannel):
 
     def send_msg(self, type: str, data: Dict):
         try:
-            self._redis.publish(EngineChannel.CHANNEL_ENGINE_OUT, json.dumps({
+            self._redis.publish(RedisChannelNames.CHANNEL_ENGINE_OUT, json.dumps({
                 'type': type,
                 'data': data
             }))

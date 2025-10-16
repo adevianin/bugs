@@ -8,12 +8,11 @@ from .world_data_repository_interface import iWorldDataRepository
 from .usernames_repository_interface import iUsernamesRepository
 from .exceptions import EngineError, EngineStateConflictError, EngineResponseTimeoutError
 from infrastructure.services.world_backup_saver import WorldBackupSaver
+from .redis_channel_names import RedisChannelNames
 import logging
 
 class EngineAdapter:
     WAIT_COMMAND_RESULT_TIMEOUT = 10
-    CHANNEL_ENGINE_IN = 'engine_in'
-    CHANNEL_ENGINE_OUT = 'engine_out'
 
     def __init__(self, event_bus: EventBus, world_data_repository: iWorldDataRepository, usernames_repository: iUsernamesRepository, redis: redis.asyncio.Redis, 
                  world_backup_saver: WorldBackupSaver, logger: logging.Logger):
@@ -288,7 +287,7 @@ class EngineAdapter:
 
     async def _send_msg_to_engine(self, type: str, data: Dict = None):
         try:
-            await self._redis.publish(EngineAdapter.CHANNEL_ENGINE_IN, json.dumps({
+            await self._redis.publish(RedisChannelNames.CHANNEL_ENGINE_IN, json.dumps({
                 'type': type,
                 'data': data
             }))
@@ -329,7 +328,7 @@ class EngineAdapter:
         while True:
             try:
                 pubsub = self._redis.pubsub(ignore_subscribe_messages=True)
-                await pubsub.subscribe(EngineAdapter.CHANNEL_ENGINE_OUT)
+                await pubsub.subscribe(RedisChannelNames.CHANNEL_ENGINE_OUT)
 
                 async for redis_msg in pubsub.listen():
                     msg = json.loads(redis_msg['data'])
