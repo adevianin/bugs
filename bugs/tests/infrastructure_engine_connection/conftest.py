@@ -1,7 +1,9 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 import pytest, redis, pytest_asyncio, threading, asyncio
 from decouple import config
 from infrastructure.services.engine.engine_adapter import EngineAdapter
+from infrastructure.services.engine.engine_channel import EngineChannel
+from core.world.utils.event_emiter import EventEmitter
 from core.application.engine import Engine
 
 @pytest_asyncio.fixture
@@ -120,7 +122,9 @@ def engine_factory(redis_client_engine):
         }
         world_deserializer = MagicMock()
         world_serializer = MagicMock()
-        return Engine(event_bus, r, logger, services, client_serializers, world_deserializer, world_serializer)
+        engine_channel_events = EventEmitter()
+        engine_channel = EngineChannel(engine_channel_events, r, logger)
+        return Engine(event_bus, engine_channel, logger, services, client_serializers, world_deserializer, world_serializer)
     return create
 
 @pytest_asyncio.fixture
@@ -180,8 +184,10 @@ async def inited_engine_adapter_engine_environment(engine_adapter_factory, engin
     engine_thread.start()
 
     world_data_repository = MagicMock()
+    world_data_repository.get = AsyncMock()
     world_data_repository.get.return_value = None
     usernames_repository = MagicMock()
+    usernames_repository.get_usernames = AsyncMock()
     usernames_repository.get_usernames.return_value = []
     engine_adapter_event_bus = MagicMock()
     engine_adapter = engine_adapter_factory(
