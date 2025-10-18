@@ -119,7 +119,7 @@ def test_ant_asap_register_thought_with_cant_delay(ant_mind_factory, ant_thought
 
     assert len(ant_mind.thoughts) == 5
     assert current_thought.delay.call_count == 0
-    assert thought is ant_mind.thoughts[2]
+    assert thought is ant_mind.thoughts[3]
     assert thought.setup.call_count == 1
 
 def test_ant_handling_done_thoughts(ant_mind_factory, ant_thought_mock_factory, ant_body_mock_factory):
