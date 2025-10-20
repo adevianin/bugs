@@ -34,7 +34,7 @@ The Application Layer and Domain Layer constitute the game core. They run in a s
 **Key Solution:** The placement of the game core(Domain + Application Layers) in a separate process(Python Process 2) prevents the web server's operations such as HTTP request processing or database queries from affecting the stability and performance of the Engine and the simulated game world.
 
 ### 💻 Client Architecture
-On the client side, the code follows Clean Architecture principles and is divided into three logical layers.
+On the client side, the code follows Clean Architecture principles and is divided into three logical layers. This is a three-layer variant of Clean Architecture, adapted for the frontend context where the application layer is omitted because orchestration is minimal and performed directly by the domain layer.
 
 _Note on dependencies: The diagram above shows data flow, not dependency direction. To maintain Clean Architecture, functionality from the Synchronization Layer is injected into the Domain Layer, ensuring its independence from external concerns._
 
