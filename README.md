@@ -6,7 +6,7 @@ The biological model in Evolution of Ants reproduces the real principles of gene
 
 ## Enter the World
 
-The system runs directly in a web browser and is fully playable on both 🖥️ desktop and 📱 mobile devices.
+It runs directly in a web browser and is fully playable on both 🖥️ desktop and 📱 mobile devices.
 
 🎮 **Open Web Version:** [https://evolutionofants.click](https://evolutionofants.click/)<br>
 🎥 **Demo Video:** [YouTube Video](https://www.youtube.com/watch?v=fMoLUvllM98)
