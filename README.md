@@ -1,14 +1,15 @@
 <h1 align="center">🐜</h1>
-This is a multiplayer simulation game focused on the evolution of ant species. The main goal is to selectively breed your ant species, ensuring its adaptation to the environment and dominance over other players' species.
 
-The game mechanics are based on real-world principles of ant genetics, including the mechanisms of genomes, chromosomes, meiosis, gene dominance, and more. These mechanics allow players to influence the evolution of their ant species, consequently altering the stats(strength, combat resistance, lifespan, and others) of newly born individual ants. Not all genes are available to the species at the start of the game. Genes for the soldier caste, for instance, only have a chance to emerge if the species frequently engages in combat. A similar dependency applies to the gene that allows ants to build satellite nests. The game also simulates the life of colonies with different ant castes(queen, workers, soldiers, females, and males) and their behavior, which is controlled by pheromones. The environment is dynamic and changes with the four seasons, which affects resource availability and requires adaptation.
+Evolution of Ants is a real-time simulation of ant evolution. Each user can selectively breed their own ant species, gradually developing unique characteristics that allow it to adapt and potentially dominate over species maintained by other users. All interactions take place within a shared online environment featuring dynamic seasonal cycles that affect food availability and overall ecological stability. The primary emphasis of the project is on biologically grounded modeling and the accurate reproduction of evolutionary mechanisms.
 
-## Play the Game
+The biological model in Evolution of Ants reproduces the real principles of genetics and social behavior observed in natural ant colonies. Every ant has genes inherited from its parents, and those genes determine various traits, such as HP, strength, appetite, visibility range, and many others. What makes the model complex is that the inheritance mechanism is biologically accurate: genes are grouped into chromosomes, forming a full genome, and passed through a meiosis-like process that includes recombination, gene dominance, and random mutations with configurable mutation rates. Each individual is diploid (two sets of chromosomes), while gametes are haploid, so offspring receive a genetically realistic mix of traits from both parents. This allows natural selection and selective breeding to work exactly like in real ant populations. On the colony level, there’s also modeling of pheromone signaling, castes (workers, soldiers, males, females, and queens), colony interactions, and resource gathering.
 
-The game runs directly in a web browser and is fully playable on both 🖥️ desktop and 📱 mobile devices.
+## Enter the World
 
-🎮 **Play Now:** [https://evolutionofants.click](https://evolutionofants.click/)<br>
-🎥 **Watch Gameplay:** [YouTube Video](https://www.youtube.com/watch?v=fMoLUvllM98)
+The system runs directly in a web browser and is fully playable on both 🖥️ desktop and 📱 mobile devices.
+
+🎮 **Open Web Version:** [https://evolutionofants.click](https://evolutionofants.click/)<br>
+🎥 **Demo Video:** [YouTube Video](https://www.youtube.com/watch?v=fMoLUvllM98)
 
 ## System Architecture and Data Flow
 
