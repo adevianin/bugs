@@ -80,6 +80,8 @@ class QueenAnt(Ant):
         self._emit_action(AntGotFertilizedAction(self.id, self.breeding_male_genome, self.owner_id))
 
     def do_step(self, step_number: int, season):
+        if self.name == 'barshk':
+            self.body.invigorate()
         if not self._body.is_in_nuptial_flight:
             super().do_step(step_number, season)
     
