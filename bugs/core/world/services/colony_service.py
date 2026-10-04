@@ -8,7 +8,7 @@ from core.world.entities.colony.colony_factory import ColonyFactory
 from core.world.utils.point import Point
 from core.world.entities.item.items.base.item import Item 
 from core.world.entities.item.items.base.item_types import ItemTypes 
-from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, 
+from core.world.settings import (NEW_EGG_FOOD_COST, LAY_EGG_SEASONS, MAX_DISTANCE_TO_SUB_NEST, MAX_SUB_NEST_COUNT, MAX_DISTANCE_TO_BUG_CORPSE_FOR_BRINGING, 
                                  MAX_DISTANCE_TO_OPERATION_TARGET, FOOD_IN_NEW_COLONY_MAIN_NEST, ITEM_SOURCE_BLOCKING_RADIUS, NEST_BLOCKING_RADIUS)
 from core.world.utils.clean_string import clean_string
 from core.world.exceptions import GameRuleError, GameError
@@ -253,7 +253,7 @@ class ColonyService(BaseService):
         nest = self._find_nest_for_owner(nest_id, user_id)
         
         filter: Callable[[Item], bool] = lambda item: item.item_type == ItemTypes.BUG_CORPSE and not item.is_bringing
-        items = self._world.map.find_entities_near(nest.position, nest.area, [EntityTypes.ITEM], filter)
+        items = self._world.map.find_entities_near(nest.position, MAX_DISTANCE_TO_BUG_CORPSE_FOR_BRINGING, [EntityTypes.ITEM], filter)
         key: Callable[[Item], int] = lambda item: nest.position.dist(item.position)
         items.sort(key = key)
 

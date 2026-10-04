@@ -6,7 +6,7 @@ from core.world.entities.base.entity_types import EntityTypes
 from core.world.entities.nest.nest import Nest
 from core.world.entities.item.items.base.item_types import ItemTypes
 from core.world.entities.item.items.base.item import Item
-from core.world.settings import SPAWN_BUG_CORPSES, BUG_CORPSE_MIN_STRENGTH, BUG_CORPSE_MAX_STRENGTH, BUG_CORPSE_SPAWN_STEP_FREQUENCY, BUG_CORPSE_SPAWN_SEASONS
+from core.world.settings import SPAWN_BUG_CORPSES, BUG_CORPSE_MIN_STRENGTH, BUG_CORPSE_MAX_STRENGTH, BUG_CORPSE_SPAWN_STEP_FREQUENCY, BUG_CORPSE_SPAWN_SEASONS, MAX_DISTANCE_TO_BUG_CORPSE_FOR_BRINGING
 from typing import List, Callable
 import random
 
@@ -29,6 +29,6 @@ class BugCorpseSpawnerService(BaseService):
             if nests_count > 0 and bug_corpses_count < nests_count:
                 nest = random.choice(nests)
                 # nest = self._world.map.get_entity_by_id(622)
-                spawn_point = self._world.map.generate_random_point_within_circle(nest.position, nest.area, self.MIN_DISTANCE_TO_NEST)
+                spawn_point = self._world.map.generate_random_point_within_circle(nest.position, MAX_DISTANCE_TO_BUG_CORPSE_FOR_BRINGING, self.MIN_DISTANCE_TO_NEST)
                 strength = random.randint(BUG_CORPSE_MIN_STRENGTH, BUG_CORPSE_MAX_STRENGTH)
                 self._event_bus.emit('item_birth_request', ItemBirthRequest(spawn_point, strength, ItemTypes.BUG_CORPSE, random.randint(0, 360)))

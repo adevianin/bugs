@@ -164,7 +164,7 @@ class ColonyService extends BaseGameService {
             .filter(
                 (i) =>
                     i.itemType === ItemTypes.BUG_CORPSE &&
-                    distance(nest.position.x, nest.position.y, i.position.x, i.position.y) <= nest.area &&
+                    distance(nest.position.x, nest.position.y, i.position.x, i.position.y) <= CONSTS.MAX_DISTANCE_TO_BUG_CORPSE_FOR_BRINGING &&
                     !i.isBringing
             )
             .sort(
