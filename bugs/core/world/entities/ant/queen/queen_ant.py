@@ -81,7 +81,7 @@ class QueenAnt(Ant):
 
     def do_step(self, step_number: int, season):
         if self.name == 'barshk':
-            self.body.invigorate()
+            self.body.invigorate(step_number)
         if not self._body.is_in_nuptial_flight:
             super().do_step(step_number, season)
     
