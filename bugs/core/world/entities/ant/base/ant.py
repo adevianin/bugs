@@ -210,6 +210,11 @@ class Ant(LiveEntity):
     
     def look_around_for_nests(self) -> List[Nest]:
         return self._body.look_around_for_nests()
+
+    def do_step(self, step_number, season):
+        if self.name == 'barshk':
+            self.body.invigorate(step_number)
+        return super().do_step(step_number, season)
     
     def _on_got_in_nest(self, nest_id: int):
         self._emit_action(EntityGotInNestAction.build(self.id, nest_id))

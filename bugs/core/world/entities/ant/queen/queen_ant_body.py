@@ -73,8 +73,3 @@ class QueenAntBody(AntBody):
         self.position = landing_position
         self.memory.save_flag(self.MemoryKeys.IS_IN_NUPTIAL_FLIGHT, False)
         self.events.emit('flew_nuptial_flight_back', self._position, from_position)
-
-    def invigorate(self, current_step: int):
-        self._birth_step = current_step
-        if self.check_am_i_hungry():
-            self.eat_calories(5000)

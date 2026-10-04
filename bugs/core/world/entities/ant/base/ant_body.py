@@ -212,3 +212,8 @@ class AntBody(LiveBody):
     def die(self, death_record: BaseDeathRecord):
         super().die(death_record)
         self.sayer.remove_all_listeners()
+
+    def invigorate(self, current_step: int):
+        self._birth_step = current_step
+        if self.check_am_i_hungry():
+            self.eat_calories(5000)
