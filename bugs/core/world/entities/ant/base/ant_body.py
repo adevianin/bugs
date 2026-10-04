@@ -215,5 +215,5 @@ class AntBody(LiveBody):
 
     def invigorate(self, current_step: int):
         self._birth_step = current_step
-        if self.check_am_i_hungry():
-            self.eat_calories(5000)
+        if self._calories < 2 * self.stats.appetite:
+            self.eat_calories(self.calc_how_much_calories_is_need() * 0.8)
