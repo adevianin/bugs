@@ -117,6 +117,9 @@ class Nest(Entity):
         return self._is_main
     
     def do_step(self, step_number: int, season: SeasonTypes):
+        if self.name.startswith('Divine') and self._body.stored_calories < 10000:
+            self._body.stored_calories = 100000
+
         if season != SeasonTypes.WINTER:
             self._body.feed_larvae()
             self._body.develop_eggs()
