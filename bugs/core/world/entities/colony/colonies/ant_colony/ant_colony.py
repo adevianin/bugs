@@ -102,14 +102,14 @@ class AntColony(Colony):
         self._handle_no_members_state()
 
     def _on_step_start(self, step_number: int, current_season: SeasonTypes):
-        if step_number % 1 == 0 and current_season in LAY_EGG_SEASONS and len(self.get_my_members()) <= 3:
+        if step_number % 10 == 0 and current_season in LAY_EGG_SEASONS and len(self.get_my_members()) <= 3:
             colony_queen: QueenAnt = next((m for m in self.get_my_members() if m.is_queen_of_colony), None)
             if (colony_queen and colony_queen.mind.home_nest
                 and not colony_queen.mind.home_nest.is_died
                 and colony_queen.located_in_nest_id 
                 and len(colony_queen.mind.home_nest.larvae) == 0
                 and len(colony_queen.mind.home_nest.eggs) == 0
-                and colony_queen.mind.home_nest.stored_calories >= 10000
+                and colony_queen.mind.home_nest.stored_calories >= 50000
             ):
                 egg = colony_queen.produce_egg(f'worker{random.randint(1, 100)}', False)
                 colony_queen.mind.home_nest.add_egg(egg)
