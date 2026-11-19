@@ -111,7 +111,7 @@ class AntColony(Colony):
                 and len(colony_queen.mind.home_nest.eggs) == 0
                 and colony_queen.mind.home_nest.stored_calories >= 50000
             ):
-                egg = colony_queen.produce_egg(f'worker{random.randint(1, 100)}', False)
+                egg = colony_queen.produce_egg(f'worker{random.randint(1, 100)}', True)
                 colony_queen.mind.home_nest.add_egg(egg)
 
     def _listen_operation(self, operation: Operation):
