@@ -16,7 +16,10 @@ from core.world.entities.action.colony_operation_changed_action import ColonyOpe
 from core.world.entities.action.colony_operation_created_action import ColonyOperationCreatedAction
 from core.world.entities.action.colony_operation_deleted_action import ColonyOperationDeletedAction
 from core.world.entities.action.colony_enemies_changed_action import ColonyEnemiesChangedAction
-
+from core.world.entities.world.season_types import SeasonTypes
+from core.world.settings import LAY_EGG_SEASONS
+from core.world.entities.ant.queen.queen_ant import QueenAnt
+import random
 from functools import partial
 
 class AntColony(Colony):
@@ -34,6 +37,7 @@ class AntColony(Colony):
             self._listen_operation(operation)
 
         event_bus.add_listener('step_done', self._on_step_done)
+        event_bus.add_listener('step_start', self._on_step_start)
 
     @property
     def owner_id(self):
@@ -96,6 +100,19 @@ class AntColony(Colony):
         self._clean_completed_operations()
         self._hire_for_operations()
         self._handle_no_members_state()
+
+    def _on_step_start(self, step_number: int, current_season: SeasonTypes):
+        if step_number % 1 == 0 and current_season in LAY_EGG_SEASONS and len(self.get_my_members()) <= 3:
+            colony_queen: QueenAnt = next((m for m in self.get_my_members() if m.is_queen_of_colony), None)
+            if (colony_queen and colony_queen.mind.home_nest
+                and not colony_queen.mind.home_nest.is_died
+                and colony_queen.located_in_nest_id 
+                and len(colony_queen.mind.home_nest.larvae) == 0
+                and len(colony_queen.mind.home_nest.eggs) == 0
+                and colony_queen.mind.home_nest.stored_calories >= 50000
+            ):
+                egg = colony_queen.produce_egg(f'worker{random.randint(1, 100)}', False)
+                colony_queen.mind.home_nest.add_egg(egg)
 
     def _listen_operation(self, operation: Operation):
         operation.events.add_listener('change', partial(self._on_operation_change, operation))
