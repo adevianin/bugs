@@ -14,6 +14,11 @@ def check_is_engine_adapter_inited():
     ea = get_engine_adapter()
     return ea is not None
 
+def init_process():
+    if not check_is_engine_adapter_inited():
+        from main.init import init
+        init() #init is here to attach async engine adapter to global event loop
+
 async def _build_world_status():
     ea = get_engine_adapter()
     world_status = await ea.get_world_status()
@@ -26,11 +31,12 @@ async def _build_world_status():
 @user_passes_test(is_superuser)
 @ensure_csrf_cookie
 async def admin_index(request):
-    if not check_is_engine_adapter_inited():
-        from main.init import init
-        init() #init is here to attach async engine adapter to global event loop
-        
+    init_process()
     return render(request, 'client/admin.html')
+
+@ensure_csrf_cookie
+async def init_not_logined(request):
+    init_process()
 
 @user_passes_test(is_superuser)
 @require_GET

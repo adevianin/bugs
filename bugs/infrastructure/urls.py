@@ -7,13 +7,14 @@ from .views.account import (check_username_uniqueness, check_email_uniqueness, a
                             account_index, google_auth_callback, verify_email, reset_password, reset_password_request, set_new_password,
                             change_username, change_email, change_password, verify_email_request)
 from .views.game import index
-from .views.admin import admin_index, world_status_check, init_world, stop_world, run_world, save_world, expand_map, get_world_data, count_ants, populate_for_performance_test
+from .views.admin import admin_index, init_not_logined, world_status_check, init_world, stop_world, run_world, save_world, expand_map, get_world_data, count_ants, populate_for_performance_test
 from .views.theft2 import theft2_index
 
 urlpatterns = [
     path('', index, name='game_index'),
     path('account', account_index, name='account_index'),
     path('admin', admin_index, name='admin_index'),
+    path('init_nl', init_not_logined, name='init_not_logined'),
     path('reset_password', reset_password, name='reset_password'),
     path('verify_email/<uidb64>/<token>/', verify_email, name='verify_email'),
     
