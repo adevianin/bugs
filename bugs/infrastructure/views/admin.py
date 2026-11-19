@@ -38,6 +38,8 @@ async def admin_index(request):
 async def init_not_logined(request):
     init_process()
 
+    return HttpResponse('OK')
+
 @user_passes_test(is_superuser)
 @require_GET
 async def world_status_check(request):
