@@ -109,7 +109,7 @@ class AntColony(Colony):
                 and colony_queen.located_in_nest_id 
                 and len(colony_queen.mind.home_nest.larvae) == 0
                 and len(colony_queen.mind.home_nest.eggs) == 0
-                and colony_queen.mind.home_nest.stored_calories >= 50000
+                and colony_queen.mind.home_nest.stored_calories >= 10000
             ):
                 egg = colony_queen.produce_egg(f'worker{random.randint(1, 100)}', False)
                 colony_queen.mind.home_nest.add_egg(egg)
